@@ -25,6 +25,7 @@ removeExtension = re.sub('.py', '', filename)
 def connect():
     print('Connected to server')
     sio.emit('client_connected', {'machine_name': filename, 'client': client})
+    sio.emit('controller', {'machine_name': filename})
     sio.emit('client', {'machine_name': filename, 'client': client})
 
 @sio.event
