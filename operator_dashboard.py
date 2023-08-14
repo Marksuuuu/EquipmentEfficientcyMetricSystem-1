@@ -7,7 +7,9 @@ import tkinter as tk
 import tkinter.font as tkFont
 import os
 import csv
+import json
 from tkinter import Toplevel
+from tkinter import messagebox
 
 
 
@@ -51,6 +53,7 @@ class OperatorDashboard:
         extracted_employee_department = data[3]
         extracted_photo_url = data[4]
         extracted_possition = data[5]
+        self.root = root
         
         #setting title
         root.title(f"OPERATOR DASHBOARD - {extracted_employee_no} -- POSSITION - {extracted_possition}")
@@ -94,57 +97,68 @@ class OperatorDashboard:
         employee_photo["text"] = "label"
         employee_photo.place(x=1320, y=0, width=83, height=60)
         
-        
-        logout_btn=tk.Button(root)
+        logout_btn = tk.Button(root)
         logout_btn["bg"] = "#999999"
         logout_btn["cursor"] = "tcross"
-        ft = tkFont.Font(family='Times',size=10)
+        ft = tkFont.Font(family='Times', size=10)
         logout_btn["font"] = ft
         logout_btn["fg"] = "#333333"
         logout_btn["justify"] = "center"
         logout_btn["text"] = "LOGOUT"
-        logout_btn["command"] = self.logout
-        logout_btn.place(x=1620,y=70,width=66,height=37)
+        logout_btn["command"] = self.logout  # Use the logout method directly
+        logout_btn.place(x=1620, y=70, width=66, height=37)
         
-        
-        self.tree = ttk.Treeview(root)
-        self.tree["columns"] = ("MO NO.", "OPERATION", "SUB-OPERATION", "OPERATOR", "MACHINE", "USAGE CARD", "UPH")
+        self.tree = ttk.Treeview(root, show="headings", columns=("MAIN OPERATION", "SUB-OPERATION", "WIP ENTITY NAME"))
         self.tree.heading("#0", text="Row")
-        self.tree.heading("MO NO.", text="MO NO.")
-        self.tree.heading("OPERATION", text="OPERATION")
+        self.tree.heading("MAIN OPERATION", text="MAIN OPERATION")
         self.tree.heading("SUB-OPERATION", text="SUB-OPERATION")
-        self.tree.heading("OPERATOR", text="OPERATOR")
-        self.tree.heading("MACHINE", text="MACHINE")
-        self.tree.heading("USAGE CARD", text="USAGE CARD")
-        self.tree.heading("UPH", text="UPH")
+        self.tree.heading("WIP ENTITY NAME", text="WIP ENTITY NAME")
         self.tree.pack(pady=120)
 
-        self.populate_table()
+        # self.populate_table()
+        self.read_json_file()
         
     def logout(self):
-        from main import App
-        
-        mainDashboard = Toplevel(root)
-        main_dashboard = App()  
-        root.withdraw()
-        
-    def populate_table(self):
-        script_directory = os.path.dirname(os.path.abspath(__file__))
-        log_folder = os.path.join(script_directory, "data")
-        csv_file_path = os.path.join(log_folder, 'setup-data.csv')
-        
-        with open(csv_file_path, "r") as csv_file:
-            csv_reader = csv.reader(csv_file, delimiter="\t")
-            for i, row in enumerate(csv_reader, start=1):
-                self.tree.insert("", "end", text=str(i), values=row)
-     
-            
+        response = messagebox.askyesno("Logout", "Are you sure you want to logout?")
+        if response:
+            self.root.destroy()  # Close the current root window
+            self.root.quit()     #
+
+    # /////////////////////////// POPULATE TABLE FROM JSON ///////////////////////////////
     
+    def read_json_file(self):
+        with open('data/main.json', 'r') as json_file:
+            data = json.load(json_file)
+            for item in data['data']:
+                main_op = item['main_opt']
+                sub_op = item['sub_opt']
+                wip_entity = item['wip_entity_name']
+                self.tree.insert("", "end", values=(main_op, sub_op, wip_entity))
+                
+        return data
+        
+    # def populate_table(self):
+    #     script_directory = os.path.dirname(os.path.abspath(__file__))
+    #     log_folder = os.path.join(script_directory, "data")
+    #     csv_file_path = os.path.join(log_folder, 'setup-data.csv')
+        
+    #     with open(csv_file_path, "r") as csv_file:
+    #         csv_reader = csv.reader(csv_file, delimiter="\t")
+    #         for i, row in enumerate(csv_reader, start=1):
+    #             self.tree.insert("", "end", text=str(i), values=row)
      
-        
-        
 if __name__ == "__main__":
     root = tk.Tk()
     dashboard = OperatorDashboard(root, user_department, user_position, dataJson)
-    logout_btn["command"] = lambda: dashboard.logout(root)
-    root.mainloop()  # Start the Tkinter main loop
+    logout_btn = tk.Button(root)
+    logout_btn["bg"] = "#999999"
+    logout_btn["cursor"] = "tcross"
+    ft = tkFont.Font(family='Times', size=10)
+    logout_btn["font"] = ft
+    logout_btn["fg"] = "#333333"
+    logout_btn["justify"] = "center"
+    logout_btn["text"] = "LOGOUT"
+    logout_btn["command"] = dashboard.logout  # Use the logout method directly
+    logout_btn.place(x=1620, y=70, width=66, height=37)
+
+    root.mainloop() 
