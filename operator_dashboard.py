@@ -8,6 +8,8 @@ import tkinter.font as tkFont
 import os
 import csv
 from tkinter import Toplevel
+from request_ticket import RequestTicket
+
 
 
 
@@ -44,16 +46,17 @@ class CSVMonitor:
 
 class OperatorDashboard:
     def __init__(self, root, user_department, user_position, dataJson):
+        self.root = root
         data = dataJson['data']
-        extracted_user_department = data[0]
-        extracted_fullname = data[1]
-        extracted_employee_no = data[2]
-        extracted_employee_department = data[3]
-        extracted_photo_url = data[4]
-        extracted_possition = data[5]
+        self.extracted_user_department = data[0]
+        self.extracted_fullname = data[1]
+        self.extracted_employee_no = data[2]
+        self.extracted_employee_department = data[3]
+        self.extracted_photo_url = data[4]
+        self.extracted_possition = data[5]
         
         #setting title
-        root.title(f"OPERATOR DASHBOARD - {extracted_employee_no} -- POSSITION - {extracted_possition}")
+        root.title(f"OPERATOR DASHBOARD - {self.extracted_employee_no} -- POSSITION - {self.extracted_possition}")
 
         width=1705
         height=1000
@@ -63,10 +66,10 @@ class OperatorDashboard:
         root.geometry(alignstr)
         root.resizable(width=False, height=False)
         
-        if extracted_photo_url == False or extracted_photo_url is None:
+        if self.extracted_photo_url == False or self.extracted_photo_url is None:
             image_url = "https://www.freeiconspng.com/uploads/no-image-icon-15.png"
         else:
-            image_url = f"http://hris.teamglac.com/{extracted_photo_url}"  # Replace with your image URL
+            image_url = f"http://hris.teamglac.com/{self.extracted_photo_url}"  # Replace with your image URL
         
         response = requests.get(image_url)
         pil_image = Image.open(BytesIO(response.content))
@@ -77,13 +80,25 @@ class OperatorDashboard:
         self.image = ImageTk.PhotoImage(pil_image)
         
         ft = tk.font.Font(family='Times', size=14)  # Use tk.font instead of tkFont
+        
+     
+  
+        GButton_458=tk.Button(root)
+        GButton_458["bg"] = "#cc0000"
+        GButton_458["font"] = ft
+        GButton_458["fg"] = "#ffffff"
+        GButton_458["justify"] = "center"
+        GButton_458["text"] = "REQUEST TICKET"
+        GButton_458.place(x=10,y=0,width=172,height=44)
+        GButton_458["command"] = self.tickets_command
+        
 
         employee_name = tk.Label(root)
         employee_name["bg"] = "#ffffff"
         employee_name["font"] = ft 
         employee_name["fg"] = "#333333"
         employee_name["justify"] = "center"
-        employee_name["text"] = extracted_fullname
+        employee_name["text"] = self.extracted_fullname
         employee_name.place(x=1420, y=0, width=281, height=60)
 
         employee_photo = tk.Label(root, image=self.image)
@@ -127,6 +142,11 @@ class OperatorDashboard:
         mainDashboard = Toplevel(root)
         main_dashboard = App()  
         root.withdraw()
+    
+    def tickets_command(self):
+        # self.root.withdraw()
+        self.ticket_dashboard = Toplevel(self.root)
+        show_ticket_dashboard = RequestTicket(self.ticket_dashboard, self.extracted_fullname)
         
     def populate_table(self):
         script_directory = os.path.dirname(os.path.abspath(__file__))

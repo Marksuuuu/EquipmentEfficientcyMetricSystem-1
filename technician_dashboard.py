@@ -7,7 +7,7 @@ import tkinter as tk
 import tkinter.font as tkFont
 import os
 import csv
-# from main import App
+from tkinter import Toplevel
 
 
 
@@ -144,6 +144,7 @@ class TechnicianDashboard:
         # main_dashboard = App()  
         # root.withdraw()
         root.quit
+    
         
     def populate_table(self):
         script_directory = os.path.dirname(os.path.abspath(__file__))
