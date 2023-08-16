@@ -115,7 +115,7 @@ class App:
         self.GLabel_544["font"] = self.ft
         self.GLabel_544["fg"] = "#333333"
         self.GLabel_544["justify"] = "center"
-        self.GLabel_544["text"] = "label"
+        self.GLabel_544["text"] = "label"     
         self.GLabel_544.place(x=20,y=160,width=298,height=339)
 
         self.GLabel_111=tk.Label(root)

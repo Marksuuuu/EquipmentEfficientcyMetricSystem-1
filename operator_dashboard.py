@@ -164,13 +164,13 @@ class OperatorDashboard:
             root,
             show="headings",
             columns=(
-                "Row Number",
+                "ROW NUMBER",
                 "MAIN OPERATION",
                 "SUB-OPERATION",
                 "WIP ENTITY NAME",
             ),
         )
-        self.tree.heading("Row Number", text="Row Number")
+        self.tree.heading("ROW NUMBER", text="ROW NUMBER")
         self.tree.heading("MAIN OPERATION", text="MAIN OPERATION")
         self.tree.heading("SUB-OPERATION", text="SUB-OPERATION")
         self.tree.heading("WIP ENTITY NAME", text="WIP ENTITY NAME")
@@ -184,13 +184,24 @@ class OperatorDashboard:
         data = self.read_json_file()
 
         for i, (main_op, sub_op, wip_entity) in enumerate(data, start=1):
-            self.tree.insert("", "end", values=(i, main_op, sub_op, wip_entity))
+            self.tree.insert("", "end", iid=i, text=str(i),values=(i, main_op, sub_op, wip_entity))
 
+    def read_json_file(self):
+        with open("data\main.json", "r") as json_file:
+            data = json.load(json_file)
+            extracted_data = []
+
+            for item in data["data"]:
+                main_op = item["main_opt"]
+                sub_op = item["sub_opt"]
+                wip_entity = item["wip_entity_name"]
+                extracted_data.append((main_op, sub_op, wip_entity))
+
+        return extracted_data
+    
     def show_popup_view(self, event):
         selected_item = self.tree.selection()
-
-        # selected_item = self.tree.selection()[0]  # Get the selected item ID
-        # selected_index = self.tree.index(selected_item) + 1  # Get the index of the selected item and add 1
+        print(selected_item)
 
         if not selected_item:
             showinfo(title="Error", message="No data selected.")
@@ -199,7 +210,7 @@ class OperatorDashboard:
         item = self.tree.item(selected_item)
         data = item["values"]
 
-        if selected_item[0] == 'I001':
+        if selected_item[0] == '1':
             new_window = tk.Tk()
             new_window.title("My Python Project")
             new_window.geometry("500x550")
@@ -242,103 +253,46 @@ class OperatorDashboard:
                 message=f"User's department or position is not allowed. Please check, Current Department / Possition  {user_department}",
             )
 
-    # def swap_position(self, selected_item):
-    #     print("item",selected_item)
-    #     selected_id = self.tree.item(selected_item, "text")
-    #     first_id = "1"
-
-    #     selected_data = self.tree.item(selected_item, "values")
-    #     first_data = self.tree.item(first_id, "values")
-
-    #     # Load data from the JSON file
-    #     with open("data/main.json", "r") as json_file:
-    #         data = json.load(json_file)
-
-    #     # Swap data within the dictionaries
-    #     data_list = data["data"]
-    #     (
-    #         data_list[int(selected_id) - 1]["main_opt"],
-    #         data_list[int(first_id) - 1]["main_opt"],
-    #     ) = (first_data[0], selected_data[0])
-    #     (
-    #         data_list[int(selected_id) - 1]["sub_opt"],
-    #         data_list[int(first_id) - 1]["sub_opt"],
-    #     ) = (first_data[1], selected_data[1])
-    #     (
-    #         data_list[int(selected_id) - 1]["wip_entity_name"],
-    #         data_list[int(first_id) - 1]["wip_entity_name"],
-    #     ) = (first_data[2], selected_data[2])
-
-    #     # Update the JSON data
-    #     data["data"] = data_list
-
-    #     # Save the updated JSON data
-    #     with open("data/main.json", "w") as json_file:
-    #         json.dump(data, json_file, indent=4)
-
-    #     self.tree.item(selected_item, values=first_data)
-    #     self.tree.item(first_id, values=selected_data)
     def swap_position(self, selected_item):
-        selected_id = self.tree.item(selected_item, 'text')
-        print('selected_item', selected_item)
-        
-        # Get the identifier of the first item in the tree
-        first_item_id = self.tree.get_children()[0]
+        print("item",selected_item)
+        selected_id = self.tree.item(selected_item, "text")
+        first_id = "1"
 
-        selected_data = self.tree.item(selected_item, 'values')
-        first_data = self.tree.item(first_item_id, 'values')
+        selected_data = self.tree.item(selected_item, "values")
+        first_data = self.tree.item(first_id, "values")
 
         # Load data from the JSON file
-        json_file_path = os.path.join(self.get_script_directory(), "config", "main.json")
-        with open(json_file_path, 'r') as json_file:
+        with open("data/main.json", "r") as json_file:
             data = json.load(json_file)
 
-        # Swap data
+        # Swap data within the dictionaries
         data_list = data["data"]
-        data_list[int(selected_id) - 1] = first_data
-        data_list[int(first_id) - 1] = selected_data
+        (
+            data_list[int(selected_id) - 1]["main_opt"],
+            data_list[int(first_id) - 1]["main_opt"],
+        ) = (first_data[1], selected_data[1])
+        (
+            data_list[int(selected_id) - 1]["sub_opt"],
+            data_list[int(first_id) - 1]["sub_opt"],
+        ) = (first_data[2], selected_data[2])
+        (
+            data_list[int(selected_id) - 1]["wip_entity_name"],
+            data_list[int(first_id) - 1]["wip_entity_name"],
+        ) = (first_data[3], selected_data[3])
 
         # Update the JSON data
         data["data"] = data_list
 
         # Save the updated JSON data
-        with open(json_file_path, 'w') as json_file:
+        with open("data/main.json", "w") as json_file:
             json.dump(data, json_file, indent=4)
 
-        self.tree.item(selected_item, values=first_data)
-        self.tree.item(first_item_id, values=selected_data)
+        # Update the values of the Treeview rows
+        self.tree.item(selected_item, values=(selected_id, first_data[1], first_data[2], first_data[3]))
+        self.tree.item(first_id, values=(first_id, selected_data[1], selected_data[2], selected_data[3]))
 
-
-    # def swap_position(self, selected_item):
-    #     selected_id = self.tree.item(selected_item, 'text')
-    #     print('selected_item', selected_item)
-    #     first_id = '1'
-
-    #         # Get the identifier of the first item in the tree
-
-
-    #     selected_data = self.tree.item(selected_item, 'values')
-    #     first_data = self.tree.item(first_id, 'values')
-
-    #     # Load data from the JSON file
-    #     json_file_path = os.path.join(self.get_script_directory(), "config", "main.json")
-    #     with open(json_file_path, 'r') as json_file:
-    #         data = json.load(json_file)
-
-    #     # Swap data
-    #     data_list = data["data"]
-    #     data_list[int(selected_id) - 1] = first_data
-    #     data_list[int(first_id) - 1] = selected_data
-
-    #     # Update the JSON data
-    #     data["data"] = data_list
-
-    #     # Save the updated JSON data
-    #     with open(json_file_path, 'w') as json_file:
-    #         json.dump(data, json_file, indent=4)
-
-    #     self.tree.item(selected_item, values=first_data)
-    #     self.tree.item(first_id, values=selected_data)
+        # Show a success message
+        showinfo("Success", "Data swapped successfully!")
 
 
 
@@ -360,27 +314,20 @@ class OperatorDashboard:
             self.ticket_dashboard, self.extracted_fullname
         )
 
-    def read_json_file(self):
-        with open("data\main.json", "r") as json_file:
-            data = json.load(json_file)
-            extracted_data = []
 
-            for item in data["data"]:
-                main_op = item["main_opt"]
-                sub_op = item["sub_opt"]
-                wip_entity = item["wip_entity_name"]
-                extracted_data.append((main_op, sub_op, wip_entity))
-
-        return extracted_data
 
     def logout(self):
         response = messagebox.askyesno("Logout", "Are you sure you want to logout?")
         if response:
             self.root.destroy()  # Close the current root window
+            os.system("python main.py")  # Start the login.py file
+
 
 
 if __name__ == "__main__":
     root = tk.Tk()
+
+
     dashboard = OperatorDashboard(root, user_department, user_position, dataJson)
     logout_btn = tk.Button(root)
     logout_btn["bg"] = "#999999"
@@ -393,4 +340,5 @@ if __name__ == "__main__":
     logout_btn["command"] = dashboard.logout  # Use the logout method directly
     logout_btn.pack()
     logout_btn.place(x=1620, y=70, width=66, height=37)
+
     root.mainloop()  # Start the Tkinter main loop
