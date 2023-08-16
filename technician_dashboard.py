@@ -71,7 +71,7 @@ class TechnicianDashboard:
         pil_image = Image.open(BytesIO(response.content))
         desired_width = 83
         desired_height = 60
-        pil_image = pil_image.resize((desired_width, desired_height), Image.ANTIALIAS)
+        pil_image = pil_image.resize((desired_width, desired_height), Image.LANCZOS)
         
         self.image = ImageTk.PhotoImage(pil_image)
         

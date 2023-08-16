@@ -14,7 +14,6 @@ from tkinter import messagebox
 
 
 
-
 class CSVMonitor:
     def __init__(self, csv_file_path):
         self.csv_file_path = csv_file_path
@@ -75,7 +74,7 @@ class OperatorDashboard:
         pil_image = Image.open(BytesIO(response.content))
         desired_width = 83
         desired_height = 60
-        pil_image = pil_image.resize((desired_width, desired_height), Image.ANTIALIAS)
+        pil_image = pil_image.resize((desired_width, desired_height), Image.LANCZOS)
         
         self.image = ImageTk.PhotoImage(pil_image)
         
@@ -115,26 +114,110 @@ class OperatorDashboard:
         self.tree.heading("WIP ENTITY NAME", text="WIP ENTITY NAME")
         self.tree.pack(pady=120)
 
+        
+
         # self.populate_table()
         self.read_json_file()
-        
+
+        self.tree.bind('<Double-1>', self.show_popup_view)
+
+    def show_popup_view(self, event):
+        selected_item = self.tree.selection()
+        if not selected_item:
+            showinfo(title='Error', message='No data selected.')
+            return
+
+        item = self.tree.item(selected_item)
+        data = item['values']
+
+        if selected_item[0] == 'I001':
+            print(selected_item)
+            print("IF")
+            # popup = tk.Toplevel(self)
+            # popup.title('Data Details')
+            # popup.geometry('800x550')
+
+            # label_mo = tk.Label(popup, text=f"MO: {data[0]}", font=('Helvetica 12'))
+            # label_mo.pack(pady=5)
+
+            # label_customer = tk.Label(popup, text=f"CUSTOMER: {data[1]}", font=('Helvetica 12'))
+            # label_customer.pack(pady=5)
+
+            # label_device = tk.Label(popup, text=f"DEVICE: {data[2]}", font=('Helvetica 12'))
+            # label_device.pack(pady=5)
+
+
+            # button_frame = tk.Frame(popup)
+            # button_frame.pack(pady=10)
+
+            # self.start = tk.Button(button_frame)
+            # self.start["bg"] = "#f0f0f0"
+            # ft = tkFont.Font(family='Times', size=30)
+            # self.start["font"] = ft
+            # self.start["fg"] = "#000000"
+            # self.start["justify"] = "center"
+            # self.start["text"] = "START"
+            # self.start.grid(row=0, column=0, padx=630, pady=242)
+            # self.stop = tk.Button(button_frame)
+            # self.stop["bg"] = "#f0f0f0"
+            # ft = tkFont.Font(family='Times', size=30)
+            # self.stop["font"] = ft
+            # self.stop["fg"] = "#000000"
+            # self.stop["justify"] = "center"
+            # self.stop["text"] = "STOP"
+            # self.stop.grid(row=0, column=1, padx=630, pady=242)
+            # self.stop.grid_remove()  # Initially hide the new button
+
+            # self.start["command"] = self.start_command
+            # self.stop["command"] = lambda : self.stop_command(data)
+
+        else:
+            print(selected_item)
+            print("ELSE")
+            # For other rows, proceed with the swap functionality as before
+            # employee_id = simpledialog.askstring('Enter Supervisor Employee ID', 'Please enter the Supervisor Employee ID:')
+            # if not employee_id:
+            #     return
+
+            # if self.users.get(employee_id) != 'supervisor':
+            #     showinfo('Error', 'Invalid Supervisor Employee ID.')
+            #     return
+
+            # selected_id = self.tree.item(selected_item, 'text')
+            # first_id = '1'
+
+            # selected_data = self.tree.item(selected_item, 'values')
+            # first_data = self.tree.item(first_id, 'values')
+
+            # with open('data.csv', 'r', newline='') as file:
+            #     data_list = list(csv.reader(file))
+
+            # data_list[int(selected_id) - 1] = first_data
+            # data_list[int(first_id) - 1] = selected_data
+
+            # with open('data.csv', 'w', newline='') as file:
+            #     writer = csv.writer(file)
+            #     writer.writerows(data_list)
+
+            # self.tree.item(selected_item, values=first_data)
+            # self.tree.item(first_id, values=selected_data)
+
     def logout(self):
         response = messagebox.askyesno("Logout", "Are you sure you want to logout?")
         if response:
             self.root.destroy()  # Close the current root window
-            self.root.quit()     #
 
     # /////////////////////////// POPULATE TABLE FROM JSON ///////////////////////////////
     
     def read_json_file(self):
-        with open('data/main.json', 'r') as json_file:
+        with open('EquipmentEfficientcyMetricSystem-1\data\main.json', 'r') as json_file:
             data = json.load(json_file)
             for item in data['data']:
                 main_op = item['main_opt']
                 sub_op = item['sub_opt']
                 wip_entity = item['wip_entity_name']
                 self.tree.insert("", "end", values=(main_op, sub_op, wip_entity))
-                
+
         return data
         
     # def populate_table(self):
