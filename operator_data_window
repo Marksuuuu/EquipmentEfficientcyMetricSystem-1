@@ -1,0 +1,40 @@
+import tkinter as tk
+from tkinter import ttk
+
+
+
+# Create the main window.
+class OperatorDataWindow:
+    def __init__(self, root):
+
+        root.title("MO Details")
+        width=800
+        height=500
+        screenwidth = root.winfo_screenwidth()
+        screenheight = root.winfo_screenheight()
+        alignstr = '%dx%d+%d+%d' % (width, height, (screenwidth - width) / 2, (screenheight - height) / 2)
+        root.geometry(alignstr)
+        root.resizable(width=False, height=False)
+        
+        label_mo = tk.Label(popup, text=f"MO: {data[0]}", font=('Helvetica 12'))
+        label_mo.pack(pady=5)
+
+        label_customer = tk.Label(popup, text=f"CUSTOMER: {data[1]}", font=('Helvetica 12'))
+        label_customer.pack(pady=5)
+
+        label_device = tk.Label(popup, text=f"DEVICE: {data[2]}", font=('Helvetica 12'))
+        label_device.pack(pady=5)
+
+        label_employee_number = tk.Label(popup, text=f"EMPLOYEE NUMBER: {data[3]}", font=('Helvetica 12'))
+        label_employee_number.pack(pady=5)
+
+        label_quantity = tk.Label(popup, text=f"QUANTITY: {data[4]}", font=('Helvetica 12'))
+        label_quantity.pack(pady=5)
+
+        label_date = tk.Label(popup, text=f"DATE: {data[5]}", font=('Helvetica 12'))
+        label_date.pack(pady=5)
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = OperatorDataWindow(root)
+    root.mainloop()
