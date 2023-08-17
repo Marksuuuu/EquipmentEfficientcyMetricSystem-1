@@ -201,7 +201,7 @@ class OperatorDashboard:
     
     def show_popup_view(self, event):
         selected_item = self.tree.selection()
-        print(selected_item)
+
 
         if not selected_item:
             showinfo(title="Error", message="No data selected.")
@@ -211,16 +211,90 @@ class OperatorDashboard:
         data = item["values"]
 
         if selected_item[0] == '1':
-            new_window = tk.Tk()
-            new_window.title("My Python Project")
-            new_window.geometry("500x550")
-            new_window.configure(bg="white")
-            new_window.mainloop()
+            data_details_window = tk.Tk()
+            data_details_window.title("Item Details")
+            #setting window size
+            data_details_window.geometry('500x500')
+
+            label_mo = tk.Label(data_details_window, text=f"Main Operation: {data[1]}", font=('Helvetica 12'))
+            label_mo.pack(pady=5)
+
+            label_customer = tk.Label(data_details_window, text=f"Sub-Operation: {data[2]}", font=('Helvetica 12'))
+            label_customer.pack(pady=5)
+
+            label_device = tk.Label(data_details_window, text=f"WIP Entity Name: {data[3]}", font=('Helvetica 12'))
+            label_device.pack(pady=5)
+
+
+            # Create a frame for buttons
+            button_frame = tk.Frame(data_details_window)
+            # button_frame.pack(side="right", padx=10)
+            button_frame.pack(pady=10)
+
+            # Create the "Start" button
+            self.start = tk.Button(button_frame)
+            self.start["bg"] = "#4f9c64"
+            ft = tkFont.Font(family='Times', size=13)
+            self.start["font"] = ft
+            self.start["fg"] = "#ffffff"
+            self.start["justify"] = "center"
+            self.start["text"] = "START"
+            self.start["relief"] = "flat"
+            self.start["command"] = self.start_command
+            self.start.grid(row=0, column=0, padx=10)  # Use grid instead of pack
+
+            # Create the "Stop" button
+            self.stop = tk.Button(button_frame)
+            self.stop["bg"] = "#e04949"
+            ft = tkFont.Font(family='Times', size=13)
+            self.stop["font"] = ft
+            self.stop["fg"] = "#ffffff"
+            self.stop["justify"] = "center"
+            self.stop["text"] = "STOP"
+            self.stop["relief"] = "flat"
+            self.stop["command"] = lambda: self.stop_command(data)
+            self.stop.grid(row=0, column=1, padx=10)  # Use grid instead of pack
+            self.stop.grid_remove()
+
+
+            data_details_window.mainloop()
 
         else:
             self.validate_offline_employee()
             self.swap_position(selected_item)
-            print("selected item", item)
+
+
+    def start_command(self):
+        self.start.grid_remove()  # Remove the start button
+        self.stop.grid()  # Display the stop button
+        print("Stop button displayed")
+
+    def stop_command(self, data):
+        print(data)
+        self.stop.grid_remove()  # Remove the stop button
+        self.start.grid()  # Display the start button
+        print("Start button displayed")
+
+        total_finished_str = simpledialog.askstring('Enter Total Number of finished', 'Please enter the total number of finish items')
+        
+        # if total_finished_str is not None and total_finished_str.strip() != "":
+        #     total_finished = int(total_finished_str)
+        #     self.start.grid_remove()
+        #     self.stop.grid()
+        #     dataPass = data[4]
+
+        #     # Ensure dataPass is an integer
+        #     dataPass = int(dataPass)
+
+        #     if total_finished > dataPass:
+        #         print('True')
+        #     else:
+        #         print('False')
+
+        #     showinfo('Notice', f'Total Finished.. inputted by {self.employee_number}')
+        # else:
+        #     showwarning('Error', 'Invalid input. Buttons not changed.')
+
 
     def validate_offline_employee(self):
         log_file_path = os.path.join(self.get_script_directory(), "config", "hris.json")
@@ -254,7 +328,7 @@ class OperatorDashboard:
             )
 
     def swap_position(self, selected_item):
-        print("item",selected_item)
+
         selected_id = self.tree.item(selected_item, "text")
         first_id = "1"
 
@@ -295,7 +369,6 @@ class OperatorDashboard:
         showinfo("Success", "Data swapped successfully!")
 
 
-
     def load_permissions(self):
         log_file_path = os.path.join(
             self.get_script_directory(), "config", "settings.json"
@@ -314,8 +387,6 @@ class OperatorDashboard:
             self.ticket_dashboard, self.extracted_fullname
         )
 
-
-
     def logout(self):
         response = messagebox.askyesno("Logout", "Are you sure you want to logout?")
         if response:
@@ -326,19 +397,5 @@ class OperatorDashboard:
 
 if __name__ == "__main__":
     root = tk.Tk()
-
-
     dashboard = OperatorDashboard(root, user_department, user_position, dataJson)
-    logout_btn = tk.Button(root)
-    logout_btn["bg"] = "#999999"
-    logout_btn["cursor"] = "tcross"
-    ft = tkFont.Font(family="Times", size=10)
-    logout_btn["font"] = ft
-    logout_btn["fg"] = "#333333"
-    logout_btn["justify"] = "center"
-    logout_btn["text"] = "LOGOUT"
-    logout_btn["command"] = dashboard.logout  # Use the logout method directly
-    logout_btn.pack()
-    logout_btn.place(x=1620, y=70, width=66, height=37)
-
     root.mainloop()  # Start the Tkinter main loop

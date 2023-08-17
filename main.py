@@ -261,7 +261,6 @@ class App:
             print("Employee not found.")
     
     def validate_permissions(self, user_department, user_position, dataJson):
-        print(user_position)
         permissions = self.load_permissions()
         if permissions.is_department_allowed(user_department) and permissions.is_position_allowed(user_position):
             if permissions.is_technician(user_position):
