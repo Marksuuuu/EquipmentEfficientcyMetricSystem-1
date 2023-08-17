@@ -1,20 +1,24 @@
+import requests
+import json
+import os
+import csv
+import socketio
+import uuid
+import re
+import logging
+import signal
 import tkinter as tk
 import tkinter.font as tkFont
 from tkinter import messagebox
 from tkinter import ttk
 from tkinter.messagebox import showinfo, showwarning, showerror
 from tkinter import simpledialog
-import requests
-import json
-import os
-import csv
+
+from datetime import datetime
+
 from tkinter import Toplevel
 from operator_dashboard import OperatorDashboard
 from technician_dashboard import TechnicianDashboard
-import socketio
-import uuid
-import re
-
 
 
 sio = socketio.Client(reconnection=True, reconnection_attempts=5, reconnection_delay=1, reconnection_delay_max=5)
@@ -88,6 +92,9 @@ class App:
         ##FUNCTIONS##
                 
         ##END##
+        dateNow = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        signal.signal(signal.SIGTERM, self.handle_exit_signal)
+        signal.signal(signal.SIGINT, self.handle_exit_signal)
 
         self.entry_employee_number=tk.Entry(root)
         self.entry_employee_number["bg"] = "#ffffff"
@@ -127,12 +134,30 @@ class App:
         self.GLabel_111["text"] = "label"
         self.GLabel_111.place(x=360,y=160,width=301,height=338)
         
+        self.log_activity(logging.INFO, f'Open Program')
+        
         ##Functions
         
         self.update_status()
         self.oee()
+        self.init_logging()
         
         ##End 
+
+    def handle_exit_signal(self, signum, frame):
+        self.log_activity(logging.INFO, f'Terminated the program')
+        self.quit()
+
+    def init_logging(self):
+        log_file = 'activity_log.txt'
+        logging.basicConfig(filename=log_file, level=logging.INFO,
+                            format='[%(asctime)s] %(levelname)s: %(message)s',
+                            datefmt='%Y-%m-%d %H:%M:%S', filemode='a')
+        print(f'Logging to {log_file}')
+
+
+    def log_activity(self, level, message):
+        logging.log(level, message)
     
     def check_internet_connection_requests(self):
         try:
