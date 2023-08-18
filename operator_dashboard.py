@@ -124,14 +124,14 @@ class OperatorDashboard:
 
         ft = tk.font.Font(family="Times", size=14)  # Use tk.font instead of tkFont
 
-        GButton_458 = tk.Button(root)
-        GButton_458["bg"] = "#cc0000"
-        GButton_458["font"] = ft
-        GButton_458["fg"] = "#ffffff"
-        GButton_458["justify"] = "center"
-        GButton_458["text"] = "REQUEST TICKET"
-        GButton_458.place(x=10, y=0, width=172, height=44)
-        GButton_458["command"] = self.tickets_command
+        request_ticket_btn = tk.Button(root)
+        request_ticket_btn["bg"] = "#cc0000"
+        request_ticket_btn["font"] = ft
+        request_ticket_btn["fg"] = "#ffffff"
+        request_ticket_btn["justify"] = "center"
+        request_ticket_btn["text"] = "REQUEST TICKET"
+        request_ticket_btn.place(x=10, y=0, width=172, height=44)
+        request_ticket_btn["command"] = self.tickets_command
 
         employee_name = tk.Label(root)
         employee_name["bg"] = "#ffffff"
@@ -211,7 +211,7 @@ class OperatorDashboard:
         data = item["values"]
 
         if selected_item[0] == '1':
-            data_details_window = tk.Tk()
+            data_details_window = tk.Toplevel(self.root)
             data_details_window.title("Item Details")
             #setting window size
             data_details_window.geometry('500x500')
@@ -255,7 +255,8 @@ class OperatorDashboard:
             self.stop["command"] = lambda: self.stop_command(data)
             self.stop.grid(row=0, column=1, padx=10)  # Use grid instead of pack
             self.stop.grid_remove()
-
+            
+            # self.creator.grab_set() 
 
             data_details_window.mainloop()
 

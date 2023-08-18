@@ -52,7 +52,6 @@ class TechnicianDashboard:
         extracted_photo_url = data[4]
         extracted_possition = data[5]
         self.root = root
-
         
         #setting title
         root.title(f"TECHNICIAN DASHBOARD - {extracted_employee_no} -- POSSITION - {extracted_possition}")
@@ -144,61 +143,74 @@ class TechnicianDashboard:
         self.tree.bind("<Double-1>", self.show_matrix_view)
 
     def show_matrix_view(self,event):
-        self.root = root
         matrix_view = tk.Tk()
         matrix_view.title("Matrix View")
         matrix_view.geometry("500x500")
 
         # ////////////////////////////////////////
         # LABELS  
-        lbl_Label1 = tk.Label(root)
+        lbl_Label0 = tk.Label(matrix_view)
+        ft = tkFont.Font(family="Times", size=13)
+        lbl_Label0["font"] = ft
+        lbl_Label0["fg"] = "#333333"
+        lbl_Label0["justify"] = "center"
+        lbl_Label0["text"] = "LABEL"
+        lbl_Label0.place(x=10, y=40, width=144, height=50)
+
+
+        lbl_Label1 = tk.Label(matrix_view)
         ft = tkFont.Font(family="Times", size=13)
         lbl_Label1["font"] = ft
         lbl_Label1["fg"] = "#333333"
         lbl_Label1["justify"] = "center"
         lbl_Label1["text"] = "LABEL"
-        lbl_Label1.place(x=0, y=10, width=144, height=50)
+        lbl_Label1.place(x=10, y=100, width=144, height=50)
 
-        # lbl_Label2 = tk.Label(root)
-        # ft = tkFont.Font(family="Times", size=13)
-        # lbl_Label2["font"] = ft
-        # lbl_Label2["fg"] = "#333333"
-        # lbl_Label2["justify"] = "center"
-        # lbl_Label2["text"] = "LABEL"
-        # lbl_Label2.place(x=0, y=40, width=144, height=50)
+        lbl_Label2 = tk.Label(matrix_view)
+        ft = tkFont.Font(family="Times", size=13)
+        lbl_Label2["font"] = ft
+        lbl_Label2["fg"] = "#333333"
+        lbl_Label2["justify"] = "center"
+        lbl_Label2["text"] = "LABEL"
+        lbl_Label2.place(x=10, y=160, width=144, height=50)
 
-        # lbl_Label3 = tk.Label(root)
-        # ft = tkFont.Font(family="Times", size=13)
-        # lbl_Label3["font"] = ft
-        # lbl_Label3["fg"] = "#333333"
-        # lbl_Label3["justify"] = "center"
-        # lbl_Label3["text"] = "LABEL"
-        # lbl_Label3.place(x=0, y=70, width=144, height=50)
+        lbl_Label3 = tk.Label(matrix_view)
+        ft = tkFont.Font(family="Times", size=13)
+        lbl_Label3["font"] = ft
+        lbl_Label3["fg"] = "#333333"
+        lbl_Label3["justify"] = "center"
+        lbl_Label3["text"] = "LABEL"
+        lbl_Label3.place(x=10, y=220, width=144, height=50)
 
-        # lbl_Label4 = tk.Label(root)
-        # ft = tkFont.Font(family="Times", size=13)
-        # lbl_Label4["font"] = ft
-        # lbl_Label4["fg"] = "#333333"
-        # lbl_Label4["justify"] = "center"
-        # lbl_Label4["text"] = "LABEL"
-        # lbl_Label4.place(x=0, y=100, width=144, height=50)
+        lbl_Label4 = tk.Label(matrix_view)
+        ft = tkFont.Font(family="Times", size=13)
+        lbl_Label4["font"] = ft
+        lbl_Label4["fg"] = "#333333"
+        lbl_Label4["justify"] = "center"
+        lbl_Label4["text"] = "LABEL"
+        lbl_Label4.place(x=10, y=280, width=144, height=50)
+
+        lbl_Label5 = tk.Label(matrix_view)
+        ft = tkFont.Font(family="Times", size=13)
+        lbl_Label5["font"] = ft
+        lbl_Label5["fg"] = "#333333"
+        lbl_Label5["justify"] = "center"
+        lbl_Label5["text"] = "LABEL"
+        lbl_Label5.place(x=10, y=280, width=144, height=50)
 
         # Create a frame for buttons
-        button_frame = tk.Frame(matrix_view)
-        button_frame.pack(pady=10)
-        
 
+        
         # Create the "SETUP" button
-        self.start = tk.Button(button_frame)
-        self.start["bg"] = "#4f9c64"
+        self.setup = tk.Button(matrix_view)
+        self.setup["bg"] = "#4f9c64"
         ft = tkFont.Font(family='Times', size=13)
-        self.start["font"] = ft
-        self.start["fg"] = "#ffffff"
-        self.start["justify"] = "center"
-        self.start["text"] = "SETUP"
-        self.start["relief"] = "flat"
-        # self.start["command"] = self.start_command
-        self.start.grid(row=0, column=0, padx=10)  
+        self.setup["font"] = ft
+        self.setup["fg"] = "#ffffff"
+        self.setup["text"] = "SETUP"
+        # self.setup["command"] = start_command
+        self.setup.place(x=380, y=440, width=100, height=30)
+
      
     def logout(self):
         response = messagebox.askyesno("Logout", "Are you sure you want to logout?")
