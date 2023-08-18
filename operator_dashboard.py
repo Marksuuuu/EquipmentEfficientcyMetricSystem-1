@@ -385,7 +385,7 @@ class OperatorDashboard:
         # self.root.withdraw()
         self.ticket_dashboard = Toplevel(self.root)
         show_ticket_dashboard = RequestTicket(
-            self.ticket_dashboard, self.extracted_fullname
+            self.ticket_dashboard, self.extracted_fullname, self.extracted_employee_no
         )
 
     def logout(self):

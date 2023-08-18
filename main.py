@@ -153,7 +153,7 @@ class App:
         logging.basicConfig(filename=log_file, level=logging.INFO,
                             format='[%(asctime)s] %(levelname)s: %(message)s',
                             datefmt='%Y-%m-%d %H:%M:%S', filemode='a')
-        print(f'Logging to {log_file}')
+        # print(f'Logging to {log_file}')
 
 
     def log_activity(self, level, message):
@@ -202,59 +202,6 @@ class App:
             json.dump(data, file)
         sio.emit('my_response', {'response': 'my response'})
         
-    # @sio.event
-    # def getMatrixfromServer(data):
-    #     print('Message received with', data)
-    #     toPassData = data['dataToPass']
-    #     print(f"==>> toPassData: {toPassData}")
-
-    #     filename = 'matrix.csv'
-    #     folder_path = 'data'
-    #     file_path = f'{folder_path}/{filename}'
-
-    #     if not os.path.exists(folder_path):
-    #         os.makedirs(folder_path)
-
-    #     file_exists = os.path.exists(file_path)
-    #     with open(file_path, 'a', newline='') as file:
-    #         writer = csv.writer(file)
-
-    #         if not file_exists:
-    #             header_row = [f'data{i}' for i in range(1, len(toPassData)+1)]
-    #             writer.writerow(header_row)
-
-    #         writer.writerow(toPassData)
-
-    #     sio.emit('my_response', {'response': 'my response'})
-
-
-    # @sio.event
-    # def getMatrixfromServer(data):
-    #     print('Message received with', data)
-    #     toPassData = data['dataToPass']
-        
-    #     flattened_data = ', '.join(toPassData[0])
-    #     print(f"==>> toPassData: {flattened_data}")
-
-    #     filename = 'matrix.csv'
-    #     folder_path = 'data'
-    #     file_path = os.path.join(folder_path, filename)
-
-    #     if not os.path.exists(folder_path):
-    #         os.makedirs(folder_path)
-
-    #     file_exists = os.path.exists(file_path)
-    #     with open(file_path, 'a', newline='') as file:
-    #         writer = csv.writer(file)
-
-    #         if not file_exists:
-    #             header_row = [f'data{i}' for i in range(1, len(toPassData[0]) + 1)]
-    #             writer.writerow(header_row)
-
-    #         writer.writerow(toPassData[0])
-
-    #     sio.emit('my_response', {'response': 'my response'})
-
 
     @sio.event
     def getMatrixfromServer(data):
@@ -338,6 +285,7 @@ class App:
         if matching_employee:
             user_department = matching_employee.get('employee_department')
             user_position = matching_employee.get('employee_position')
+            # user_empNo = matching_employee.get('employee_id_no')
             
             self.validate_permissions(user_department, user_position)
         else:
