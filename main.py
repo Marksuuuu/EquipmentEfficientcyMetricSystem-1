@@ -160,6 +160,7 @@ class App:
     def my_message(data):
         print('Message received with', data)
         toPassData = data['dataToPass']
+        machno = data['machno']
         remove_py = re.sub('.py', '', filename)
         fileNameWithIni = remove_py + '.json'
         folder_path = 'data'
@@ -170,6 +171,7 @@ class App:
 
         with open(file_path, 'w') as file:
             data = {
+                'machno': machno,
                 'filename': remove_py,
                 'data': toPassData
             }
