@@ -63,19 +63,19 @@ class RequestTicket:
         lbl_DateNow["font"] = ft
         lbl_DateNow["fg"] = "#333333"
         lbl_DateNow["justify"] = "center"
-        lbl_DateNow["text"] = "DATE NOW"
-        lbl_DateNow.place(x=0, y=120, width=70, height=50)
+        lbl_DateNow["text"] = "DATETIME NOW"
+        lbl_DateNow.place(x=20, y=120, width=100, height=50)
 
-        le_DateNow = tk.Entry(root)
-        le_DateNow["bg"] = "#ffffff"
-        le_DateNow["borderwidth"] = "1px"
-        ft = tkFont.Font(family="Times", size=13)
-        le_DateNow["font"] = ft
-        le_DateNow["fg"] = "#333333"
-        le_DateNow["justify"] = "center"
-        le_DateNow["text"] = "date now"
-        le_DateNow.delete(0, tk.END)
-        le_DateNow.place(x=0, y=150, width=447, height=50)
+        # le_DateNow = tk.Entry(root)
+        # le_DateNow["bg"] = "#ffffff"
+        # le_DateNow["borderwidth"] = "1px"
+        # ft = tkFont.Font(family="Times", size=13)
+        # le_DateNow["font"] = ft
+        # le_DateNow["fg"] = "#333333"
+        # le_DateNow["justify"] = "center"
+        # le_DateNow["text"] = "date now"
+        # le_DateNow.delete(0, tk.END)
+        # le_DateNow.place(x=0, y=150, width=447, height=50)
 
 
         # ////////////////////////////////////////
@@ -87,18 +87,18 @@ class RequestTicket:
         lbl_TimeDown["fg"] = "#333333"
         lbl_TimeDown["justify"] = "center"
         lbl_TimeDown["text"] = "TIME DOWN"
-        lbl_TimeDown.place(x=920, y=120, width=70, height=50)
+        lbl_TimeDown.place(x=900, y=120, width=300, height=50)
 
-        le_TimeDown = tk.Entry(root)
-        le_TimeDown["bg"] = "#ffffff"
-        le_TimeDown["borderwidth"] = "1px"
-        ft = tkFont.Font(family="Times", size=13)
-        le_TimeDown["font"] = ft
-        le_TimeDown["fg"] = "#333333"
-        le_TimeDown["justify"] = "center"
-        le_TimeDown["text"] = "Entry"
-        le_TimeDown.delete(0, tk.END)
-        le_TimeDown.place(x=540, y=150, width=456, height=50)
+        # le_TimeDown = tk.Entry(root)
+        # le_TimeDown["bg"] = "#ffffff"
+        # le_TimeDown["borderwidth"] = "1px"
+        # ft = tkFont.Font(family="Times", size=13)
+        # le_TimeDown["font"] = ft
+        # le_TimeDown["fg"] = "#333333"
+        # le_TimeDown["justify"] = "center"
+        # le_TimeDown["text"] = "Entry"
+        # le_TimeDown.delete(0, tk.END)
+        # le_TimeDown.place(x=540, y=150, width=456, height=50)
 
 
         # ////////////////////////////////////////
@@ -110,18 +110,18 @@ class RequestTicket:
         lbl_MachineNo["fg"] = "#333333"
         lbl_MachineNo["justify"] = "center"
         lbl_MachineNo["text"] = "MACHINE #"
-        lbl_MachineNo.place(x=0, y=210, width=70, height=50)
+        lbl_MachineNo.place(x=20, y=210, width=100, height=50)
 
-        le_MachineNo = tk.Entry(root)
-        le_MachineNo["bg"] = "#ffffff"
-        le_MachineNo["borderwidth"] = "1px"
-        ft = tkFont.Font(family="Times", size=13)
-        le_MachineNo["font"] = ft
-        le_MachineNo["fg"] = "#333333"
-        le_MachineNo["justify"] = "center"
-        le_MachineNo["text"] = "Entry"
-        le_MachineNo.delete(0, tk.END)
-        le_MachineNo.place(x=0, y=240, width=449, height=50)
+        # le_MachineNo = tk.Entry(root)
+        # le_MachineNo["bg"] = "#ffffff"
+        # le_MachineNo["borderwidth"] = "1px"
+        # ft = tkFont.Font(family="Times", size=13)
+        # le_MachineNo["font"] = ft
+        # le_MachineNo["fg"] = "#333333"
+        # le_MachineNo["justify"] = "center"
+        # le_MachineNo["text"] = "Entry"
+        # le_MachineNo.delete(0, tk.END)
+        # le_MachineNo.place(x=0, y=240, width=449, height=50)
 
         # ////////////////////////////////////////
         # DOWNTIME TYPE  
@@ -144,15 +144,14 @@ class RequestTicket:
         lbl_DowntimeType["fg"] = "#333333"
         lbl_DowntimeType["justify"] = "center"
         lbl_DowntimeType["text"] = "DOWNTIME TYPE"
-        lbl_DowntimeType.place(x=890,y=210,width=104,height=50)
+        lbl_DowntimeType.place(x=540,y=200,width=250,height=50)
 
         dropdown_var = tk.StringVar()
         # Create a dropdown widget
         dropdown = ttk.Combobox(root, textvariable=dropdown_var, state="readonly")
-        dropdown["values"] = ("SETUP", "RECTIFICATION", "Option 3", "Option 4")
+        dropdown["values"] = ("SETUP", "RECTIFICATION", "CONVERSION")
         dropdown.bind("<<ComboboxSelected>>", self.on_select)  # Bind a function to the selection event
-        dropdown['width'] = 15 
-        dropdown.place(x=540, y=240, width=100, height=25)
+        dropdown.place(x=540, y=240, width=250, height=30)
 
         # dropdown.pack(padx=20, pady=20)
 
