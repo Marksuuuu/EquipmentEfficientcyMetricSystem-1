@@ -1,3 +1,41 @@
+import json
+import requests
+
+def checking():
+    hris_url = 'http://lams.teamglac.com/lams/api/job_order/active_jo.php'
+    response = requests.get(hris_url)
+    
+    if response.status_code == 200:
+        data = response.json()  # Parse JSON response
+        result = data['result']  # Access the 'result' key
+        res = ''
+        for x in result:
+            if x['MACH201_MACHNO'] == 'DAD 3350-01':
+                res = x['MACH201_MACHNO']
+                break
+        print(res)
+        
+        
+        # if result:
+        #     print('result: ', result)
+        #     target_value = "DAD 3350-01"
+        #     if target_value in result:
+        #         print(f'The value "{target_value}" is present in the result.')
+        #     else:
+        #         print(f'The value "{target_value}" is not present in the result.')
+        # else:
+        #     print('No data found in the result.')
+    else:
+        print('Request failed with status code:', response.status_code)
+
+checking()
+
+
+
+
+
+
+
 # import tkinter as tk
 # from PIL import Image, ImageTk
 # import requests
@@ -26,58 +64,58 @@
 #     app = App(root)
 #     root.mainloop()
 
-import tkinter as tk
-from PIL import Image, ImageTk
-import requests
-from io import BytesIO
-import tkinter as tk
-import tkinter.font as tkFont
+# import tkinter as tk
+# from PIL import Image, ImageTk
+# import requests
+# from io import BytesIO
+# import tkinter as tk
+# import tkinter.font as tkFont
 
-class App:
-    def __init__(self, root):
-        #setting title
-        root.title("DASHBOARD")
-        #setting window size
-        width=1475
-        height=935
-        screenwidth = root.winfo_screenwidth()
-        screenheight = root.winfo_screenheight()
-        alignstr = '%dx%d+%d+%d' % (width, height, (screenwidth - width) / 2, (screenheight - height) / 2)
-        root.geometry(alignstr)
-        root.resizable(width=False, height=False)
+# class App:
+#     def __init__(self, root):
+#         #setting title
+#         root.title("DASHBOARD")
+#         #setting window size
+#         width=1475
+#         height=935
+#         screenwidth = root.winfo_screenwidth()
+#         screenheight = root.winfo_screenheight()
+#         alignstr = '%dx%d+%d+%d' % (width, height, (screenwidth - width) / 2, (screenheight - height) / 2)
+#         root.geometry(alignstr)
+#         root.resizable(width=False, height=False)
         
-        image_url = "http://hris.teamglac.com/employeeInformation/photos/EMP2932/JOHN_RAYMARK_M._LLAVANES.JPG"  # Replace with your image URL
-        response = requests.get(image_url)
-        pil_image = Image.open(BytesIO(response.content))
-        desired_width = 83
-        desired_height = 60
-        pil_image = pil_image.resize((desired_width, desired_height), Image.ANTIALIAS)
+#         image_url = "http://hris.teamglac.com/employeeInformation/photos/EMP2932/JOHN_RAYMARK_M._LLAVANES.JPG"  # Replace with your image URL
+#         response = requests.get(image_url)
+#         pil_image = Image.open(BytesIO(response.content))
+#         desired_width = 83
+#         desired_height = 60
+#         pil_image = pil_image.resize((desired_width, desired_height), Image.ANTIALIAS)
         
-        self.image = ImageTk.PhotoImage(pil_image)
+#         self.image = ImageTk.PhotoImage(pil_image)
         
-        GLabel_937=tk.Label(root)
-        GLabel_937["bg"] = "#ffffff"
-        ft = tkFont.Font(family='Times',size=10)
-        GLabel_937["font"] = ft
-        GLabel_937["fg"] = "#333333"
-        GLabel_937["justify"] = "center"
-        GLabel_937["text"] = "label"
-        GLabel_937.place(x=1190,y=0,width=281,height=60)
+#         GLabel_937=tk.Label(root)
+#         GLabel_937["bg"] = "#ffffff"
+#         ft = tkFont.Font(family='Times',size=10)
+#         GLabel_937["font"] = ft
+#         GLabel_937["fg"] = "#333333"
+#         GLabel_937["justify"] = "center"
+#         GLabel_937["text"] = "label"
+#         GLabel_937.place(x=1190,y=0,width=281,height=60)
 
-        GLabel_831=tk.Label(root, image=self.image)
-        GLabel_831["bg"] = "#999999"
-        ft = tkFont.Font(family='Times',size=10)
-        GLabel_831["font"] = ft
-        GLabel_831["fg"] = "#333333"
-        GLabel_831["justify"] = "center"
-        GLabel_831["text"] = "label"
-        GLabel_831.place(x=1100,y=0,width=83,height=60)
+#         GLabel_831=tk.Label(root, image=self.image)
+#         GLabel_831["bg"] = "#999999"
+#         ft = tkFont.Font(family='Times',size=10)
+#         GLabel_831["font"] = ft
+#         GLabel_831["fg"] = "#333333"
+#         GLabel_831["justify"] = "center"
+#         GLabel_831["text"] = "label"
+#         GLabel_831.place(x=1100,y=0,width=83,height=60)
         
         
-if __name__ == "__main__":
-    root = tk.Tk()
-    app = App(root)
-    root.mainloop()
+# if __name__ == "__main__":
+#     root = tk.Tk()
+#     app = App(root)
+#     root.mainloop()
 
 
 
@@ -186,8 +224,4 @@ if __name__ == "__main__":
 # employee_id = "003091"
 # result = check_employee_permissions(employee_id)
 # print(result)
-
-
-
-
 
