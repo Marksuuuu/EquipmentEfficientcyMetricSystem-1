@@ -26,7 +26,7 @@ client = str(uuid.uuid4())
 filename = os.path.basename(__file__)
 removeExtension = re.sub('.py', '', filename)
 
-@sio.event
+@sio.event       
 def connect():
     print('Connected to server')
     sio.emit('client_connected', {'machine_name': filename, 'client': client})
@@ -247,6 +247,7 @@ class App:
                     employee_no = data.get('employee_no')
                     employee_department = data.get('employee_department')
                     photo_url = data.get('photo_url')
+                    username = data.get('username')
                     
                     
                     data = [
@@ -255,7 +256,8 @@ class App:
                         employee_no,
                         employee_department,
                         photo_url,
-                        user_position
+                        user_position,
+                        username
                     ]
                     dataJson = {'data':data}
 

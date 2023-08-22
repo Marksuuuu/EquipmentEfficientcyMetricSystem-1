@@ -9,6 +9,7 @@ import csv
 import json
 from tkinter import Toplevel
 from request_ticket import RequestTicket
+from mo_details import MO_Details
 from tkinter import messagebox
 from tkinter import simpledialog
 from tkinter.messagebox import showinfo, showwarning, showerror
@@ -73,7 +74,7 @@ class CSVMonitor:
             new_rows = len(current_rows) - len(previous_rows)
             if new_rows > 0:
                 self.new_data_count += new_rows
-                print(new_data_count)
+                print(self.new_data_count)
 
             self.previous_content = current_content
 
@@ -89,6 +90,7 @@ class OperatorDashboard:
         self.extracted_employee_department = data[3]
         self.extracted_photo_url = data[4]
         self.extracted_possition = data[5]
+        self.extracted_username = data[6]
         self.root = root
         # setting title
         root.title(
@@ -199,77 +201,8 @@ class OperatorDashboard:
                 extracted_data.append((main_op, sub_op, wip_entity))
 
         return extracted_data
-    
+        
     def show_popup_view(self, event):
-                #setting title
-        self.root.title("undefined")
-        #setting window size
-        width=985
-        height=482
-        screenwidth = self.root.winfo_screenwidth()
-        screenheight = self.root.winfo_screenheight()
-        alignstr = '%dx%d+%d+%d' % (width, height, (screenwidth - width) / 2, (screenheight - height) / 2)
-        self.root.geometry(alignstr)
-        self.root.resizable(width=False, height=False)
-
-        GButton_715=tk.Button(self.root)
-        GButton_715["bg"] = "#f0f0f0"
-        ft = tkFont.Font(family='Times',size=10)
-        GButton_715["font"] = ft
-        GButton_715["fg"] = "#000000"
-        GButton_715["justify"] = "center"
-        GButton_715["text"] = "Button"
-        GButton_715.place(x=820,y=390,width=155,height=77)
-        GButton_715["command"] = self.GButton_715_command
-
-        GLabel_690=tk.Label(self.root)
-        GLabel_690["bg"] = "#ffffff"
-        ft = tkFont.Font(family='Times',size=10)
-        GLabel_690["font"] = ft
-        GLabel_690["fg"] = "#333333"
-        GLabel_690["justify"] = "center"
-        GLabel_690["text"] = "label"
-        GLabel_690.place(x=20,y=110,width=487,height=65)
-
-        GLabel_898=tk.Label(self.root)
-        GLabel_898["bg"] = "#fbfbfb"
-        ft = tkFont.Font(family='Times',size=10)
-        GLabel_898["font"] = ft
-        GLabel_898["fg"] = "#333333"
-        GLabel_898["justify"] = "center"
-        GLabel_898["text"] = "label"
-        GLabel_898.place(x=20,y=210,width=487,height=65)
-
-        GLabel_961=tk.Label(self.root)
-        GLabel_961["bg"] = "#ffffff"
-        ft = tkFont.Font(family='Times',size=10)
-        GLabel_961["font"] = ft
-        GLabel_961["fg"] = "#333333"
-        GLabel_961["justify"] = "center"
-        GLabel_961["text"] = "label"
-        GLabel_961.place(x=20,y=310,width=487,height=65)
-
-        GLabel_417=tk.Label(self.root)
-        GLabel_417["bg"] = "#fbfbfb"
-        ft = tkFont.Font(family='Times',size=10)
-        GLabel_417["font"] = ft
-        GLabel_417["fg"] = "#333333"
-        GLabel_417["justify"] = "center"
-        GLabel_417["text"] = "label"
-        GLabel_417.place(x=600,y=10,width=82,height=50)
-
-        GLabel_593=tk.Label(self.root)
-        GLabel_593["bg"] = "#fefefe"
-        ft = tkFont.Font(family='Times',size=10)
-        GLabel_593["font"] = ft
-        GLabel_593["fg"] = "#333333"
-        GLabel_593["justify"] = "center"
-        GLabel_593["text"] = "label"
-        GLabel_593.place(x=700,y=10,width=273,height=50)
-
-    def GButton_715_command(self):
-        print("command")
-    # def show_popup_view(self, event):
         selected_item = self.tree.selection()
 
         if not selected_item:
@@ -280,84 +213,27 @@ class OperatorDashboard:
         data = item["values"]
 
         if selected_item[0] == "1":
-            data_details_window = tk.Toplevel(self.root)
-            data_details_window.title("Item Details")
-            # setting window size
-            data_details_window.geometry("500x500")
-
-            label_mo = tk.Label(
-                data_details_window,
-                text=f"Main Operation: {data[1]}",
-                font=("Helvetica 12"),
-            )
-            label_mo.pack(pady=5)
-
-            label_customer = tk.Label(
-                data_details_window,
-                text=f"Sub-Operation: {data[2]}",
-                font=("Helvetica 12"),
-            )
-            label_customer.pack(pady=5)
-
-            label_device = tk.Label(
-                data_details_window,
-                text=f"WIP Entity Name: {data[3]}",
-                font=("Helvetica 12"),
-            )
-            label_device.pack(pady=5)
-
-            # Create a frame for buttons
-            button_frame = tk.Frame(data_details_window)
-            # button_frame.pack(side="right", padx=10)
-            button_frame.pack(pady=10)
-
-            # Create the "Start" button
-            self.start = tk.Button(button_frame)
-            self.start["bg"] = "#4f9c64"
-            ft = tkFont.Font(family="Times", size=13)
-            self.start["font"] = ft
-            self.start["fg"] = "#ffffff"
-            self.start["justify"] = "center"
-            self.start["text"] = "START"
-            self.start["relief"] = "flat"
-            self.start["command"] = self.start_command
-            self.start.grid(row=0, column=0, padx=10)  # Use grid instead of pack
-
-            # Create the "Stop" button
-            self.stop = tk.Button(button_frame)
-            self.stop["bg"] = "#e04949"
-            ft = tkFont.Font(family="Times", size=13)
-            self.stop["font"] = ft
-            self.stop["fg"] = "#ffffff"
-            self.stop["justify"] = "center"
-            self.stop["text"] = "STOP"
-            self.stop["relief"] = "flat"
-            self.stop["command"] = lambda: self.stop_command(data)
-            self.stop.grid(row=0, column=1, padx=10)  # Use grid instead of pack
-            self.stop.grid_remove()
-
-            # self.creator.grab_set()
-
-            data_details_window.mainloop()
+            self.root.withdraw()
+            self.show_mo_details(data)
 
         else:
             self.validate_offline_employee()
             self.swap_position(selected_item)
 
-    def start_command(self):
-        self.checking()
-        print("Stop button displayed")
+    # def start_command(self):
+    #     self.checking()
+    #     print("Stop button displayed")
 
-    def stop_command(self, data):
-        print(data)
-        self.stop.grid_remove()  # Remove the stop button
-        self.start.grid()  # Display the start button
-        print("Start button displayed")
+    # def stop_command(self, data):
+    #     print(data)
+    #     self.stop.grid_remove()  # Remove the stop button
+    #     self.start.grid()  # Display the start button
+    #     print("Start button displayed")
 
-        total_finished_str = simpledialog.askstring(
-            "Enter Total Number of finished",
-            "Please enter the total number of finish items",
-        )
+    #     total_finished_str = simpledialog.askstring(
+    #         "Enter Total Number of finished",
+    #         "Please enter the total number of finish items",
+    #     )
 
         # if total_finished_str is not None and total_finished_str.strip() != "":
         #     total_finished = int(total_finished_str)
@@ -471,6 +347,10 @@ class OperatorDashboard:
         show_ticket_dashboard = RequestTicket(
             self.ticket_dashboard, self.extracted_fullname, self.extracted_employee_no
         )
+
+    def show_mo_details(self, data):
+        self.details_window = Toplevel(self.root)
+        show_mo_details_window = MO_Details(self.details_window,  self.extracted_fullname, self.extracted_employee_no, self.extracted_photo_url, self.extracted_username, data)
 
     def logout(self):
         response = messagebox.askyesno("Logout", "Are you sure you want to logout?")
