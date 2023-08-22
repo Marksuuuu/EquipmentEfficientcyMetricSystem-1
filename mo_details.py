@@ -11,7 +11,7 @@ from tkinter import Toplevel
 from tkinter import messagebox
 from tkinter import simpledialog
 from tkinter.messagebox import showinfo, showwarning, showerror
-from operator_dashboard import OperatorDashboard
+# from operator_dashboard import OperatorDashboard
 
 
 class MO_Details:
