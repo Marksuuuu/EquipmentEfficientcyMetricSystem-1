@@ -218,40 +218,6 @@ class OperatorDashboard:
 
         else:
             self.validate_offline_employee()
-            self.swap_position(selected_item)
-
-    # def start_command(self):
-    #     self.checking()
-    #     print("Stop button displayed")
-
-    # def stop_command(self, data):
-    #     print(data)
-    #     self.stop.grid_remove()  # Remove the stop button
-    #     self.start.grid()  # Display the start button
-    #     print("Start button displayed")
-
-    #     total_finished_str = simpledialog.askstring(
-    #         "Enter Total Number of finished",
-    #         "Please enter the total number of finish items",
-    #     )
-
-        # if total_finished_str is not None and total_finished_str.strip() != "":
-        #     total_finished = int(total_finished_str)
-        #     self.start.grid_remove()
-        #     self.stop.grid()
-        #     dataPass = data[4]
-
-        #     # Ensure dataPass is an integer
-        #     dataPass = int(dataPass)
-
-        #     if total_finished > dataPass:
-        #         print('True')
-        #     else:
-        #         print('False')
-
-        #     showinfo('Notice', f'Total Finished.. inputted by {self.employee_number}')
-        # else:
-        #     showwarning('Error', 'Invalid input. Buttons not changed.')
 
     def validate_offline_employee(self):
         log_file_path = os.path.join(self.get_script_directory(), "config", "hris.json")
@@ -277,11 +243,14 @@ class OperatorDashboard:
         print(user_department)
         permissions = self.load_permissions()
         if permissions.is_department_allowed(user_department):
+            selected_item = self.tree.selection()
+            self.swap_position(selected_item)
+
             print("User allowed.")
         else:
             showerror(
                 title="Login Failed",
-                message=f"User's department or position is not allowed. Please check, Current Department / Possition  {user_department}",
+                message=f"User's department or position is not allowed. {user_department}",
             )
 
     def swap_position(self, selected_item):

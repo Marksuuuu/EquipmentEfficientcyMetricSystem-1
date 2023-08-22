@@ -11,7 +11,7 @@ from tkinter import Toplevel
 from tkinter import messagebox
 from tkinter import simpledialog
 from tkinter.messagebox import showinfo, showwarning, showerror
-# from operator_dashboard import OperatorDashboard
+
 
 
 class MO_Details:
@@ -180,13 +180,11 @@ class MO_Details:
                 print('False')
 
             showinfo('Notice', f'Total Finished.. inputted by {self.extracted_employee_no}')
+            self.root.destroy()
 
     def on_close(self):
         if messagebox.askokcancel("Quit", "Do you want to quit?"):
-            self.destroy()
-            OpeDashboard= Toplevel(root)
-            ope_dashboard = OperatorDashboard(self.root)  
-            # root.withdraw()
+            self.root.deiconify()
             
 
 if __name__ == "__main__":
