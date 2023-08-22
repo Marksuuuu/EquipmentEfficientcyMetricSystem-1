@@ -149,6 +149,10 @@ class MO_Details:
             if response['result'] == False:
                 print("FAILED")
                 self.stop_btn["state"] = "normal"    # Enable the START button
+                showerror(
+                title="Login Failed",
+                message=f"Password is incorrect. Please try again.",
+            )
             else:
                 # self.start_btn["state"] = "normal"    # Enable the START button
                 print("Success")
@@ -184,7 +188,7 @@ class MO_Details:
 
     def on_close(self):
         if messagebox.askokcancel("Quit", "Do you want to quit?"):
-            self.root.deiconify()
+            os.system("python operator_dashboard.py")
             
 
 if __name__ == "__main__":

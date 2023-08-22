@@ -4,8 +4,8 @@
     "data": [
         {
             "main_opt": "Wafer Saw",
-            "sub_opt": "Wafer Mount-Mounter",
-            "wip_entity_name": "MO832784"
+            "sub_opt": "Wafer Saw/ Wash",
+            "wip_entity_name": "MO837293"
         },
         {
             "main_opt": "Wafer Saw",
@@ -29,8 +29,8 @@
         },
         {
             "main_opt": "Wafer Saw",
-            "sub_opt": "Wafer Saw/ Wash",
-            "wip_entity_name": "MO837293"
+            "sub_opt": "Wafer Mount-Mounter",
+            "wip_entity_name": "MO832784"
         }
     ]
 }
