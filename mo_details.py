@@ -11,6 +11,9 @@ from tkinter import Toplevel
 from tkinter import messagebox
 from tkinter import simpledialog
 from tkinter.messagebox import showinfo, showwarning, showerror
+import logging
+import datetime
+
 
 
 
@@ -57,6 +60,14 @@ class MO_Details:
         desired_width = 83
         desired_height = 60
         pil_image = pil_image.resize((desired_width, desired_height), Image.ANTIALIAS)
+        
+        
+        script_directory = os.path.dirname(os.path.abspath(__file__))
+        self.log_folder = os.path.join(script_directory, "data")
+        if not os.path.exists(self.log_folder):
+            os.makedirs(self.log_folder)
+        self.csv_file_path = os.path.join(self.log_folder, 'time.csv')
+
 
         self.image = ImageTk.PhotoImage(pil_image)
 
@@ -124,9 +135,20 @@ class MO_Details:
         lbl_device["justify"] = "center"
         lbl_device["text"] = f"WIP Entity Name: {data[3]}"
         lbl_device.place(x=20, y=310, width=487, height=65)
+        
+
+    def log_event(self, msg):
+        current_time = datetime.datetime.now()
+        date = current_time.strftime('%Y-%m-%d')
+        time = current_time.strftime('%H:%M:%S')
+
+        with open(self.csv_file_path, mode='a', newline='') as csv_file:
+            csv_writer = csv.writer(csv_file)
+            csv_writer.writerow([msg, date, time ])
 
     def start_command(self):
         print("START button clicked")
+        self.log_event('START')
         self.start_btn["state"] = "disabled"  # Disable the START button
         self.stop_btn["state"] = "normal"  # Enable the STOP button
 
@@ -135,7 +157,6 @@ class MO_Details:
         print("STOP button clicked")
         # self.start_btn["state"] = "normal"    # Enable the START button
         self.stop_btn["state"] = "disabled"  # Disable the STOP button
-
         hris_password = simpledialog.askstring(
             "Password",
             "Enter Password", show='*'
@@ -156,6 +177,7 @@ class MO_Details:
             else:
                 # self.start_btn["state"] = "normal"    # Enable the START button
                 print("Success")
+                self.log_event('STOP')
                 self.show_input_dialog()
         else:
             showwarning("Error", "Invalid input. Buttons not changed.")
