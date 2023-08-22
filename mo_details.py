@@ -177,7 +177,6 @@ class MO_Details:
             else:
                 # self.start_btn["state"] = "normal"    # Enable the START button
                 print("Success")
-                self.log_event('STOP')
                 self.show_input_dialog()
         else:
             showwarning("Error", "Invalid input. Buttons not changed.")
@@ -206,6 +205,7 @@ class MO_Details:
                 print('False')
 
             showinfo('Notice', f'Total Finished.. inputted by {self.extracted_employee_no}')
+            self.log_event('STOP')
             self.root.destroy()
 
     def on_close(self):
