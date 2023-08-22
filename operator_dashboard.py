@@ -90,7 +90,6 @@ class OperatorDashboard:
         self.extracted_photo_url = data[4]
         self.extracted_possition = data[5]
         self.root = root
-
         # setting title
         root.title(
             f"OPERATOR DASHBOARD - {self.extracted_employee_no} -- POSSITION - {self.extracted_possition}"
@@ -184,7 +183,9 @@ class OperatorDashboard:
         data = self.read_json_file()
 
         for i, (main_op, sub_op, wip_entity) in enumerate(data, start=1):
-            self.tree.insert("", "end", iid=i, text=str(i),values=(i, main_op, sub_op, wip_entity))
+            self.tree.insert(
+                "", "end", iid=i, text=str(i), values=(i, main_op, sub_op, wip_entity)
+            )
 
     def read_json_file(self):
         with open("data\main.json", "r") as json_file:
@@ -198,6 +199,7 @@ class OperatorDashboard:
                 extracted_data.append((main_op, sub_op, wip_entity))
 
         return extracted_data
+    
     def show_popup_view(self, event):
                 #setting title
         self.root.title("undefined")
@@ -270,7 +272,6 @@ class OperatorDashboard:
     # def show_popup_view(self, event):
         selected_item = self.tree.selection()
 
-
         if not selected_item:
             showinfo(title="Error", message="No data selected.")
             return
@@ -278,21 +279,32 @@ class OperatorDashboard:
         item = self.tree.item(selected_item)
         data = item["values"]
 
-        if selected_item[0] == '1':
+        if selected_item[0] == "1":
             data_details_window = tk.Toplevel(self.root)
             data_details_window.title("Item Details")
-            #setting window size
-            data_details_window.geometry('500x500')
+            # setting window size
+            data_details_window.geometry("500x500")
 
-            label_mo = tk.Label(data_details_window, text=f"Main Operation: {data[1]}", font=('Helvetica 12'))
+            label_mo = tk.Label(
+                data_details_window,
+                text=f"Main Operation: {data[1]}",
+                font=("Helvetica 12"),
+            )
             label_mo.pack(pady=5)
 
-            label_customer = tk.Label(data_details_window, text=f"Sub-Operation: {data[2]}", font=('Helvetica 12'))
+            label_customer = tk.Label(
+                data_details_window,
+                text=f"Sub-Operation: {data[2]}",
+                font=("Helvetica 12"),
+            )
             label_customer.pack(pady=5)
 
-            label_device = tk.Label(data_details_window, text=f"WIP Entity Name: {data[3]}", font=('Helvetica 12'))
+            label_device = tk.Label(
+                data_details_window,
+                text=f"WIP Entity Name: {data[3]}",
+                font=("Helvetica 12"),
+            )
             label_device.pack(pady=5)
-
 
             # Create a frame for buttons
             button_frame = tk.Frame(data_details_window)
@@ -302,7 +314,7 @@ class OperatorDashboard:
             # Create the "Start" button
             self.start = tk.Button(button_frame)
             self.start["bg"] = "#4f9c64"
-            ft = tkFont.Font(family='Times', size=13)
+            ft = tkFont.Font(family="Times", size=13)
             self.start["font"] = ft
             self.start["fg"] = "#ffffff"
             self.start["justify"] = "center"
@@ -314,7 +326,7 @@ class OperatorDashboard:
             # Create the "Stop" button
             self.stop = tk.Button(button_frame)
             self.stop["bg"] = "#e04949"
-            ft = tkFont.Font(family='Times', size=13)
+            ft = tkFont.Font(family="Times", size=13)
             self.stop["font"] = ft
             self.stop["fg"] = "#ffffff"
             self.stop["justify"] = "center"
@@ -323,8 +335,8 @@ class OperatorDashboard:
             self.stop["command"] = lambda: self.stop_command(data)
             self.stop.grid(row=0, column=1, padx=10)  # Use grid instead of pack
             self.stop.grid_remove()
-            
-            # self.creator.grab_set() 
+
+            # self.creator.grab_set()
 
             data_details_window.mainloop()
 
@@ -332,10 +344,8 @@ class OperatorDashboard:
             self.validate_offline_employee()
             self.swap_position(selected_item)
 
-
     def start_command(self):
-        self.start.grid_remove()  # Remove the start button
-        self.stop.grid()  # Display the stop button
+        self.checking()
         print("Stop button displayed")
 
     def stop_command(self, data):
@@ -344,8 +354,11 @@ class OperatorDashboard:
         self.start.grid()  # Display the start button
         print("Start button displayed")
 
-        total_finished_str = simpledialog.askstring('Enter Total Number of finished', 'Please enter the total number of finish items')
-        
+        total_finished_str = simpledialog.askstring(
+            "Enter Total Number of finished",
+            "Please enter the total number of finish items",
+        )
+
         # if total_finished_str is not None and total_finished_str.strip() != "":
         #     total_finished = int(total_finished_str)
         #     self.start.grid_remove()
@@ -363,7 +376,6 @@ class OperatorDashboard:
         #     showinfo('Notice', f'Total Finished.. inputted by {self.employee_number}')
         # else:
         #     showwarning('Error', 'Invalid input. Buttons not changed.')
-
 
     def validate_offline_employee(self):
         log_file_path = os.path.join(self.get_script_directory(), "config", "hris.json")
@@ -397,7 +409,6 @@ class OperatorDashboard:
             )
 
     def swap_position(self, selected_item):
-
         selected_id = self.tree.item(selected_item, "text")
         first_id = "1"
 
@@ -431,12 +442,17 @@ class OperatorDashboard:
             json.dump(data, json_file, indent=4)
 
         # Update the values of the Treeview rows
-        self.tree.item(selected_item, values=(selected_id, first_data[1], first_data[2], first_data[3]))
-        self.tree.item(first_id, values=(first_id, selected_data[1], selected_data[2], selected_data[3]))
+        self.tree.item(
+            selected_item,
+            values=(selected_id, first_data[1], first_data[2], first_data[3]),
+        )
+        self.tree.item(
+            first_id,
+            values=(first_id, selected_data[1], selected_data[2], selected_data[3]),
+        )
 
         # Show a success message
         showinfo("Success", "Data swapped successfully!")
-
 
     def load_permissions(self):
         log_file_path = os.path.join(
@@ -461,7 +477,6 @@ class OperatorDashboard:
         if response:
             self.root.destroy()  # Close the current root window
             os.system("python main.py")  # Start the login.py file
-
 
 
 if __name__ == "__main__":

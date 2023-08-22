@@ -246,6 +246,48 @@ class RequestTicket:
     def on_select(self, event):
         selected_downtime_type = self.dropdown_var.get()
 
+    # def collect_and_print_values(self):
+    #     employee_no = self.employee_no
+    #     machine_no_value = self.load_machno()
+    #     downtime_type_value = self.dropdown_var.get()
+    #     checkbox_value = self.set_checkbox_value
+    #     remarks_value = self.le_Remarks.get()
+
+    #     file_path = "data/ticket.json"
+    #     if os.path.exists(file_path):
+    #         with open(file_path, "r") as json_file:
+    #             existing_data = json.load(json_file)
+    #     else:
+    #         existing_data = []
+
+    #     # Create a new entry dictionary
+    #     new_entry = {
+    #         "employee_no": employee_no,
+    #         "machine_no_value": machine_no_value,
+    #         "downtime_type_value": downtime_type_value,
+    #         "checkbox_value": checkbox_value,
+    #         "remarks_value": remarks_value
+    #     }
+
+    #     # Add the new entry to the existing data
+    #     existing_data.append(new_entry)
+
+    #     # Save the updated JSON data to the file
+    #     with open(file_path, "w") as json_file:
+    #         json.dump(existing_data, json_file, indent=4)
+
+    #     url = f'http://lams.teamglac.com/lams/api/job_order/create_jo.php?params=["{machine_no_value}","{downtime_type_value}","{remarks_value}","{employee_no}","{checkbox_value}"]'
+    #     r = requests.post(url)
+
+    #     if r.status_code == 200:
+    #         value_url = (r.json())
+
+    #         dtno_value = value_url['dtno']
+    #         showinfo("Success", f"Job order created successfully. \nDTNO {dtno_value}")
+    #         print(value_url['dtno'])
+    #     else:
+    #         showerror("Error", "Error in creating job order.")
+
     def collect_and_print_values(self):
         employee_no = self.employee_no
         machine_no_value = self.load_machno()
@@ -253,19 +295,41 @@ class RequestTicket:
         checkbox_value = self.set_checkbox_value
         remarks_value = self.le_Remarks.get()
 
+        # Load existing JSON data if the file exists, or create an empty list
+        file_path = "data/ticket_logs.json"
+        if os.path.exists(file_path):
+            with open(file_path, "r") as json_file:
+                existing_data = json.load(json_file)
+        else:
+            existing_data = []
+        # Create a new entry dictionary
+        new_entry = {
+            "employee_no": employee_no,
+            "machine_no_value": machine_no_value,
+            "downtime_type_value": downtime_type_value,
+            "checkbox_value": checkbox_value,
+            "remarks_value": remarks_value
+        }
+
+        # Add the new entry to the existing data
+        existing_data.append(new_entry)
+
+        # Save the updated JSON data to the file
+        with open(file_path, "w") as json_file:
+            json.dump(existing_data, json_file, indent=4)
+
+        # Your existing code for sending the HTTP request and displaying messages
         url = f'http://lams.teamglac.com/lams/api/job_order/create_jo.php?params=["{machine_no_value}","{downtime_type_value}","{remarks_value}","{employee_no}","{checkbox_value}"]'
         r = requests.post(url)
 
         if r.status_code == 200:
             value_url = (r.json())
-            # {"msg":"<center><strong>JOB ORDER CREATED <i class='ace-icon fa fa-exclamation-triangle bigger-120'><\/i><\/strong><\/center>","flag":1,"dtno":"53574"}
-            # new_value_url = value_url.replace('"', "")
+
             dtno_value = value_url['dtno']
             showinfo("Success", f"Job order created successfully. \nDTNO {dtno_value}")
             print(value_url['dtno'])
         else:
             showerror("Error", "Error in creating job order.")
-
 
 
     def submit(self):

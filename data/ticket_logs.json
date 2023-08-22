@@ -1,0 +1,23 @@
+[
+    {
+        "employee_no": "010387",
+        "machine_no_value": "DAD 3350-01",
+        "downtime_type_value": "SETUP",
+        "checkbox_value": 1,
+        "remarks_value": "asdasdada"
+    },
+    {
+        "employee_no": "010387",
+        "machine_no_value": "DAD 3350-01",
+        "downtime_type_value": "SETUP",
+        "checkbox_value": 1,
+        "remarks_value": "asdasdada"
+    },
+    {
+        "employee_no": "010387",
+        "machine_no_value": "DAD 3350-01",
+        "downtime_type_value": "SETUP",
+        "checkbox_value": 1,
+        "remarks_value": "testt"
+    }
+]
