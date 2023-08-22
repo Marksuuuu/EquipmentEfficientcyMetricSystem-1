@@ -198,8 +198,76 @@ class OperatorDashboard:
                 extracted_data.append((main_op, sub_op, wip_entity))
 
         return extracted_data
-    
     def show_popup_view(self, event):
+                #setting title
+        self.root.title("undefined")
+        #setting window size
+        width=985
+        height=482
+        screenwidth = self.root.winfo_screenwidth()
+        screenheight = self.root.winfo_screenheight()
+        alignstr = '%dx%d+%d+%d' % (width, height, (screenwidth - width) / 2, (screenheight - height) / 2)
+        self.root.geometry(alignstr)
+        self.root.resizable(width=False, height=False)
+
+        GButton_715=tk.Button(self.root)
+        GButton_715["bg"] = "#f0f0f0"
+        ft = tkFont.Font(family='Times',size=10)
+        GButton_715["font"] = ft
+        GButton_715["fg"] = "#000000"
+        GButton_715["justify"] = "center"
+        GButton_715["text"] = "Button"
+        GButton_715.place(x=820,y=390,width=155,height=77)
+        GButton_715["command"] = self.GButton_715_command
+
+        GLabel_690=tk.Label(self.root)
+        GLabel_690["bg"] = "#ffffff"
+        ft = tkFont.Font(family='Times',size=10)
+        GLabel_690["font"] = ft
+        GLabel_690["fg"] = "#333333"
+        GLabel_690["justify"] = "center"
+        GLabel_690["text"] = "label"
+        GLabel_690.place(x=20,y=110,width=487,height=65)
+
+        GLabel_898=tk.Label(self.root)
+        GLabel_898["bg"] = "#fbfbfb"
+        ft = tkFont.Font(family='Times',size=10)
+        GLabel_898["font"] = ft
+        GLabel_898["fg"] = "#333333"
+        GLabel_898["justify"] = "center"
+        GLabel_898["text"] = "label"
+        GLabel_898.place(x=20,y=210,width=487,height=65)
+
+        GLabel_961=tk.Label(self.root)
+        GLabel_961["bg"] = "#ffffff"
+        ft = tkFont.Font(family='Times',size=10)
+        GLabel_961["font"] = ft
+        GLabel_961["fg"] = "#333333"
+        GLabel_961["justify"] = "center"
+        GLabel_961["text"] = "label"
+        GLabel_961.place(x=20,y=310,width=487,height=65)
+
+        GLabel_417=tk.Label(self.root)
+        GLabel_417["bg"] = "#fbfbfb"
+        ft = tkFont.Font(family='Times',size=10)
+        GLabel_417["font"] = ft
+        GLabel_417["fg"] = "#333333"
+        GLabel_417["justify"] = "center"
+        GLabel_417["text"] = "label"
+        GLabel_417.place(x=600,y=10,width=82,height=50)
+
+        GLabel_593=tk.Label(self.root)
+        GLabel_593["bg"] = "#fefefe"
+        ft = tkFont.Font(family='Times',size=10)
+        GLabel_593["font"] = ft
+        GLabel_593["fg"] = "#333333"
+        GLabel_593["justify"] = "center"
+        GLabel_593["text"] = "label"
+        GLabel_593.place(x=700,y=10,width=273,height=50)
+
+    def GButton_715_command(self):
+        print("command")
+    # def show_popup_view(self, event):
         selected_item = self.tree.selection()
 
 
