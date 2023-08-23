@@ -77,7 +77,6 @@ class UserPermissions:
     def is_operator(self, position):
         return position in self.operator
 
-
 class App:
     def __init__(self, root):
         root.title("LOG IN DASHBOARD")
@@ -91,12 +90,15 @@ class App:
         root.geometry(self.alignstr)
         root.resizable(width=False, height=False)
 
+        root.protocol("WM_DELETE_WINDOW", self.handle_exit_signal)
+
+
         ## FUNCTIONS##
 
         ## END##
         dateNow = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        signal.signal(signal.SIGTERM, self.handle_exit_signal)
-        signal.signal(signal.SIGINT, self.handle_exit_signal)
+        # signal.signal(signal.SIGTERM, self.handle_exit_signal)
+        # signal.signal(signal.SIGINT, self.handle_exit_signal)
 
         self.entry_employee_number = tk.Entry(root)
         self.entry_employee_number["bg"] = "#ffffff"
@@ -137,8 +139,8 @@ class App:
         self.GLabel_111.place(x=360, y=160, width=301, height=338)
 
         self.init_logging()
-        # self.passLogDatatoServer()
-        # self.update_logs()
+        self.passLogDatatoServer()
+        self.update_logs()
 
         self.log_activity(logging.INFO, f'Open Program')
 
@@ -150,9 +152,10 @@ class App:
 
         # End
     
-    def handle_exit_signal(self, signum, frame):
+    def handle_exit_signal(self):
         self.log_activity(logging.INFO, f'Terminated the program')
-        self.quit()
+        root.destroy()
+        # self.quit()
 
     
     def passLogDatatoServer(self):
@@ -161,13 +164,13 @@ class App:
             with open(log_file, 'r') as file:
                 logs_data = file.read()
             lines = logs_data.split('\n')
-            last_5_logs = '\n'.join(lines[-5:])
+            last_5_logs = '\n'.join(lines[-6:])
             # data = (last_5_logs, client, removeExtension)
             # encoded_data = json.dumps({'data': data})
             # sio.emit('passActivityData', encoded_data)
         except Exception as e:
             raise
-        self.after(50000, self.update_logs)
+        root.after(5000, self.update_logs)
     
     def update_logs(self):
         log_file = 'logs/activity_log.txt'
@@ -175,18 +178,23 @@ class App:
             with open(log_file, 'r') as file:
                 log_content = file.read()
             lines = log_content.split('\n')
-            last_5_logs = '\n'.join(lines[-5:])
-            self.logs=tk.Message(self)
-            self.logs["bg"] = "white"
-            self.ft = tkFont.Font(family='Times New Roman',size=25)
+            last_5_logs = '\n'.join(lines[-6:])
+ 
+
+            self.logs = tk.Message(root)
+            self.logs["bg"] = "#ffffff"
+            self.ft = tkFont.Font(family='Times', size=18)
             self.logs["font"] = self.ft
+            self.logs["fg"] = "#333333"
             self.logs["justify"] = "left"
-            self.logs.place(x=975,y=230,width=932,height=820)
-            self.logs['width'] = 700
             self.logs["text"] = last_5_logs
+            self.logs['width'] = 700
+            self.logs.place(x=680, y=160, width=666, height=717)
+
+
         except FileNotFoundError:
             self.logs["text"] = "Log file not found."
-        self.after(5000, self.update_logs)
+        root.after(5000, self.update_logs)
 
 
     def init_logging(self):
@@ -332,6 +340,8 @@ class App:
             print("Employee not found.")
 
     def validate_permissions(self, user_department, user_position, dataJson):
+        employee_number = self.entry_employee_number.get()
+
         permissions = self.load_permissions()
         if permissions.is_department_allowed(user_department) and permissions.is_position_allowed(user_position):
             if permissions.is_technician(user_position):
@@ -341,12 +351,16 @@ class App:
                 print(f"{user_position} is an operator.")
                 self.show_operator_dashboard(
                     user_department, user_position, dataJson)
+                self.log_activity(logging.INFO, f'User login successful. ID NUM: {employee_number}')
+                
             else:
+                self.log_activity(logging.INFO, f'User login unsuccessful. ID NUM: {employee_number}')
+
                 showerror(title='Login Failed',
                           message=f"User's department or position is not allowed. Please check, Current Department / Possition  {user_department + ' ' + user_position}")
 
         else:
-            # self.log_activity(logging.INFO, f'User login unsuccessful. ID NUM: {employee_number}')
+            self.log_activity(logging.INFO, f'User login unsuccessful. ID NUM: {employee_number}')
             showerror(title='Login Failed',
                       message=f"User's department or position is not allowed. Please check, Current Department / Possition  {user_department + ' ' + user_position}")
 
@@ -435,15 +449,15 @@ class App:
                 if last_row:
                     # Get the first value from the last row
                     last_value = last_row[0]
-                    self.logs = tk.Message(root)
-                    self.logs["bg"] = "#e0bdbd"
+                    self.logs_message = tk.Message(root)
+                    self.logs_message["bg"] = "#e0bdbd"
                     self.ft = tkFont.Font(family='Times', size=10)
-                    self.logs["font"] = self.ft
-                    self.logs["fg"] = "#333333"
-                    self.logs["justify"] = "center"
-                    self.logs['width'] = 200
-                    self.logs["text"] = last_value
-                    self.logs.place(x=20, y=20, width=284, height=51)
+                    self.logs_message["font"] = self.ft
+                    self.logs_message["fg"] = "#333333"
+                    self.logs_message["justify"] = "center"
+                    self.logs_message['width'] = 200
+                    self.logs_message["text"] = last_value
+                    self.logs_message.place(x=20, y=20, width=284, height=51)
                 else:
                     pass
         except FileNotFoundError as e:
@@ -494,6 +508,8 @@ sio.connect('http://10.0.2.150:9090')
 
 
 if __name__ == "__main__":
+    signal.signal(signal.SIGINT, signal.SIG_DFL)
+
     root = tk.Tk()
     app = App(root)
     root.mainloop()
