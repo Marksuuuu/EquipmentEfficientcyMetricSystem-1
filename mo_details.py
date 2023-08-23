@@ -36,19 +36,15 @@ class MO_Details:
 
         root.protocol('WM_DELETE_WINDOW', self.on_close)
 
-        # setting window size
-        width = 985
-        height = 482
-        screenwidth = self.root.winfo_screenwidth()
-        screenheight = self.root.winfo_screenheight()
-        alignstr = "%dx%d+%d+%d" % (
-            width,
-            height,
-            (screenwidth - width) / 2,
-            (screenheight - height) / 2,
-        )
-        self.root.geometry(alignstr)
-        self.root.resizable(width=False, height=False)
+        root.title("MO DETAILS")
+        #setting window size
+        width=600
+        height=600
+        screenwidth = root.winfo_screenwidth()
+        screenheight = root.winfo_screenheight()
+        alignstr = '%dx%d+%d+%d' % (width, height, (screenwidth - width) / 2, (screenheight - height) / 2)
+        root.geometry(alignstr)
+        root.resizable(width=False, height=False)
 
         if self.extracted_photo_url == False or self.extracted_photo_url is None:
             image_url = "https://www.freeiconspng.com/uploads/no-image-icon-15.png"
@@ -210,7 +206,8 @@ class MO_Details:
 
     def on_close(self):
         if messagebox.askokcancel("Quit", "Do you want to quit?"):
-            os.system("python operator_dashboard.py")
+            self.root.destroy()
+            os.system("python main.py")
             
 
 if __name__ == "__main__":
