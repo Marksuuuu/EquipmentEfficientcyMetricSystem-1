@@ -191,22 +191,58 @@ class MO_Details:
 
         if total_finished is not None and total_finished.strip() != "":
             total_finished = int(total_finished)
-            
-            # dataPass = int(dataPass)
 
-            dataPass = 100
-            # Ensure dataPass is an integer
-            dataPass = int(dataPass)
+            with open("data/main.json", "r") as json_file:
+                data = json.load(json_file)
+                extracted_data = []
 
-            if total_finished >= dataPass:
-                print('True')
-                self.start_btn["state"] = "normal"    # Enable the START button
-            else:
-                print('False')
+                for item in data["data"]:
+                    customer = item["customer"]
+                    device = item["device"]
+                    main_opt = item["main_opt"]
+                    package = item["package"]
+                    running_qty = item["running_qty"]
+                    wip_entity_name = item["wip_entity_name"]
 
-            showinfo('Notice', f'Total Finished.. inputted by {self.extracted_employee_no}')
-            self.log_event('STOP')
-            self.root.destroy()
+                    extracted_data.append((customer, device, main_opt, package, running_qty, wip_entity_name))
+                    
+                    extracted_running_qty = int(running_qty)
+
+                if total_finished >= extracted_running_qty:
+                    self.start_btn["state"] = "normal"
+                    self.log_event('START')
+                else:
+                    showinfo('Notice', f'Total Finished inputted by {self.extracted_employee_no}')
+                    self.log_event('STOP')
+
+                # Load existing log data
+                try:
+                    with open("data/mo_logs.json", "r") as logs_file:
+                        logs_data = json.load(logs_file)
+                        if not isinstance(logs_data, dict):  # Check if logs_data is a dictionary
+                            logs_data = {}  # Initialize as dictionary if not
+                except FileNotFoundError:
+                    logs_data = {}  # Initialize as dictionary if file doesn't exist
+
+                # Calculate new total_finished and append to logs_data
+                new_total_finished = total_finished + logs_data.get("total_finished", 0)
+                # logs_data["total_finished"] = new_total_finished
+
+                new_log_entry = {
+                    "wip_entity_name": wip_entity_name,
+                    "running_qty": extracted_running_qty,
+                    "total_finished": new_total_finished
+                }
+
+                # Append new_log_entry to logs_data
+                logs_data.append(new_log_entry)
+
+                # Write logs_data to mo_logs.json
+                with open("data/mo_logs.json", "w") as logs_file:
+                    json.dump(logs_data, logs_file)
+
+
+            # self.root.destroy()
 
     def on_close(self):
         if messagebox.askokcancel("Quit", "Do you want to quit?"):
