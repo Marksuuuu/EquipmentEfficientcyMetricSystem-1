@@ -1,3 +1,51 @@
+def show_input_dialog(self):
+        total_finished = simpledialog.askstring(
+            "Enter Total Number of finished",
+            "Please enter the total number of finish items",
+        )
+
+        if total_finished is not None and total_finished.strip() != "":
+            total_finished = int(total_finished)
+
+            with open("data/mo_logs.json", "r") as logs_file:
+                logs_data = json.load(logs_file)
+
+            wip_entity_name = self.extracted_wip_entity_name  # Assuming you have this value available
+
+            found_entry = None
+            for entry in logs_data:
+                if entry["wip_entity_name"] == wip_entity_name:
+                    found_entry = entry
+                    break
+
+            if found_entry:
+                found_entry["total_finished"] += total_finished
+            else:
+                new_entry = {
+                    "wip_entity_name": wip_entity_name,
+                    "running_qty": extracted_running_qty,
+                    "total_finished": total_finished
+                }
+                logs_data.append(new_entry)
+
+            with open("data/mo_logs.json", "w") as logs_file:
+                json.dump(logs_data, logs_file, indent=4)
+
+            self.start_btn["state"] = "normal"
+            self.log_event('START')
+            
+    # Other methods and code for your class
+
+
+
+
+
+
+
+
+
+
+
 # import json
 # import requests
 
@@ -31,39 +79,39 @@
 # checking()
 
 
-import csv
-from datetime import datetime, timedelta
+# import csv
+# from datetime import datetime, timedelta
 
-data = []
-# Read data from CSV file
-with open('data/time.csv', 'r') as csvfile:
-    csvreader = csv.reader(csvfile)
-    for row in csvreader:
-        data.append(tuple(row))
+# data = []
+# # Read data from CSV file
+# with open('data/time.csv', 'r') as csvfile:
+#     csvreader = csv.reader(csvfile)
+#     for row in csvreader:
+#         data.append(tuple(row))
 
-productive_hours = {}
-start_time = None
+# productive_hours = {}
+# start_time = None
 
-for action, date_str, time_str in data:
-    dt = datetime.strptime(date_str + " " + time_str, "%Y-%m-%d %H:%M:%S")
+# for action, date_str, time_str in data:
+#     dt = datetime.strptime(date_str + " " + time_str, "%Y-%m-%d %H:%M:%S")
     
-    if action == "START":
-        start_time = dt
-    elif action == "STOP" and start_time is not None:
-        productive_time = dt - start_time
-        day = dt.date()
-        if day not in productive_hours:
-            productive_hours[day] = productive_time
-        else:
-            productive_hours[day] += productive_time
-        start_time = None
+#     if action == "START":
+#         start_time = dt
+#     elif action == "STOP" and start_time is not None:
+#         productive_time = dt - start_time
+#         day = dt.date()
+#         if day not in productive_hours:
+#             productive_hours[day] = productive_time
+#         else:
+#             productive_hours[day] += productive_time
+#         start_time = None
 
-total_productive_time = timedelta()
+# total_productive_time = timedelta()
 
-for day, productive_time in productive_hours.items():
-    total_productive_time += productive_time
+# for day, productive_time in productive_hours.items():
+#     total_productive_time += productive_time
 
-print("Total productive time:", total_productive_time)
+# print("Total productive time:", total_productive_time)
 
 
 

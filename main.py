@@ -202,7 +202,7 @@ class App:
         logging.basicConfig(filename=log_file, level=logging.INFO,
                             format='[%(asctime)s] %(levelname)s: %(message)s',
                             datefmt='%Y-%m-%d %H:%M:%S', filemode='a')
-        print(f'Logging to {log_file}')
+        # print(f'Logging to {log_file}')-
 
     def log_activity(self, level, message):
         logging.log(level, message)
