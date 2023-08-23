@@ -1,12 +1,5 @@
-[
-    {
-        "wip_entity_name": "MO839288",
-        "running_qty": 100,
-        "total_finished": 128
-    },
-    {
-        "wip_entity_name": "MO838597",
-        "running_qty": 100,
-        "total_finished": 101
-    }
-]
+{
+    "wip_entity_name": "MO838597",
+    "running_qty": "100",
+    "total_finished": 100
+}

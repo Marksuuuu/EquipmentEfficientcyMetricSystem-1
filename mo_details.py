@@ -93,8 +93,17 @@ class MO_Details:
         GLabel_915["font"] = ft
         GLabel_915["fg"] = "#333333"
         GLabel_915["justify"] = "center"
-        GLabel_915["text"] = f"Running Qty : {data[5]}"
+        GLabel_915["text"] = f"MO Quantity : {data[5]}"
         GLabel_915.place(x=20,y=540,width=526,height=97)
+
+        # lbl_remaining_qty=tk.Label(root)
+        # lbl_remaining_qty["bg"] = "#ffffff"
+        # ft = tkFont.Font(family='Times',size=18)
+        # lbl_remaining_qty["font"] = ft
+        # lbl_remaining_qty["fg"] = "#333333"
+        # lbl_remaining_qty["justify"] = "center"
+        # lbl_remaining_qty["text"] = f"Remaining MO Quantity : {data[5]}"
+        # lbl_remaining_qty.place(x=450,y=540,width=526,height=97)
 
         GLabel_514=tk.Label(root)
         ft = tkFont.Font(family='Times',size=24)
@@ -174,32 +183,32 @@ class MO_Details:
         print("STOP button clicked")
         # self.start_btn["state"] = "normal"    # Enable the START button
         # self.stop_btn["state"] = "disabled"  # Disable the STOP button
-        hris_password = simpledialog.askstring(
-            "Password",
-            "Enter Password", show='*'
-        )
+        # hris_password = simpledialog.askstring(
+        #     "Password",
+        #     "Enter Password", show='*'
+        # )
+        self.show_input_dialog()
+        # if hris_password is not None and hris_password.strip() != "":
+        #     input_password = str(hris_password)
 
-        if hris_password is not None and hris_password.strip() != "":
-            input_password = str(hris_password)
+        #     url = f"http://hris.teamglac.com/api/users/login?u={self.extracted_username}&p={input_password}"
+        #     response = requests.get(url).json()
+        #     if response['result'] == False or response['result'] == None:
+        #         print("FAILED")
+        #         self.start_btn["state"] = "disabled"
+        #         self.stop_btn["state"] = "normal"
+        #         showerror(
+        #         title="Login Failed",
+        #         message=f"Password is incorrect. Please try again.",
+        #     )
 
-            url = f"http://hris.teamglac.com/api/users/login?u={self.extracted_username}&p={input_password}"
-            response = requests.get(url).json()
-            if response['result'] == False or response['result'] == None:
-                print("FAILED")
-                self.start_btn["state"] = "disabled"
-                self.stop_btn["state"] = "normal"
-                showerror(
-                title="Login Failed",
-                message=f"Password is incorrect. Please try again.",
-            )
-
-            else:
-                # self.start_btn["state"] = "normal"    # Enable the START button
-                print("Success")
-                self.stop_btn["state"] = "disabled"
-                self.show_input_dialog()
-        else:
-            pass
+        #     else:
+        #         # self.start_btn["state"] = "normal"    # Enable the START button
+        #         print("Success")
+        #         self.stop_btn["state"] = "disabled"
+        #         self.show_input_dialog()
+        # else:
+        #     pass
             # self.start_btn["state"] = "normal
 
 
@@ -253,47 +262,96 @@ class MO_Details:
                     
                     extracted_running_qty = int(running_qty)
                     extracted_total_finished = item.get("total_finished", 0)  # Load existing total_finished
-                    print('extracted_total_finished: ', extracted_total_finished)
 
-                    # Check if total_finished is greater than or equal to extracted_running_qty
-                    if total_finished <= extracted_running_qty:
-                        print('total_finished: ', total_finished)
+                    if total_finished == extracted_running_qty:
+                        print("DONE")
+                        self.start_btn["state"] = "disabled"
+                        self.stop_btn["state"] = "disabled"
+  
+                        # Save data in JSON
+                        new_data = {
+                            "wip_entity_name": wip_entity_name,
+                            "running_qty": running_qty,
+                            "total_finished": total_finished
+                        }
+                        with open("data/mo_logs.json", "w") as json_output_file:
+                            json.dump(new_data, json_output_file, indent=4)
+
+                        self.root.destroy()
+                        os.system("python main.py")
+  
+                    elif total_finished < extracted_running_qty:
+                        remaining_qty = extracted_running_qty - total_finished
+
+                        # lbl_remaining_qty=tk.Label(root)
+                        # lbl_remaining_qty["bg"] = "#ffffff"
+                        # ft = tkFont.Font(family='Times',size=18)
+                        # lbl_remaining_qty["font"] = ft
+                        # lbl_remaining_qty["fg"] = "#333333"
+                        # lbl_remaining_qty["justify"] = "center"
+                        # lbl_remaining_qty["text"] = f"Remaining MO Quantity : ", remaining_qty
+                        # lbl_remaining_qty.place(x=450,y=540,width=526,height=97)
+                        # print('remaining_qty: ', remaining_qty)
+
                         self.start_btn["state"] = "normal"
-                        # Load existing log data
-                        logs_data = []  # Initialize as list
-
-                        try:
-                            with open("data/mo_logs.json", "r") as logs_file:
-                                file_content = logs_file.read().strip()
-                                if file_content:  # Check if the file has content
-                                    logs_data = json.loads(file_content)
-                                    if not isinstance(logs_data, list):
-                                        logs_data = []  # Initialize as list if not valid
-                        except FileNotFoundError:
-                            pass  # No need to handle the error explicitly here
-
-                        # Find and update existing entry or append new entry to logs_data
-                        found_entry = None
-                        for entry in logs_data:
-                            if entry["wip_entity_name"] == wip_entity_name:
-                                found_entry = entry
-                                break
-
-                        if found_entry:
-                            found_entry["total_finished"] += total_finished
-                        else:
-                            new_entry = {
-                                "wip_entity_name": wip_entity_name,
-                                "running_qty": extracted_running_qty,
-                                "total_finished": total_finished
-                            }
-                            logs_data.append(new_entry)
-
-                        # Write back to the logs file
-                        with open("data/mo_logs.json", "w") as logs_file:
-                            json.dump(logs_data, logs_file, indent=4)
+                        self.stop_btn["state"] = "disabled"
+  
+                        # Save data in JSON
+                        new_data = {
+                            "wip_entity_name": wip_entity_name,
+                            "running_qty": running_qty,
+                            "total_finished": total_finished
+                        }
+                        with open("data/mo_logs.json", "w") as json_output_file:
+                            json.dump(new_data, json_output_file, indent=4)
+  
+                        print('total_finished: ', total_finished)
+                        print('extracted_running_qty: ', extracted_running_qty)
+  
                     else:
-                        print("Total finished is not greater than or equal to extracted running qty.")
+                        messagebox.showinfo(title="Warning", message="Input exceeded the set running Quantity: " + str(extracted_running_qty))
+                        print("Total finished is not greater than or equal to extracted running qty.")    
+
+                    # # # Check if total_finished is greater than or equal to extracted_running_qty
+                    # if total_finished >= extracted_running_qty:
+
+                    #     print('total_finished: ', total_finished)
+                    #     self.start_btn["state"] = "normal"
+                    #     # Load existing log data
+                    #     logs_data = []  # Initialize as list
+
+                    #     try:
+                    #         with open("data/mo_logs.json", "r") as logs_file:
+                    #             file_content = logs_file.read().strip()
+                    #             if file_content:  # Check if the file has content
+                    #                 logs_data = json.loads(file_content)
+                    #                 if not isinstance(logs_data, list):
+                    #                     logs_data = []  # Initialize as list if not valid
+                    #     except FileNotFoundError:
+                    #         pass  
+
+                    #     # Find and update existing entry or append new entry to logs_data
+                    #     found_entry = None
+                    #     for entry in logs_data:
+                    #         if entry["wip_entity_name"] == wip_entity_name:
+                    #             found_entry = entry
+                    #             break
+
+                    #     if found_entry:
+                    #         found_entry["total_finished"] += total_finished
+                    #     else:
+                    #         new_entry = {
+                    #             "wip_entity_name": wip_entity_name,
+                    #             "running_qty": extracted_running_qty,
+                    #             "total_finished": total_finished
+                    #         }
+                    #         logs_data.append(new_entry)
+
+                    #     # Write back to the logs file
+                    #     with open("data/mo_logs.json", "w") as logs_file:
+                    #         json.dump(logs_data, logs_file, indent=4)
+                    # else:
+                    #     print("Total finished is not greater than or equal to extracted running qty.")
 
             # self.root.destroy()
 

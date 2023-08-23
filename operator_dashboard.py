@@ -170,7 +170,7 @@ class OperatorDashboard:
                 "DEVICES",
                 "MAIN OPERATION",
                 "PACKAGE",
-                "RUNNING QUANTITY",
+                "MO QUANTITY",
                 "MO",
             ),
         )
@@ -179,7 +179,7 @@ class OperatorDashboard:
         self.tree.heading("DEVICES", text="DEVICES")
         self.tree.heading("MAIN OPERATION", text="MAIN OPERATION")
         self.tree.heading("PACKAGE", text="PACKAGE")
-        self.tree.heading("RUNNING QUANTITY", text="RUNNING QUANTITY")
+        self.tree.heading("MO QUANTITY", text="MO QUANTITY")
         self.tree.heading("MO", text="MO")
         self.tree.pack(pady=120)
 
