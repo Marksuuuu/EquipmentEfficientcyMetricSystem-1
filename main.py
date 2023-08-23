@@ -15,7 +15,7 @@ from tkinter.messagebox import showinfo, showwarning, showerror
 from tkinter import simpledialog
 from ttkbootstrap.constants import *
 import ttkbootstrap as tb
-from datetime import datetime, timedelta
+from datetime import datetime
 
 from tkinter import Toplevel
 from operator_dashboard import OperatorDashboard
@@ -343,43 +343,6 @@ class App:
                 result = log_content['allowed_users']
         except FileNotFoundError as e:
             print(e)
-            
-    def calculate_total_productive_time(self):
-        script_directory = os.path.dirname(os.path.abspath(__file__))
-        log_folder = os.path.join(script_directory, "data")
-        log_file_path = os.path.join(log_folder, 'time.csv')
-        
-        data = []
-        # Read data from CSV file
-        with open(log_file_path, 'r') as csvfile:
-            csvreader = csv.reader(csvfile)
-            for row in csvreader:
-                data.append(tuple(row))
-
-        productive_hours = {}
-        start_time = None
-
-        for action, date_str, time_str in data:
-            dt = datetime.strptime(date_str + " " + time_str, "%Y-%m-%d %H:%M:%S")
-            
-            if action == "START":
-                start_time = dt
-            elif action == "STOP" and start_time is not None:
-                productive_time = dt - start_time
-                day = dt.date()
-                if day not in productive_hours:
-                    productive_hours[day] = productive_time
-                else:
-                    productive_hours[day] += productive_time
-                start_time = None
-
-        total_productive_time = timedelta()
-
-        for day, productive_time in productive_hours.items():
-            total_productive_time += productive_time
-
-        return total_productive_time
-    
 
     def update_status(self):
         script_directory = os.path.dirname(os.path.abspath(__file__))
@@ -428,7 +391,7 @@ class App:
                     last_value = last_row[2]
 
                     label = f"""
-                    1. PRODUCTIVE HOURS: {self.calculate_total_productive_time()} HOURS
+                    1. PRODUCTIVE HOURS: ' ' HOURS
                     2. AVAILABLE HOURS: {last_value} HOURS
                     3. QUANTITY TO PROCESS: ' ' PCS
                     4. TOTAL PROCESS: ' ' PCS
