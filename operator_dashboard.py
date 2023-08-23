@@ -166,15 +166,21 @@ class OperatorDashboard:
             show="headings",
             columns=(
                 "ROW NUMBER",
+                "DEVICES",
+                "CUSTOMER",
                 "MAIN OPERATION",
-                "SUB-OPERATION",
-                "WIP ENTITY NAME",
+                "PACKAGE",
+                "RUNNING QUANTITY",
+                "MO",
             ),
         )
         self.tree.heading("ROW NUMBER", text="ROW NUMBER")
+        self.tree.heading("DEVICES", text="DEVICES")
+        self.tree.heading("CUSTOMER", text="CUSTOMER")
         self.tree.heading("MAIN OPERATION", text="MAIN OPERATION")
-        self.tree.heading("SUB-OPERATION", text="SUB-OPERATION")
-        self.tree.heading("WIP ENTITY NAME", text="WIP ENTITY NAME")
+        self.tree.heading("PACKAGE", text="PACKAGE")
+        self.tree.heading("RUNNING QUANTITY", text="RUNNING QUANTITY")
+        self.tree.heading("MO", text="MO")
         self.tree.pack(pady=120)
 
         self.populate_table()
@@ -184,9 +190,9 @@ class OperatorDashboard:
     def populate_table(self):
         data = self.read_json_file()
 
-        for i, (main_op, sub_op, wip_entity) in enumerate(data, start=1):
+        for i, (customer,device,main_opt,package,running_qty,wip_entity_name) in enumerate(data, start=1):
             self.tree.insert(
-                "", "end", iid=i, text=str(i), values=(i, main_op, sub_op, wip_entity)
+                "", "end", iid=i, text=str(i), values=(i, customer,device,main_opt,package,running_qty,wip_entity_name)
             )
 
     def read_json_file(self):
@@ -195,10 +201,13 @@ class OperatorDashboard:
             extracted_data = []
 
             for item in data["data"]:
-                main_op = item["main_opt"]
-                sub_op = item["sub_opt"]
-                wip_entity = item["wip_entity_name"]
-                extracted_data.append((main_op, sub_op, wip_entity))
+                customer = item["customer"]
+                device = item["device"]
+                main_opt = item["main_opt"]
+                package = item["package"]
+                running_qty = item["running_qty"]
+                wip_entity_name = item["wip_entity_name"]
+                extracted_data.append((customer,device,main_opt,package,running_qty,wip_entity_name))
 
         return extracted_data
         
@@ -267,17 +276,29 @@ class OperatorDashboard:
         # Swap data within the dictionaries
         data_list = data["data"]
         (
-            data_list[int(selected_id) - 1]["main_opt"],
-            data_list[int(first_id) - 1]["main_opt"],
+            data_list[int(selected_id) - 1]["customer"],
+            data_list[int(first_id) - 1]["customer"],
         ) = (first_data[1], selected_data[1])
         (
-            data_list[int(selected_id) - 1]["sub_opt"],
-            data_list[int(first_id) - 1]["sub_opt"],
+            data_list[int(selected_id) - 1]["device"],
+            data_list[int(first_id) - 1]["device"],
         ) = (first_data[2], selected_data[2])
+        (
+            data_list[int(selected_id) - 1]["main_opt"],
+            data_list[int(first_id) - 1]["main_opt"],
+        ) = (first_data[3], selected_data[3])
+        (
+            data_list[int(selected_id) - 1]["package"],
+            data_list[int(first_id) - 1]["package"],
+        ) = (first_data[4], selected_data[4])
+        (
+            data_list[int(selected_id) - 1]["running_qty"],
+            data_list[int(first_id) - 1]["running_qty"],
+        ) = (first_data[5], selected_data[5])
         (
             data_list[int(selected_id) - 1]["wip_entity_name"],
             data_list[int(first_id) - 1]["wip_entity_name"],
-        ) = (first_data[3], selected_data[3])
+        ) = (first_data[6], selected_data[6])
 
         # Update the JSON data
         data["data"] = data_list
@@ -289,11 +310,11 @@ class OperatorDashboard:
         # Update the values of the Treeview rows
         self.tree.item(
             selected_item,
-            values=(selected_id, first_data[1], first_data[2], first_data[3]),
+            values=(selected_id, first_data[1], first_data[2], first_data[3], first_data[4], first_data[5], first_data[6]),
         )
         self.tree.item(
             first_id,
-            values=(first_id, selected_data[1], selected_data[2], selected_data[3]),
+            values=(first_id, selected_data[1], selected_data[2], selected_data[3], selected_data[4], selected_data[5], selected_data[6]),
         )
 
         # Show a success message

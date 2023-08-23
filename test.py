@@ -1,36 +1,69 @@
-import json
-import requests
+# import json
+# import requests
 
-def checking():
-    hris_url = 'http://lams.teamglac.com/lams/api/job_order/active_jo.php'
-    response = requests.get(hris_url)
+# def checking():
+#     hris_url = 'http://lams.teamglac.com/lams/api/job_order/active_jo.php'
+#     response = requests.get(hris_url)
     
-    if response.status_code == 200:
-        data = response.json()  # Parse JSON response
-        result = data['result']  # Access the 'result' key
-        res = ''
-        for x in result:
-            if x['MACH201_MACHNO'] == 'DAD 3350-01':
-                res = x['MACH201_MACHNO']
-                break
-        print(res)
+#     if response.status_code == 200:
+#         data = response.json()  # Parse JSON response
+#         result = data['result']  # Access the 'result' key
+#         res = ''
+#         for x in result:
+#             if x['MACH201_MACHNO'] == 'DAD 3350-01':
+#                 res = x['MACH201_MACHNO']
+#                 break
+#         print(res)
         
         
-        # if result:
-        #     print('result: ', result)
-        #     target_value = "DAD 3350-01"
-        #     if target_value in result:
-        #         print(f'The value "{target_value}" is present in the result.')
-        #     else:
-        #         print(f'The value "{target_value}" is not present in the result.')
-        # else:
-        #     print('No data found in the result.')
-    else:
-        print('Request failed with status code:', response.status_code)
+#         # if result:
+#         #     print('result: ', result)
+#         #     target_value = "DAD 3350-01"
+#         #     if target_value in result:
+#         #         print(f'The value "{target_value}" is present in the result.')
+#         #     else:
+#         #         print(f'The value "{target_value}" is not present in the result.')
+#         # else:
+#         #     print('No data found in the result.')
+#     else:
+#         print('Request failed with status code:', response.status_code)
 
-checking()
+# checking()
 
 
+import csv
+from datetime import datetime, timedelta
+
+data = []
+# Read data from CSV file
+with open('data/time.csv', 'r') as csvfile:
+    csvreader = csv.reader(csvfile)
+    for row in csvreader:
+        data.append(tuple(row))
+
+productive_hours = {}
+start_time = None
+
+for action, date_str, time_str in data:
+    dt = datetime.strptime(date_str + " " + time_str, "%Y-%m-%d %H:%M:%S")
+    
+    if action == "START":
+        start_time = dt
+    elif action == "STOP" and start_time is not None:
+        productive_time = dt - start_time
+        day = dt.date()
+        if day not in productive_hours:
+            productive_hours[day] = productive_time
+        else:
+            productive_hours[day] += productive_time
+        start_time = None
+
+total_productive_time = timedelta()
+
+for day, productive_time in productive_hours.items():
+    total_productive_time += productive_time
+
+print("Total productive time:", total_productive_time)
 
 
 
