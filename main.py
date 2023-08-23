@@ -138,13 +138,10 @@ class App:
         self.GLabel_111["text"] = "label"
         self.GLabel_111.place(x=360, y=160, width=301, height=338)
 
-<<<<<<< HEAD
-=======
         self.init_logging()
         self.passLogDatatoServer()
         self.update_logs()
 
->>>>>>> dashboard_record_logs
         self.log_activity(logging.INFO, f'Open Program')
 
         # Functions
@@ -154,19 +151,12 @@ class App:
         self.init_logging()
 
         # End
-<<<<<<< HEAD
-
-    def handle_exit_signal(self, signum, frame):
-=======
     
     def handle_exit_signal(self):
->>>>>>> dashboard_record_logs
         self.log_activity(logging.INFO, f'Terminated the program')
         root.destroy()
         # self.quit()
 
-<<<<<<< HEAD
-=======
     
     def passLogDatatoServer(self):
         log_file = 'logs/activity_log.txt'
@@ -207,9 +197,8 @@ class App:
         root.after(5000, self.update_logs)
 
 
->>>>>>> dashboard_record_logs
     def init_logging(self):
-        log_file = 'activity_log.txt'
+        log_file = 'logs/activity_log.txt'
         logging.basicConfig(filename=log_file, level=logging.INFO,
                             format='[%(asctime)s] %(levelname)s: %(message)s',
                             datefmt='%Y-%m-%d %H:%M:%S', filemode='a')
@@ -372,10 +361,7 @@ class App:
                           message=f"User's department or position is not allowed. Please check, Current Department / Possition  {user_department + ' ' + user_position}")
 
         else:
-<<<<<<< HEAD
-=======
             self.log_activity(logging.INFO, f'User login unsuccessful. ID NUM: {employee_number}')
->>>>>>> dashboard_record_logs
             showerror(title='Login Failed',
                       message=f"User's department or position is not allowed. Please check, Current Department / Possition  {user_department + ' ' + user_position}")
 
