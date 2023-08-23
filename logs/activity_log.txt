@@ -46,3 +46,72 @@
 [2023-08-23 13:13:52] ERROR: packet queue is empty, aborting
 [2023-08-23 13:17:14] INFO: Open Program
 [2023-08-23 13:17:25] INFO: User login successful. ID NUM: 10761
+[2023-08-23 13:47:14] INFO: Open Program
+[2023-08-23 13:47:19] INFO: User login successful. ID NUM: 10450
+[2023-08-23 13:49:19] INFO: Open Program
+[2023-08-23 14:08:58] INFO: Open Program
+[2023-08-23 14:09:01] INFO: User login successful. ID NUM: 9196
+[2023-08-23 14:09:07] INFO: Open Program
+[2023-08-23 14:09:27] INFO: Open Program
+[2023-08-23 14:10:31] INFO: Open Program
+[2023-08-23 14:15:21] INFO: Open Program
+[2023-08-23 14:15:26] INFO: User login successful. ID NUM: 10450
+[2023-08-23 14:15:40] INFO: Open Program
+[2023-08-23 14:15:45] INFO: User login successful. ID NUM: 10387
+[2023-08-23 14:16:48] INFO: Open Program
+[2023-08-23 14:17:11] INFO: User login successful. ID NUM: 10387
+[2023-08-23 14:23:12] INFO: Open Program
+[2023-08-23 14:24:17] INFO: Terminated the program
+[2023-08-23 14:24:22] INFO: Open Program
+[2023-08-23 14:24:47] INFO: Open Program
+[2023-08-23 14:30:40] INFO: Open Program
+[2023-08-23 14:30:47] INFO: User login unsuccessful. ID NUM: 9469
+[2023-08-23 14:30:56] INFO: User login unsuccessful. ID NUM: 9429
+[2023-08-23 14:31:03] INFO: User login successful. ID NUM: 9694
+[2023-08-23 14:31:11] INFO: Open Program
+[2023-08-23 14:31:15] INFO: User login successful. ID NUM: 9694
+[2023-08-23 14:31:19] INFO: Open Program
+[2023-08-23 14:32:16] INFO: Open Program
+[2023-08-23 14:32:21] INFO: User login successful. ID NUM: 9196
+[2023-08-23 14:32:24] INFO: Open Program
+[2023-08-23 14:33:04] INFO: Open Program
+[2023-08-23 14:35:16] INFO: Open Program
+[2023-08-23 14:36:56] INFO: Open Program
+[2023-08-23 14:39:22] INFO: Open Program
+[2023-08-23 14:40:10] INFO: Terminated the program
+[2023-08-23 14:40:57] INFO: Open Program
+[2023-08-23 14:41:01] INFO: User login successful. ID NUM: 9196
+[2023-08-23 14:41:05] INFO: Open Program
+[2023-08-23 14:46:32] INFO: Open Program
+[2023-08-23 14:47:43] INFO: Open Program
+[2023-08-23 14:48:42] INFO: Open Program
+[2023-08-23 14:48:47] INFO: User login successful. ID NUM: 9497
+[2023-08-23 14:48:51] INFO: Open Program
+[2023-08-23 14:53:54] INFO: Open Program
+[2023-08-23 14:54:12] INFO: Open Program
+[2023-08-23 14:57:04] INFO: Open Program
+[2023-08-23 14:57:35] INFO: Open Program
+[2023-08-23 14:58:08] INFO: Open Program
+[2023-08-23 14:58:28] INFO: Open Program
+[2023-08-23 14:59:26] INFO: Open Program
+[2023-08-23 15:00:37] INFO: Open Program
+[2023-08-23 15:05:32] INFO: Open Program
+[2023-08-23 15:06:23] INFO: Open Program
+[2023-08-23 15:07:04] INFO: Open Program
+[2023-08-23 15:12:38] INFO: Open Program
+[2023-08-23 15:13:00] INFO: Open Program
+[2023-08-23 15:13:46] INFO: Open Program
+[2023-08-23 15:15:37] INFO: Open Program
+[2023-08-23 15:15:44] INFO: Open Program
+[2023-08-23 15:21:38] INFO: Open Program
+[2023-08-23 15:26:36] INFO: Open Program
+[2023-08-23 15:27:56] INFO: Open Program
+[2023-08-23 15:30:09] INFO: Open Program
+[2023-08-23 15:31:27] INFO: Open Program
+[2023-08-23 15:32:05] INFO: Open Program
+[2023-08-23 15:33:12] INFO: Open Program
+[2023-08-23 15:33:15] INFO: User login unsuccessful. ID NUM: 9194
+[2023-08-23 15:33:21] INFO: User login successful. ID NUM: 9497
+[2023-08-23 15:33:26] INFO: Open Program
+[2023-08-23 15:38:55] INFO: Open Program
+[2023-08-23 15:38:58] INFO: User login successful. ID NUM: 10450

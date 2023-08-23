@@ -19,5 +19,12 @@
         "downtime_type_value": "SETUP",
         "checkbox_value": 1,
         "remarks_value": "testt"
+    },
+    {
+        "employee_no": "010387",
+        "machine_no_value": "1470-004",
+        "downtime_type_value": "SETUP",
+        "checkbox_value": 1,
+        "remarks_value": "SAMPLE TICKET"
     }
 ]
