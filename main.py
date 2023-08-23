@@ -109,14 +109,14 @@ class App:
             '<KeyRelease>', self.validate_employee_number)
         self.entry_employee_number.place(x=450, y=30, width=443, height=74)
 
-        self.GMessage_33 = tk.Message(root)
-        self.GMessage_33["bg"] = "#ffffff"
-        self.ft = tkFont.Font(family='Times', size=14)
-        self.GMessage_33["font"] = self.ft
-        self.GMessage_33["fg"] = "#333333"
-        self.GMessage_33["justify"] = "center"
-        self.GMessage_33["text"] = "LOGS"
-        self.GMessage_33.place(x=680, y=160, width=666, height=717)
+        # self.GMessage_33 = tk.Message(root)
+        # self.GMessage_33["bg"] = "#ffffff"
+        # self.ft = tkFont.Font(family='Times', size=14)
+        # self.GMessage_33["font"] = self.ft
+        # self.GMessage_33["fg"] = "#333333"
+        # self.GMessage_33["justify"] = "center"
+        # self.GMessage_33["text"] = "LOGS"
+        # self.GMessage_33.place(x=680, y=160, width=666, height=717)
 
         self.GLabel_544 = tk.Label(root)
         self.GLabel_544["bg"] = "#ffffff"
@@ -136,26 +136,64 @@ class App:
         self.GLabel_111["text"] = "label"
         self.GLabel_111.place(x=360, y=160, width=301, height=338)
 
+        self.init_logging()
+        # self.passLogDatatoServer()
+        # self.update_logs()
+
         self.log_activity(logging.INFO, f'Open Program')
 
         # Functions
 
         self.update_status()
         self.oee()
-        self.init_logging()
+
 
         # End
-
+    
     def handle_exit_signal(self, signum, frame):
         self.log_activity(logging.INFO, f'Terminated the program')
         self.quit()
 
+    
+    def passLogDatatoServer(self):
+        log_file = 'logs/activity_log.txt'
+        try:
+            with open(log_file, 'r') as file:
+                logs_data = file.read()
+            lines = logs_data.split('\n')
+            last_5_logs = '\n'.join(lines[-5:])
+            # data = (last_5_logs, client, removeExtension)
+            # encoded_data = json.dumps({'data': data})
+            # sio.emit('passActivityData', encoded_data)
+        except Exception as e:
+            raise
+        self.after(50000, self.update_logs)
+    
+    def update_logs(self):
+        log_file = 'logs/activity_log.txt'
+        try:
+            with open(log_file, 'r') as file:
+                log_content = file.read()
+            lines = log_content.split('\n')
+            last_5_logs = '\n'.join(lines[-5:])
+            self.logs=tk.Message(self)
+            self.logs["bg"] = "white"
+            self.ft = tkFont.Font(family='Times New Roman',size=25)
+            self.logs["font"] = self.ft
+            self.logs["justify"] = "left"
+            self.logs.place(x=975,y=230,width=932,height=820)
+            self.logs['width'] = 700
+            self.logs["text"] = last_5_logs
+        except FileNotFoundError:
+            self.logs["text"] = "Log file not found."
+        self.after(5000, self.update_logs)
+
+
     def init_logging(self):
-        log_file = 'activity_log.txt'
+        log_file = 'logs/activity_log.txt'
         logging.basicConfig(filename=log_file, level=logging.INFO,
                             format='[%(asctime)s] %(levelname)s: %(message)s',
                             datefmt='%Y-%m-%d %H:%M:%S', filemode='a')
-        print(f'Logging to {log_file}')
 
     def log_activity(self, level, message):
         logging.log(level, message)
@@ -308,6 +346,7 @@ class App:
                           message=f"User's department or position is not allowed. Please check, Current Department / Possition  {user_department + ' ' + user_position}")
 
         else:
+            # self.log_activity(logging.INFO, f'User login unsuccessful. ID NUM: {employee_number}')
             showerror(title='Login Failed',
                       message=f"User's department or position is not allowed. Please check, Current Department / Possition  {user_department + ' ' + user_position}")
 
@@ -428,11 +467,11 @@ class App:
                     last_value = last_row[2]
 
                     label = f"""
-                    1. PRODUCTIVE HOURS: {self.calculate_total_productive_time()} HOURS
-                    2. AVAILABLE HOURS: {last_value} HOURS
-                    3. QUANTITY TO PROCESS: ' ' PCS
-                    4. TOTAL PROCESS: ' ' PCS
-                    5. TARGET TOTAL ' ' PCS
+                    PRODUCTIVE HOURS: {self.calculate_total_productive_time()} HOURS
+                    AVAILABLE HOURS: {last_value} HOURS
+                    QUANTITY TO PROCESS: ' ' PCS
+                    TOTAL PROCESS: ' ' PCS
+                    TARGET TOTAL ' ' PCS
                     """
                     self.GMessage_465 = tk.Message(root)
                     self.GMessage_465["bg"] = "#ffffff"
@@ -458,3 +497,5 @@ if __name__ == "__main__":
     root = tk.Tk()
     app = App(root)
     root.mainloop()
+
+    
