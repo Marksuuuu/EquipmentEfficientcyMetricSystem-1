@@ -166,8 +166,8 @@ class OperatorDashboard:
             show="headings",
             columns=(
                 "ROW NUMBER",
-                "DEVICES",
                 "CUSTOMER",
+                "DEVICES",
                 "MAIN OPERATION",
                 "PACKAGE",
                 "RUNNING QUANTITY",
@@ -175,8 +175,8 @@ class OperatorDashboard:
             ),
         )
         self.tree.heading("ROW NUMBER", text="ROW NUMBER")
-        self.tree.heading("DEVICES", text="DEVICES")
         self.tree.heading("CUSTOMER", text="CUSTOMER")
+        self.tree.heading("DEVICES", text="DEVICES")
         self.tree.heading("MAIN OPERATION", text="MAIN OPERATION")
         self.tree.heading("PACKAGE", text="PACKAGE")
         self.tree.heading("RUNNING QUANTITY", text="RUNNING QUANTITY")
