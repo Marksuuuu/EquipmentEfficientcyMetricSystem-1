@@ -195,6 +195,7 @@ class OperatorDashboard:
                 "", "end", iid=i, text=str(i), values=(i, customer,device,main_opt,package,running_qty,wip_entity_name)
             )
 
+
     def read_json_file(self):
         with open("data\main.json", "r") as json_file:
             data = json.load(json_file)
