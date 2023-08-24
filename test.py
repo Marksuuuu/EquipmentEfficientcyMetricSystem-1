@@ -1,40 +1,66 @@
-def show_input_dialog(self):
-        total_finished = simpledialog.askstring(
-            "Enter Total Number of finished",
-            "Please enter the total number of finish items",
-        )
+# def show_input_dialog(self):
+#     total_finished = simpledialog.askstring(
+#         "Enter Total Number of finished",
+#         "Please enter the total number of finish items",
+#     )
 
-        if total_finished is not None and total_finished.strip() != "":
-            total_finished = int(total_finished)
+#     if total_finished is not None and total_finished.strip() != "":
+#         total_finished = int(total_finished)
 
-            with open("data/mo_logs.json", "r") as logs_file:
-                logs_data = json.load(logs_file)
+#         with open("data/mo_logs.json", "r") as logs_file:
+#             logs_data = json.load(logs_file)
 
-            wip_entity_name = self.extracted_wip_entity_name  # Assuming you have this value available
+#         wip_entity_name = self.extracted_wip_entity_name  # Assuming you have this value available
 
-            found_entry = None
-            for entry in logs_data:
-                if entry["wip_entity_name"] == wip_entity_name:
-                    found_entry = entry
-                    break
+#         found_entry = None
+#         for entry in logs_data:
+#             if entry["wip_entity_name"] == wip_entity_name:
+#                 found_entry = entry
+#                 break
 
-            if found_entry:
-                found_entry["total_finished"] += total_finished
-            else:
-                new_entry = {
-                    "wip_entity_name": wip_entity_name,
-                    "running_qty": extracted_running_qty,
-                    "total_finished": total_finished
-                }
-                logs_data.append(new_entry)
+#         if found_entry:
+#             found_entry["total_finished"] += total_finished
+#         else:
+#             new_entry = {
+#                 "wip_entity_name": wip_entity_name,
+#                 "running_qty": extracted_running_qty,
+#                 "total_finished": total_finished
+#             }
+#             logs_data.append(new_entry)
 
-            with open("data/mo_logs.json", "w") as logs_file:
-                json.dump(logs_data, logs_file, indent=4)
+#         with open("data/mo_logs.json", "w") as logs_file:
+#             json.dump(logs_data, logs_file, indent=4)
 
-            self.start_btn["state"] = "normal"
-            self.log_event('START')
-            
-    # Other methods and code for your class
+#         self.start_btn["state"] = "normal"
+#         self.log_event('START')
+
+# from datetime import datetime
+
+# data = [
+#     "ONLINE,2023-08-23,17:14:43",
+#     "OFFLINE,2023-08-25,20:19:14"
+# ]
+
+# total_available_hours = 0
+
+# for i in range(0, len(data), 2):
+#     online_data = data[i].split(",")
+#     offline_data = data[i+1].split(",")
+
+#     online_datetime = datetime.strptime(online_data[1] + " " + online_data[2], "%Y-%m-%d %H:%M:%S")
+#     offline_datetime = datetime.strptime(offline_data[1] + " " + offline_data[2], "%Y-%m-%d %H:%M:%S")
+
+#     time_difference = offline_datetime - online_datetime
+#     total_available_hours += time_difference.total_seconds() / 3600
+
+# print("Total available hours:", total_available_hours)
+
+import csv
+from datetime import datetime
+
+
+
+getAvailableHours()
 
 
 
@@ -44,6 +70,11 @@ def show_input_dialog(self):
 
 
 
+
+
+
+
+# Other methods and code for your class
 
 
 # import json
@@ -52,7 +83,7 @@ def show_input_dialog(self):
 # def checking():
 #     hris_url = 'http://lams.teamglac.com/lams/api/job_order/active_jo.php'
 #     response = requests.get(hris_url)
-    
+
 #     if response.status_code == 200:
 #         data = response.json()  # Parse JSON response
 #         result = data['result']  # Access the 'result' key
@@ -62,8 +93,8 @@ def show_input_dialog(self):
 #                 res = x['MACH201_MACHNO']
 #                 break
 #         print(res)
-        
-        
+
+
 #         # if result:
 #         #     print('result: ', result)
 #         #     target_value = "DAD 3350-01"
@@ -94,7 +125,7 @@ def show_input_dialog(self):
 
 # for action, date_str, time_str in data:
 #     dt = datetime.strptime(date_str + " " + time_str, "%Y-%m-%d %H:%M:%S")
-    
+
 #     if action == "START":
 #         start_time = dt
 #     elif action == "STOP" and start_time is not None:
@@ -114,9 +145,6 @@ def show_input_dialog(self):
 # print("Total productive time:", total_productive_time)
 
 
-
-
-
 # import tkinter as tk
 # from PIL import Image, ImageTk
 # import requests
@@ -129,11 +157,11 @@ def show_input_dialog(self):
 #         # Fetch the image from a URL
 #         image_url = "http://hris.teamglac.com/employeeInformation/photos/EMP2932/JOHN_RAYMARK_M._LLAVANES.JPG"  # Replace with your image URL
 #         response = requests.get(image_url)
-        
+
 #         if response.status_code == 200:
 #             pil_image = Image.open(BytesIO(response.content))
 #             self.image = ImageTk.PhotoImage(pil_image)
-            
+
 #             # Create a label to display the image
 #             self.image_label = tk.Label(root, image=self.image)
 #             self.image_label.pack()
@@ -164,16 +192,16 @@ def show_input_dialog(self):
 #         alignstr = '%dx%d+%d+%d' % (width, height, (screenwidth - width) / 2, (screenheight - height) / 2)
 #         root.geometry(alignstr)
 #         root.resizable(width=False, height=False)
-        
+
 #         image_url = "http://hris.teamglac.com/employeeInformation/photos/EMP2932/JOHN_RAYMARK_M._LLAVANES.JPG"  # Replace with your image URL
 #         response = requests.get(image_url)
 #         pil_image = Image.open(BytesIO(response.content))
 #         desired_width = 83
 #         desired_height = 60
 #         pil_image = pil_image.resize((desired_width, desired_height), Image.ANTIALIAS)
-        
+
 #         self.image = ImageTk.PhotoImage(pil_image)
-        
+
 #         GLabel_937=tk.Label(root)
 #         GLabel_937["bg"] = "#ffffff"
 #         ft = tkFont.Font(family='Times',size=10)
@@ -191,22 +219,12 @@ def show_input_dialog(self):
 #         GLabel_831["justify"] = "center"
 #         GLabel_831["text"] = "label"
 #         GLabel_831.place(x=1100,y=0,width=83,height=60)
-        
-        
+
+
 # if __name__ == "__main__":
 #     root = tk.Tk()
 #     app = App(root)
 #     root.mainloop()
-
-
-
-
-
-
-
-
-
-
 
 
 # import os
@@ -290,7 +308,7 @@ def show_input_dialog(self):
 #     if matching_employee:
 #         user_department = matching_employee.get('employee_department')
 #         user_position = matching_employee.get('employee_position')
-        
+
 #         if user_department and user_position:
 #             if permissions.is_department_allowed(user_department) and permissions.is_position_allowed(user_position):
 #                 return "User's department and position are allowed."
@@ -305,4 +323,3 @@ def show_input_dialog(self):
 # employee_id = "003091"
 # result = check_employee_permissions(employee_id)
 # print(result)
-

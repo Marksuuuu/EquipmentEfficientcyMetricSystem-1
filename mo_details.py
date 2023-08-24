@@ -1,41 +1,38 @@
-import tkinter as tk
-from tkinter import ttk
-from PIL import Image, ImageTk
-import requests
-from io import BytesIO
-import tkinter.font as tkFont
-import os
 import csv
+import datetime
 import json
-from tkinter import Toplevel
+import os
+import tkinter as tk
+import tkinter.font as tkFont
+from io import BytesIO
 from tkinter import messagebox
 from tkinter import simpledialog
-from tkinter.messagebox import showinfo, showwarning, showerror
-import logging
-import datetime
+from tkinter.messagebox import showwarning
 
+import requests
+from PIL import Image, ImageTk
 
 
 class MO_Details:
-    def __init__(self,root,extracted_fullname,extracted_employee_no,extracted_photo_url,extracted_username,data):
-        #setting title
+    def __init__(self, root, extracted_fullname, extracted_employee_no, extracted_photo_url, extracted_username, data):
+        # setting title
         root.title("MO")
-        #setting window size
-        width=1264
-        height=675
+        # setting window size
+        width = 1264
+        height = 675
         screenwidth = root.winfo_screenwidth()
         screenheight = root.winfo_screenheight()
         alignstr = '%dx%d+%d+%d' % (width, height, (screenwidth - width) / 2, (screenheight - height) / 2)
         root.geometry(alignstr)
         root.resizable(width=False, height=False)
-        
+
         self.root = root
         self.extracted_employee_no = extracted_employee_no
         self.extracted_photo_url = extracted_photo_url
         self.extracted_username = extracted_username
         self.root.title("MO DETAILS")
         self.test_data = data
-        
+
         self.root.geometry(alignstr)
         self.root.resizable(width=False, height=False)
 
@@ -49,52 +46,50 @@ class MO_Details:
         desired_width = 83
         desired_height = 60
         pil_image = pil_image.resize((desired_width, desired_height), Image.ANTIALIAS)
-        
-        
+
         script_directory = os.path.dirname(os.path.abspath(__file__))
         self.log_folder = os.path.join(script_directory, "data")
         if not os.path.exists(self.log_folder):
             os.makedirs(self.log_folder)
         self.csv_file_path = os.path.join(self.log_folder, 'time.csv')
 
-
         self.image = ImageTk.PhotoImage(pil_image)
 
-        GLabel_932=tk.Label(root)
+        GLabel_932 = tk.Label(root)
         GLabel_932["bg"] = "#ffffff"
-        ft = tkFont.Font(family='Times',size=18)
+        ft = tkFont.Font(family='Times', size=18)
         GLabel_932["font"] = ft
         GLabel_932["fg"] = "#333333"
         GLabel_932["justify"] = "center"
         GLabel_932["text"] = f"Device : {data[2]}"
-        GLabel_932.place(x=20,y=180,width=526,height=97)
+        GLabel_932.place(x=20, y=180, width=526, height=97)
 
-        GLabel_771=tk.Label(root)
+        GLabel_771 = tk.Label(root)
         GLabel_771["bg"] = "#ffffff"
-        ft = tkFont.Font(family='Times',size=18)
+        ft = tkFont.Font(family='Times', size=18)
         GLabel_771["font"] = ft
         GLabel_771["fg"] = "#333333"
         GLabel_771["justify"] = "center"
         GLabel_771["text"] = f"Package : {data[4]}"
-        GLabel_771.place(x=20,y=300,width=526,height=97)
+        GLabel_771.place(x=20, y=300, width=526, height=97)
 
-        GLabel_146=tk.Label(root)
+        GLabel_146 = tk.Label(root)
         GLabel_146["bg"] = "#ffffff"
-        ft = tkFont.Font(family='Times',size=18)
+        ft = tkFont.Font(family='Times', size=18)
         GLabel_146["font"] = ft
         GLabel_146["fg"] = "#333333"
         GLabel_146["justify"] = "center"
         GLabel_146["text"] = f"Customer : {data[1]}"
-        GLabel_146.place(x=20,y=420,width=526,height=97)
+        GLabel_146.place(x=20, y=420, width=526, height=97)
 
-        GLabel_915=tk.Label(root)
+        GLabel_915 = tk.Label(root)
         GLabel_915["bg"] = "#ffffff"
-        ft = tkFont.Font(family='Times',size=18)
+        ft = tkFont.Font(family='Times', size=18)
         GLabel_915["font"] = ft
         GLabel_915["fg"] = "#333333"
         GLabel_915["justify"] = "center"
         GLabel_915["text"] = f"MO Quantity : {data[5]}"
-        GLabel_915.place(x=20,y=540,width=526,height=97)
+        GLabel_915.place(x=20, y=540, width=526, height=97)
 
         # lbl_remaining_qty=tk.Label(root)
         # lbl_remaining_qty["bg"] = "#ffffff"
@@ -105,63 +100,62 @@ class MO_Details:
         # lbl_remaining_qty["text"] = f"Remaining MO Quantity : {data[5]}"
         # lbl_remaining_qty.place(x=450,y=540,width=526,height=97)
 
-        GLabel_514=tk.Label(root)
-        ft = tkFont.Font(family='Times',size=24)
+        GLabel_514 = tk.Label(root)
+        ft = tkFont.Font(family='Times', size=24)
         GLabel_514["font"] = ft
         GLabel_514["fg"] = "#333333"
         GLabel_514["justify"] = "center"
         GLabel_514["text"] = extracted_fullname
-        GLabel_514.place(x=820,y=20,width=424,height=87)
+        GLabel_514.place(x=820, y=20, width=424, height=87)
 
-        GLabel_978=tk.Label(root, image=self.image)
-        ft = tkFont.Font(family='Times',size=10)
+        GLabel_978 = tk.Label(root, image=self.image)
+        ft = tkFont.Font(family='Times', size=10)
         GLabel_978["font"] = ft
         GLabel_978["fg"] = "#333333"
         GLabel_978["justify"] = "center"
         GLabel_978["text"] = "img"
-        GLabel_978.place(x=680,y=20,width=120,height=87)
+        GLabel_978.place(x=680, y=20, width=120, height=87)
 
-        self.start_btn=tk.Button(root)
+        self.start_btn = tk.Button(root)
         self.start_btn["bg"] = "#5fb878"
-        ft = tkFont.Font(family='Times',size=23)
+        ft = tkFont.Font(family='Times', size=23)
         self.start_btn["font"] = ft
         self.start_btn["fg"] = "#ffffff"
         self.start_btn["justify"] = "center"
         self.start_btn["text"] = "START"
-        self.start_btn.place(x=1000,y=540,width=245,height=97)
+        self.start_btn.place(x=1000, y=540, width=245, height=97)
         self.start_btn["command"] = self.start_command
 
-        self.stop_btn=tk.Button(root)
+        self.stop_btn = tk.Button(root)
         self.stop_btn["bg"] = "#cc0000"
-        ft = tkFont.Font(family='Times',size=23)
+        ft = tkFont.Font(family='Times', size=23)
         self.stop_btn["font"] = ft
         self.stop_btn["fg"] = "#f9f9f9"
         self.stop_btn["justify"] = "center"
         self.stop_btn["text"] = "STOP"
-        self.stop_btn.place(x=1000,y=430,width=245,height=97)
-        self.stop_btn["state"] = "disabled"  
+        self.stop_btn.place(x=1000, y=430, width=245, height=97)
+        self.stop_btn["state"] = "disabled"
         self.stop_btn["command"] = self.stop_command
 
-        GLabel_65=tk.Label(root)
+        GLabel_65 = tk.Label(root)
         GLabel_65["bg"] = "#ffffff"
         GLabel_65["borderwidth"] = "2px"
-        ft = tkFont.Font(family='Times',size=58)
+        ft = tkFont.Font(family='Times', size=58)
         GLabel_65["font"] = ft
         GLabel_65["fg"] = "#333333"
         GLabel_65["justify"] = "center"
-        GLabel_65["text"] =  data[6]
-        GLabel_65.place(x=20,y=20,width=526,height=87)
+        GLabel_65["text"] = data[6]
+        GLabel_65.place(x=20, y=20, width=526, height=87)
 
-        GLabel_566=tk.Label(root)
-        ft = tkFont.Font(family='Times',size=11)
+        GLabel_566 = tk.Label(root)
+        ft = tkFont.Font(family='Times', size=11)
         GLabel_566["font"] = ft
         GLabel_566["fg"] = "#333333"
         GLabel_566["justify"] = "center"
         GLabel_566["text"] = "PERSON ASSIGNED"
-        GLabel_566.place(x=820,y=80,width=424,height=30)
+        GLabel_566.place(x=820, y=80, width=424, height=30)
 
         root.protocol("WM_DELETE_WINDOW", self.on_close)
-
 
     def log_event(self, msg):
         current_time = datetime.datetime.now()
@@ -170,7 +164,7 @@ class MO_Details:
 
         with open(self.csv_file_path, mode='a', newline='') as csv_file:
             csv_writer = csv.writer(csv_file)
-            csv_writer.writerow([msg, date, time ])
+            csv_writer.writerow([msg, date, time])
 
     def start_command(self):
         self.checking()
@@ -209,8 +203,7 @@ class MO_Details:
         #         self.show_input_dialog()
         # else:
         #     pass
-            # self.start_btn["state"] = "normal
-
+        # self.start_btn["state"] = "normal
 
     def read_machno(self):
         with open("data\main.json", "r") as json_file:
@@ -218,7 +211,7 @@ class MO_Details:
             extracted_data = []
             extracted_machno = data["machno"]
         return extracted_machno
-    
+
     def checking(self):
         hris_url = "http://lams.teamglac.com/lams/api/job_order/active_jo.php"
         response = requests.get(hris_url)
@@ -259,7 +252,7 @@ class MO_Details:
                     wip_entity_name = item["wip_entity_name"]
 
                     extracted_data.append((customer, device, main_opt, package, running_qty, wip_entity_name))
-                    
+
                     extracted_running_qty = int(running_qty)
                     extracted_total_finished = item.get("total_finished", 0)  # Load existing total_finished
 
@@ -267,7 +260,7 @@ class MO_Details:
                         print("DONE")
                         self.start_btn["state"] = "disabled"
                         self.stop_btn["state"] = "disabled"
-  
+
                         # Save data in JSON
                         new_data = {
                             "wip_entity_name": wip_entity_name,
@@ -279,7 +272,7 @@ class MO_Details:
 
                         self.root.destroy()
                         os.system("python main.py")
-  
+
                     elif total_finished < extracted_running_qty:
                         remaining_qty = extracted_running_qty - total_finished
 
@@ -295,7 +288,7 @@ class MO_Details:
 
                         self.start_btn["state"] = "normal"
                         self.stop_btn["state"] = "disabled"
-  
+
                         # Save data in JSON
                         new_data = {
                             "wip_entity_name": wip_entity_name,
@@ -304,15 +297,16 @@ class MO_Details:
                         }
                         with open("data/mo_logs.json", "w") as json_output_file:
                             json.dump(new_data, json_output_file, indent=4)
-  
+
                         print('total_finished: ', total_finished)
                         print('extracted_running_qty: ', extracted_running_qty)
-  
-                    else:
-                        messagebox.showinfo(title="Warning", message="Input exceeded the set running Quantity: " + str(extracted_running_qty))
-                        print("Total finished is not greater than or equal to extracted running qty.")    
 
-                    # # # Check if total_finished is greater than or equal to extracted_running_qty
+                    else:
+                        messagebox.showinfo(title="Warning", message="Input exceeded the set running Quantity: " + str(
+                            extracted_running_qty))
+                        print("Total finished is not greater than or equal to extracted running qty.")
+
+                        # # # Check if total_finished is greater than or equal to extracted_running_qty
                     # if total_finished >= extracted_running_qty:
 
                     #     print('total_finished: ', total_finished)
@@ -359,7 +353,7 @@ class MO_Details:
         if messagebox.askokcancel("Quit", "Do you want to quit?"):
             self.root.destroy()
             os.system("python main.py")
-          
+
 
 if __name__ == "__main__":
     root = tk.Tk()

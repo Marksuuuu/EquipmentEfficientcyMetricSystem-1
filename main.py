@@ -1,26 +1,23 @@
-import requests
-import json
-import os
 import csv
-import socketio
-import uuid
-import re
+import json
 import logging
+import os
+import re
 import signal
 import tkinter as tk
 import tkinter.font as tkFont
-from tkinter import messagebox
-from tkinter import ttk
-from tkinter.messagebox import showinfo, showwarning, showerror
-from tkinter import simpledialog
-from ttkbootstrap.constants import *
-import ttkbootstrap as tb
+import uuid
 from datetime import datetime, timedelta
-
 from tkinter import Toplevel
+from tkinter import messagebox
+from tkinter.messagebox import showerror
+
+import requests
+import socketio
+from ttkbootstrap.constants import *
+
 from operator_dashboard import OperatorDashboard
 from technician_dashboard import TechnicianDashboard
-
 
 sio = socketio.Client(reconnection=True, reconnection_attempts=5,
                       reconnection_delay=1, reconnection_delay_max=5)
@@ -77,6 +74,7 @@ class UserPermissions:
     def is_operator(self, position):
         return position in self.operator
 
+
 class App:
     def __init__(self, root):
         root.title("LOG IN DASHBOARD")
@@ -86,12 +84,12 @@ class App:
         self.screenwidth = root.winfo_screenwidth()
         self.screenheight = root.winfo_screenheight()
         self.alignstr = '%dx%d+%d+%d' % (self.width, self.height, (self.screenwidth -
-                                         self.width) / 2, (self.screenheight - self.height) / 2)
+                                                                   self.width) / 2,
+                                         (self.screenheight - self.height) / 2)
         root.geometry(self.alignstr)
         root.resizable(width=False, height=False)
 
         root.protocol("WM_DELETE_WINDOW", self.handle_exit_signal)
-
 
         ## FUNCTIONS##
 
@@ -151,13 +149,12 @@ class App:
         self.init_logging()
 
         # End
-    
+
     def handle_exit_signal(self):
         self.log_activity(logging.INFO, f'Terminated the program')
         root.destroy()
         # self.quit()
 
-    
     def passLogDatatoServer(self):
         log_file = 'logs/activity_log.txt'
         try:
@@ -171,7 +168,7 @@ class App:
         except Exception as e:
             raise
         root.after(5000, self.update_logs)
-    
+
     def update_logs(self):
         log_file = 'logs/activity_log.txt'
         try:
@@ -179,7 +176,6 @@ class App:
                 log_content = file.read()
             lines = log_content.split('\n')
             last_5_logs = '\n'.join(lines[-6:])
- 
 
             self.logs = tk.Message(root)
             self.logs["bg"] = "#ffffff"
@@ -195,7 +191,6 @@ class App:
         except FileNotFoundError:
             self.logs["text"] = "Log file not found."
         root.after(5000, self.update_logs)
-
 
     def init_logging(self):
         log_file = 'logs/activity_log.txt'
@@ -353,7 +348,7 @@ class App:
                 self.show_operator_dashboard(
                     user_department, user_position, dataJson)
                 self.log_activity(logging.INFO, f'User login successful. ID NUM: {employee_number}')
-                
+
             else:
                 self.log_activity(logging.INFO, f'User login unsuccessful. ID NUM: {employee_number}')
 
@@ -397,12 +392,12 @@ class App:
                 result = log_content['allowed_users']
         except FileNotFoundError as e:
             print(e)
-            
+
     def calculate_total_productive_time(self):
         script_directory = os.path.dirname(os.path.abspath(__file__))
         log_folder = os.path.join(script_directory, "data")
         log_file_path = os.path.join(log_folder, 'time.csv')
-        
+
         data = []
         # Read data from CSV file
         with open(log_file_path, 'r') as csvfile:
@@ -415,7 +410,7 @@ class App:
 
         for action, date_str, time_str in data:
             dt = datetime.strptime(date_str + " " + time_str, "%Y-%m-%d %H:%M:%S")
-            
+
             if action == "START":
                 start_time = dt
             elif action == "STOP" and start_time is not None:
@@ -434,6 +429,41 @@ class App:
 
         return total_productive_time
     
+    def getAvailableHours(self):
+        data = []
+        with open('logs/logs.csv', 'r') as csvfile:
+            csvreader = csv.reader(csvfile)
+            for row in csvreader:
+                print(f"==>> row: {row}")
+                data.append(row)
+
+        total_available_seconds = 0
+        previous_event_time = None
+
+        for event in data:
+            event_type = event[0]
+            event_date = event[1]
+            event_time = event[2]
+            
+            event_datetime = datetime.strptime(event_date + " " + event_time, "%Y-%m-%d %H:%M:%S")
+            
+            if previous_event_time and event_type == "OFFLINE":
+                time_difference = event_datetime - previous_event_time
+                total_available_seconds += time_difference.total_seconds()
+            
+            previous_event_time = event_datetime
+
+        if not any(event[0].startswith("OFFLINE") for event in data):
+            current_datetime = datetime.now()
+            if previous_event_time:
+                time_difference = current_datetime - previous_event_time
+            else:
+                time_difference = current_datetime - datetime.strptime("2000-01-01 00:00:00", "%Y-%m-%d %H:%M:%S")
+            total_available_seconds += time_difference.total_seconds()
+
+        total_available_hours = total_available_seconds / 3600
+        print("Total available hours:", round(total_available_hours, 2))
+        return round(total_available_hours, 2)
 
     def update_status(self):
         script_directory = os.path.dirname(os.path.abspath(__file__))
@@ -479,11 +509,10 @@ class App:
                     last_row = row
                 if last_row:
                     # Get the first value from the last row
-                    last_value = last_row[2]
 
                     label = f"""
                     1. PRODUCTIVE HOURS: {self.calculate_total_productive_time()} HOURS
-                    2. AVAILABLE HOURS: {last_value} HOURS
+                    2. AVAILABLE HOURS: {self.getAvailableHours()} HOURS
                     3. QUANTITY TO PROCESS: ' ' PCS
                     4. TOTAL PROCESS: ' ' PCS
                     5. TARGET TOTAL ' ' PCS
@@ -506,7 +535,6 @@ class App:
 
 
 sio.connect('http://10.0.2.150:9090')
-
 
 if __name__ == "__main__":
     signal.signal(signal.SIGINT, signal.SIG_DFL)
