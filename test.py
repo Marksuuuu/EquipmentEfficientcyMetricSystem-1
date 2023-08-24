@@ -1,3 +1,61 @@
+import tkinter as tk
+import matplotlib.pyplot as plt
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from PIL import Image, ImageTk
+
+def create_donut_chart():
+    total = 100 - 17
+    data = [17, total]  # Example data
+    labels = ['Blue', 'Red']  # Example labels
+    colors = ['#3498db', '#e74c3c']  # Example colors
+    explode = (0.05, 0)  # "explode" the first slice for emphasis
+
+    figure = Figure(figsize=(5, 4), dpi=100)
+    plot = figure.add_subplot(1, 1, 1)
+    plot.pie(data, labels=labels, colors=colors, autopct='%1.1f%%', startangle=90, pctdistance=0.85, explode=explode)
+
+    centre_circle = plt.Circle((0,0),0.70,fc='white')
+    plot.add_artist(centre_circle)
+    
+    plot.axis('equal')
+
+    canvas = FigureCanvasTkAgg(figure, master=root)
+    canvas_widget = canvas.get_tk_widget()
+    
+    # Convert FigureCanvasTkAgg to a PIL Image
+    canvas.draw()  # Render the canvas
+    pil_image = Image.frombytes('RGB', canvas.get_width_height(), canvas.tostring_rgb())
+    
+    # Convert PIL Image to PhotoImage
+    img = ImageTk.PhotoImage(image=pil_image)
+    
+    # Clear the previous contents of the Label (if any) and add the new chart
+    chart_label.config(image=img)
+    chart_label.image = img  # Keep a reference to prevent it from being garbage collected
+
+root = tk.Tk()
+root.title("Donut Chart in Tkinter")
+
+chart_label = tk.Label(root)
+chart_label.pack()
+
+create_donut_chart_button = tk.Button(root, text="Create Donut Chart", command=create_donut_chart)
+create_donut_chart_button.pack()
+
+root.mainloop()
+
+
+
+
+
+
+
+
+
+
+
+
 # def show_input_dialog(self):
 #     total_finished = simpledialog.askstring(
 #         "Enter Total Number of finished",
@@ -55,12 +113,52 @@
 
 # print("Total available hours:", total_available_hours)
 
-import csv
-from datetime import datetime
+# import csv
+# from datetime import datetime
 
+# def format_time(seconds):
+#     hours = int(seconds // 3600)
+#     minutes = int((seconds % 3600) // 60)
+#     seconds = int(seconds % 60)
+#     return f"{hours:02d}:{minutes:02d}:{seconds:02d}"
 
+# def getAvailableHours():
+#     data = []
+#     with open('logs/logs.csv', 'r') as csvfile:
+#         csvreader = csv.reader(csvfile)
+#         for row in csvreader:
+#             data.append(row)
 
-getAvailableHours()
+#     total_available_seconds = 0
+#     previous_event_time = None
+
+#     for event in data:
+#         event_type = event[0]
+#         event_date = event[1]
+#         event_time = event[2]
+        
+#         event_datetime = datetime.strptime(event_date + " " + event_time, "%Y-%m-%d %H:%M:%S")
+        
+#         if previous_event_time and event_type == "OFFLINE":
+#             time_difference = event_datetime - previous_event_time
+#             total_available_seconds += time_difference.total_seconds()
+        
+#         previous_event_time = event_datetime
+
+#     if not any(event[0].startswith("OFFLINE") for event in data):
+#         current_datetime = datetime.now()
+#         if previous_event_time:
+#             time_difference = current_datetime - previous_event_time
+#         else:
+#             time_difference = current_datetime - datetime.strptime("2000-01-01 00:00:00", "%Y-%m-%d %H:%M:%S")
+#         total_available_seconds += time_difference.total_seconds()
+
+#     formatted_time = format_time(total_available_seconds)
+#     return formatted_time
+
+# total_available_time = getAvailableHours()
+# print("Total available time:", total_available_time)
+
 
 
 

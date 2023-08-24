@@ -11,6 +11,10 @@ from datetime import datetime, timedelta
 from tkinter import Toplevel
 from tkinter import messagebox
 from tkinter.messagebox import showerror
+import matplotlib.pyplot as plt
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from PIL import Image, ImageTk
 
 import requests
 import socketio
@@ -91,12 +95,16 @@ class App:
 
         root.protocol("WM_DELETE_WINDOW", self.handle_exit_signal)
 
-        ## FUNCTIONS##
+        # Functions
+
+        self.update_status()
+        self.oee()
+        self.init_logging()
+        self.chart_image = self.create_donut_chart()
+        # End
 
         ## END##
         dateNow = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        # signal.signal(signal.SIGTERM, self.handle_exit_signal)
-        # signal.signal(signal.SIGINT, self.handle_exit_signal)
 
         self.entry_employee_number = tk.Entry(root)
         self.entry_employee_number["bg"] = "#ffffff"
@@ -118,14 +126,14 @@ class App:
         self.GMessage_33["text"] = "LOGS"
         self.GMessage_33.place(x=680, y=160, width=666, height=717)
 
-        self.GLabel_544 = tk.Label(root)
+        self.GLabel_544 = tk.Label(root, image=self.chart_image)
         self.GLabel_544["bg"] = "#ffffff"
-        self.ft = tkFont.Font(family='Times', size=10)
+        self.ft = tk.font.Font(family='Times', size=10)
         self.GLabel_544["font"] = self.ft
         self.GLabel_544["fg"] = "#333333"
         self.GLabel_544["justify"] = "center"
         self.GLabel_544["text"] = "label"
-        self.GLabel_544.place(x=20, y=160, width=298, height=339)
+        self.GLabel_544.place(x=20, y=160, width=300, height=339)
 
         self.GLabel_111 = tk.Label(root)
         self.GLabel_111["bg"] = "#ffffff"
@@ -141,14 +149,6 @@ class App:
         self.update_logs()
 
         self.log_activity(logging.INFO, f'Open Program')
-
-        # Functions
-
-        self.update_status()
-        self.oee()
-        self.init_logging()
-
-        # End
 
     def handle_exit_signal(self):
         self.log_activity(logging.INFO, f'Terminated the program')
@@ -186,7 +186,6 @@ class App:
             self.logs["text"] = last_5_logs
             self.logs['width'] = 700
             self.logs.place(x=680, y=160, width=666, height=717)
-
 
         except FileNotFoundError:
             self.logs["text"] = "Log file not found."
@@ -347,16 +346,19 @@ class App:
                 print(f"{user_position} is an operator.")
                 self.show_operator_dashboard(
                     user_department, user_position, dataJson)
-                self.log_activity(logging.INFO, f'User login successful. ID NUM: {employee_number}')
+                self.log_activity(
+                    logging.INFO, f'User login successful. ID NUM: {employee_number}')
 
             else:
-                self.log_activity(logging.INFO, f'User login unsuccessful. ID NUM: {employee_number}')
+                self.log_activity(
+                    logging.INFO, f'User login unsuccessful. ID NUM: {employee_number}')
 
                 showerror(title='Login Failed',
                           message=f"User's department or position is not allowed. Please check, Current Department / Possition  {user_department + ' ' + user_position}")
 
         else:
-            self.log_activity(logging.INFO, f'User login unsuccessful. ID NUM: {employee_number}')
+            self.log_activity(
+                logging.INFO, f'User login unsuccessful. ID NUM: {employee_number}')
             showerror(title='Login Failed',
                       message=f"User's department or position is not allowed. Please check, Current Department / Possition  {user_department + ' ' + user_position}")
 
@@ -409,7 +411,8 @@ class App:
         start_time = None
 
         for action, date_str, time_str in data:
-            dt = datetime.strptime(date_str + " " + time_str, "%Y-%m-%d %H:%M:%S")
+            dt = datetime.strptime(
+                date_str + " " + time_str, "%Y-%m-%d %H:%M:%S")
 
             if action == "START":
                 start_time = dt
@@ -428,13 +431,67 @@ class App:
             total_productive_time += productive_time
 
         return total_productive_time
-    
+
+    def create_donut_chart(self):
+        total = 100 - self.calculateOee()
+        print(self.calculateOee())
+        data = [self.calculateOee(), total]
+        labels = ['Effectiveness', '']
+        colors = ['#3498db', '#e74c3c']
+        explode = (0.05, 0)
+
+        figure = Figure(figsize=(5, 4), dpi=100)
+        plot = figure.add_subplot(1, 1, 1)
+        plot.pie(data, labels=labels, colors=colors, autopct='%1.1f%%',
+                 startangle=90, pctdistance=0.85, explode=explode)
+
+        centre_circle = plt.Circle((0, 0), 0.70, fc='white')
+        plot.add_artist(centre_circle)
+
+        plot.axis('equal')
+
+        canvas = FigureCanvasTkAgg(figure, master=root)
+        canvas_widget = canvas.get_tk_widget()
+
+        canvas.draw()
+        pil_image = Image.frombytes(
+            'RGB', canvas.get_width_height(), canvas.tostring_rgb())
+        img = ImageTk.PhotoImage(image=pil_image)
+        return img
+
+    def calculateOee(self):
+        availableHrs_str = self.getAvailableHours()
+        availableHrs_parts = availableHrs_str.split(':')
+        available_hours = int(availableHrs_parts[0])
+        available_minutes = int(availableHrs_parts[1])
+        available_seconds = int(availableHrs_parts[2])
+
+        availableHrs = available_hours + \
+            (available_minutes / 60) + (available_seconds / 3600)
+        print(f"==>> availableHrs: {availableHrs}")
+
+        productiveHrs = self.calculate_total_productive_time().total_seconds() / \
+            3600  # Convert timedelta to hours
+        print(f"==>> productiveHrs: {productiveHrs}")
+
+        if availableHrs > 0:  # Make sure availableHrs is greater than 0 to avoid division by zero
+            oee_percentage = (productiveHrs / availableHrs) * 100
+            print(round(oee_percentage, 5))
+            return round(oee_percentage, 5)
+        else:
+            return 0
+
+    def format_time(self, seconds):
+        hours = int(seconds // 3600)
+        minutes = int((seconds % 3600) // 60)
+        seconds = int(seconds % 60)
+        return f"{hours:02d}:{minutes:02d}:{seconds:02d}"
+
     def getAvailableHours(self):
         data = []
         with open('logs/logs.csv', 'r') as csvfile:
             csvreader = csv.reader(csvfile)
             for row in csvreader:
-                print(f"==>> row: {row}")
                 data.append(row)
 
         total_available_seconds = 0
@@ -444,13 +501,14 @@ class App:
             event_type = event[0]
             event_date = event[1]
             event_time = event[2]
-            
-            event_datetime = datetime.strptime(event_date + " " + event_time, "%Y-%m-%d %H:%M:%S")
-            
+
+            event_datetime = datetime.strptime(
+                event_date + " " + event_time, "%Y-%m-%d %H:%M:%S")
+
             if previous_event_time and event_type == "OFFLINE":
                 time_difference = event_datetime - previous_event_time
                 total_available_seconds += time_difference.total_seconds()
-            
+
             previous_event_time = event_datetime
 
         if not any(event[0].startswith("OFFLINE") for event in data):
@@ -458,12 +516,13 @@ class App:
             if previous_event_time:
                 time_difference = current_datetime - previous_event_time
             else:
-                time_difference = current_datetime - datetime.strptime("2000-01-01 00:00:00", "%Y-%m-%d %H:%M:%S")
+                time_difference = current_datetime - \
+                    datetime.strptime("2000-01-01 00:00:00",
+                                      "%Y-%m-%d %H:%M:%S")
             total_available_seconds += time_difference.total_seconds()
 
-        total_available_hours = total_available_seconds / 3600
-        print("Total available hours:", round(total_available_hours, 2))
-        return round(total_available_hours, 2)
+        formatted_time = self.format_time(total_available_seconds)
+        return formatted_time
 
     def update_status(self):
         script_directory = os.path.dirname(os.path.abspath(__file__))
