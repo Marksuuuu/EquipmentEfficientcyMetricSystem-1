@@ -133,7 +133,7 @@ class App:
         self.GLabel_544["fg"] = "#333333"
         self.GLabel_544["justify"] = "center"
         self.GLabel_544["text"] = "label"
-        self.GLabel_544.place(x=20, y=160, width=300, height=339)
+        self.GLabel_544.place(x=20, y=160, width=298, height=339)
 
         self.GLabel_111 = tk.Label(root)
         self.GLabel_111["bg"] = "#ffffff"
@@ -447,6 +447,9 @@ class App:
 
         centre_circle = plt.Circle((0, 0), 0.70, fc='white')
         plot.add_artist(centre_circle)
+        
+        center_text = 'OEE'
+        plot.text(0, 0, center_text, va='center', ha='center', fontsize=12)
 
         plot.axis('equal')
 
