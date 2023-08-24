@@ -1,19 +1,18 @@
-import json
-import os
 import tkinter as tk
-import tkinter.font as tkFont
+from tkinter import ttk
+from PIL import Image, ImageTk
+import requests
 from io import BytesIO
+import tkinter.font as tkFont
+import os
+import csv
+import json
 from tkinter import Toplevel
+from request_ticket import RequestTicket
+from mo_details import MO_Details
 from tkinter import messagebox
 from tkinter import simpledialog
-from tkinter import ttk
-from tkinter.messagebox import showinfo, showerror
-
-import requests
-from PIL import Image, ImageTk
-
-from mo_details import MO_Details
-from request_ticket import RequestTicket
+from tkinter.messagebox import showinfo, showwarning, showerror
 
 
 class UserPermissions:
@@ -191,11 +190,11 @@ class OperatorDashboard:
     def populate_table(self):
         data = self.read_json_file()
 
-        for i, (customer, device, main_opt, package, running_qty, wip_entity_name) in enumerate(data, start=1):
+        for i, (customer,device,main_opt,package,running_qty,wip_entity_name) in enumerate(data, start=1):
             self.tree.insert(
-                "", "end", iid=i, text=str(i),
-                values=(i, customer, device, main_opt, package, running_qty, wip_entity_name)
+                "", "end", iid=i, text=str(i), values=(i, customer,device,main_opt,package,running_qty,wip_entity_name)
             )
+
 
     def read_json_file(self):
         with open("data\main.json", "r") as json_file:
@@ -209,10 +208,10 @@ class OperatorDashboard:
                 package = item["package"]
                 running_qty = item["running_qty"]
                 wip_entity_name = item["wip_entity_name"]
-                extracted_data.append((customer, device, main_opt, package, running_qty, wip_entity_name))
+                extracted_data.append((customer,device,main_opt,package,running_qty,wip_entity_name))
 
         return extracted_data
-
+        
     def show_popup_view(self, event):
         selected_item = self.tree.selection()
 
@@ -312,13 +311,11 @@ class OperatorDashboard:
         # Update the values of the Treeview rows
         self.tree.item(
             selected_item,
-            values=(
-            selected_id, first_data[1], first_data[2], first_data[3], first_data[4], first_data[5], first_data[6]),
+            values=(selected_id, first_data[1], first_data[2], first_data[3], first_data[4], first_data[5], first_data[6]),
         )
         self.tree.item(
             first_id,
-            values=(first_id, selected_data[1], selected_data[2], selected_data[3], selected_data[4], selected_data[5],
-                    selected_data[6]),
+            values=(first_id, selected_data[1], selected_data[2], selected_data[3], selected_data[4], selected_data[5], selected_data[6]),
         )
 
         # Show a success message
@@ -344,8 +341,7 @@ class OperatorDashboard:
 
     def show_mo_details(self, data):
         self.details_window = Toplevel(self.root)
-        show_mo_details_window = MO_Details(self.details_window, self.extracted_fullname, self.extracted_employee_no,
-                                            self.extracted_photo_url, self.extracted_username, data)
+        show_mo_details_window = MO_Details(self.details_window,  self.extracted_fullname, self.extracted_employee_no, self.extracted_photo_url, self.extracted_username, data)
 
     def logout(self):
         response = messagebox.askyesno("Logout", "Are you sure you want to logout?")

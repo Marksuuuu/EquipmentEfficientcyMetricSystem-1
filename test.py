@@ -1,49 +1,40 @@
-import tkinter as tk
-import matplotlib.pyplot as plt
-from matplotlib.figure import Figure
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-from PIL import Image, ImageTk
+def show_input_dialog(self):
+        total_finished = simpledialog.askstring(
+            "Enter Total Number of finished",
+            "Please enter the total number of finish items",
+        )
 
-def create_donut_chart():
-    total = 100 - 17
-    data = [17, total]  # Example data
-    labels = ['Blue', 'Red']  # Example labels
-    colors = ['#3498db', '#e74c3c']  # Example colors
-    explode = (0.05, 0)  # "explode" the first slice for emphasis
+        if total_finished is not None and total_finished.strip() != "":
+            total_finished = int(total_finished)
 
-    figure = Figure(figsize=(5, 4), dpi=100)
-    plot = figure.add_subplot(1, 1, 1)
-    plot.pie(data, labels=labels, colors=colors, autopct='%1.1f%%', startangle=90, pctdistance=0.85, explode=explode)
+            with open("data/mo_logs.json", "r") as logs_file:
+                logs_data = json.load(logs_file)
 
-    centre_circle = plt.Circle((0,0),0.70,fc='white')
-    plot.add_artist(centre_circle)
-    
-    plot.axis('equal')
+            wip_entity_name = self.extracted_wip_entity_name  # Assuming you have this value available
 
-    canvas = FigureCanvasTkAgg(figure, master=root)
-    canvas_widget = canvas.get_tk_widget()
-    
-    # Convert FigureCanvasTkAgg to a PIL Image
-    canvas.draw()  # Render the canvas
-    pil_image = Image.frombytes('RGB', canvas.get_width_height(), canvas.tostring_rgb())
-    
-    # Convert PIL Image to PhotoImage
-    img = ImageTk.PhotoImage(image=pil_image)
-    
-    # Clear the previous contents of the Label (if any) and add the new chart
-    chart_label.config(image=img)
-    chart_label.image = img  # Keep a reference to prevent it from being garbage collected
+            found_entry = None
+            for entry in logs_data:
+                if entry["wip_entity_name"] == wip_entity_name:
+                    found_entry = entry
+                    break
 
-root = tk.Tk()
-root.title("Donut Chart in Tkinter")
+            if found_entry:
+                found_entry["total_finished"] += total_finished
+            else:
+                new_entry = {
+                    "wip_entity_name": wip_entity_name,
+                    "running_qty": extracted_running_qty,
+                    "total_finished": total_finished
+                }
+                logs_data.append(new_entry)
 
-chart_label = tk.Label(root)
-chart_label.pack()
+            with open("data/mo_logs.json", "w") as logs_file:
+                json.dump(logs_data, logs_file, indent=4)
 
-create_donut_chart_button = tk.Button(root, text="Create Donut Chart", command=create_donut_chart)
-create_donut_chart_button.pack()
-
-root.mainloop()
+            self.start_btn["state"] = "normal"
+            self.log_event('START')
+            
+    # Other methods and code for your class
 
 
 
@@ -53,126 +44,6 @@ root.mainloop()
 
 
 
-
-
-
-# def show_input_dialog(self):
-#     total_finished = simpledialog.askstring(
-#         "Enter Total Number of finished",
-#         "Please enter the total number of finish items",
-#     )
-
-#     if total_finished is not None and total_finished.strip() != "":
-#         total_finished = int(total_finished)
-
-#         with open("data/mo_logs.json", "r") as logs_file:
-#             logs_data = json.load(logs_file)
-
-#         wip_entity_name = self.extracted_wip_entity_name  # Assuming you have this value available
-
-#         found_entry = None
-#         for entry in logs_data:
-#             if entry["wip_entity_name"] == wip_entity_name:
-#                 found_entry = entry
-#                 break
-
-#         if found_entry:
-#             found_entry["total_finished"] += total_finished
-#         else:
-#             new_entry = {
-#                 "wip_entity_name": wip_entity_name,
-#                 "running_qty": extracted_running_qty,
-#                 "total_finished": total_finished
-#             }
-#             logs_data.append(new_entry)
-
-#         with open("data/mo_logs.json", "w") as logs_file:
-#             json.dump(logs_data, logs_file, indent=4)
-
-#         self.start_btn["state"] = "normal"
-#         self.log_event('START')
-
-# from datetime import datetime
-
-# data = [
-#     "ONLINE,2023-08-23,17:14:43",
-#     "OFFLINE,2023-08-25,20:19:14"
-# ]
-
-# total_available_hours = 0
-
-# for i in range(0, len(data), 2):
-#     online_data = data[i].split(",")
-#     offline_data = data[i+1].split(",")
-
-#     online_datetime = datetime.strptime(online_data[1] + " " + online_data[2], "%Y-%m-%d %H:%M:%S")
-#     offline_datetime = datetime.strptime(offline_data[1] + " " + offline_data[2], "%Y-%m-%d %H:%M:%S")
-
-#     time_difference = offline_datetime - online_datetime
-#     total_available_hours += time_difference.total_seconds() / 3600
-
-# print("Total available hours:", total_available_hours)
-
-# import csv
-# from datetime import datetime
-
-# def format_time(seconds):
-#     hours = int(seconds // 3600)
-#     minutes = int((seconds % 3600) // 60)
-#     seconds = int(seconds % 60)
-#     return f"{hours:02d}:{minutes:02d}:{seconds:02d}"
-
-# def getAvailableHours():
-#     data = []
-#     with open('logs/logs.csv', 'r') as csvfile:
-#         csvreader = csv.reader(csvfile)
-#         for row in csvreader:
-#             data.append(row)
-
-#     total_available_seconds = 0
-#     previous_event_time = None
-
-#     for event in data:
-#         event_type = event[0]
-#         event_date = event[1]
-#         event_time = event[2]
-        
-#         event_datetime = datetime.strptime(event_date + " " + event_time, "%Y-%m-%d %H:%M:%S")
-        
-#         if previous_event_time and event_type == "OFFLINE":
-#             time_difference = event_datetime - previous_event_time
-#             total_available_seconds += time_difference.total_seconds()
-        
-#         previous_event_time = event_datetime
-
-#     if not any(event[0].startswith("OFFLINE") for event in data):
-#         current_datetime = datetime.now()
-#         if previous_event_time:
-#             time_difference = current_datetime - previous_event_time
-#         else:
-#             time_difference = current_datetime - datetime.strptime("2000-01-01 00:00:00", "%Y-%m-%d %H:%M:%S")
-#         total_available_seconds += time_difference.total_seconds()
-
-#     formatted_time = format_time(total_available_seconds)
-#     return formatted_time
-
-# total_available_time = getAvailableHours()
-# print("Total available time:", total_available_time)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# Other methods and code for your class
 
 
 # import json
@@ -181,7 +52,7 @@ root.mainloop()
 # def checking():
 #     hris_url = 'http://lams.teamglac.com/lams/api/job_order/active_jo.php'
 #     response = requests.get(hris_url)
-
+    
 #     if response.status_code == 200:
 #         data = response.json()  # Parse JSON response
 #         result = data['result']  # Access the 'result' key
@@ -191,8 +62,8 @@ root.mainloop()
 #                 res = x['MACH201_MACHNO']
 #                 break
 #         print(res)
-
-
+        
+        
 #         # if result:
 #         #     print('result: ', result)
 #         #     target_value = "DAD 3350-01"
@@ -223,7 +94,7 @@ root.mainloop()
 
 # for action, date_str, time_str in data:
 #     dt = datetime.strptime(date_str + " " + time_str, "%Y-%m-%d %H:%M:%S")
-
+    
 #     if action == "START":
 #         start_time = dt
 #     elif action == "STOP" and start_time is not None:
@@ -243,6 +114,9 @@ root.mainloop()
 # print("Total productive time:", total_productive_time)
 
 
+
+
+
 # import tkinter as tk
 # from PIL import Image, ImageTk
 # import requests
@@ -255,11 +129,11 @@ root.mainloop()
 #         # Fetch the image from a URL
 #         image_url = "http://hris.teamglac.com/employeeInformation/photos/EMP2932/JOHN_RAYMARK_M._LLAVANES.JPG"  # Replace with your image URL
 #         response = requests.get(image_url)
-
+        
 #         if response.status_code == 200:
 #             pil_image = Image.open(BytesIO(response.content))
 #             self.image = ImageTk.PhotoImage(pil_image)
-
+            
 #             # Create a label to display the image
 #             self.image_label = tk.Label(root, image=self.image)
 #             self.image_label.pack()
@@ -290,16 +164,16 @@ root.mainloop()
 #         alignstr = '%dx%d+%d+%d' % (width, height, (screenwidth - width) / 2, (screenheight - height) / 2)
 #         root.geometry(alignstr)
 #         root.resizable(width=False, height=False)
-
+        
 #         image_url = "http://hris.teamglac.com/employeeInformation/photos/EMP2932/JOHN_RAYMARK_M._LLAVANES.JPG"  # Replace with your image URL
 #         response = requests.get(image_url)
 #         pil_image = Image.open(BytesIO(response.content))
 #         desired_width = 83
 #         desired_height = 60
 #         pil_image = pil_image.resize((desired_width, desired_height), Image.ANTIALIAS)
-
+        
 #         self.image = ImageTk.PhotoImage(pil_image)
-
+        
 #         GLabel_937=tk.Label(root)
 #         GLabel_937["bg"] = "#ffffff"
 #         ft = tkFont.Font(family='Times',size=10)
@@ -317,12 +191,22 @@ root.mainloop()
 #         GLabel_831["justify"] = "center"
 #         GLabel_831["text"] = "label"
 #         GLabel_831.place(x=1100,y=0,width=83,height=60)
-
-
+        
+        
 # if __name__ == "__main__":
 #     root = tk.Tk()
 #     app = App(root)
 #     root.mainloop()
+
+
+
+
+
+
+
+
+
+
 
 
 # import os
@@ -406,7 +290,7 @@ root.mainloop()
 #     if matching_employee:
 #         user_department = matching_employee.get('employee_department')
 #         user_position = matching_employee.get('employee_position')
-
+        
 #         if user_department and user_position:
 #             if permissions.is_department_allowed(user_department) and permissions.is_position_allowed(user_position):
 #                 return "User's department and position are allowed."
@@ -421,3 +305,4 @@ root.mainloop()
 # employee_id = "003091"
 # result = check_employee_permissions(employee_id)
 # print(result)
+

@@ -1,12 +1,10 @@
-import signal
 import tkinter as tk
-
+import signal
 
 def on_closing():
     print("Tkinter window is closing...")
     # Add your code here for actions to be performed before exiting
     root.destroy()  # Close the Tkinter window
-
 
 def main():
     global root
@@ -20,7 +18,6 @@ def main():
     label.pack(padx=20, pady=20)
 
     root.mainloop()
-
 
 if __name__ == "__main__":
     # Set up a signal handler to catch SIGINT (Ctrl+C)

@@ -1,12 +1,16 @@
-import json
-import os
+import tkinter as tk
+from tkinter import ttk
+from tkinter import messagebox
+from PIL import Image, ImageTk
+import requests
+from io import BytesIO
 import tkinter as tk
 import tkinter.font as tkFont
-from io import BytesIO
-from tkinter import messagebox
-
-import requests
-from PIL import Image, ImageTk
+import os
+import csv
+from tkinter import Toplevel
+from tkinter.messagebox import showwarning , showinfo
+import json
 
 
 class CSVMonitor:
@@ -51,8 +55,8 @@ class TechnicianDashboard:
         extracted_possition = data[5]
         self.root = root
         self.checking()
-        self.ticket = ''
-        self.ticket_status = ''
+        self.machno_result = "N/A"
+        self.machno_result_status = "N/A"
         root.title(
             f"TECHNICIAN DASHBOARD - {extracted_employee_no} -- POSSITION - {extracted_possition}")
 
@@ -106,7 +110,7 @@ class TechnicianDashboard:
         self.ticket_show["font"] = ft
         self.ticket_show["fg"] = "#333333"
         self.ticket_show['width'] = 600
-        self.ticket_show["text"] = f"Ticket: {self.ticket} : Status {self.ticket_status}"
+        self.ticket_show["text"] = f"Ticket: {self.machno_result} : Status {self.machno_result_status}"
         self.ticket_show["justify"] = "left"
         self.ticket_show.place(x=20, y=320, width=800, height=547)
 
@@ -155,26 +159,27 @@ class TechnicianDashboard:
                     break
             if res == 1:
 
-                self.machno_string = ", ".join(machno_alerts)
-                self.machno_string_status = ", ".join(machno_status)
-                print(
-                    f"==>> machno_string_status: {self.machno_string_status}")
-                print(f"==>> machno_string: {self.machno_string}")
-                if self.machno_status == False or self.machno_status is None and self.machno_alerts == False or self.machno_alerts is None:
-                    self.ticket = ''
-                    self.ticket_status = ''
-                else:
-                    self.ticket = self.machno_string
-                    self.ticket_status = self.machno_string_status
+                machno_string = ", ".join(machno_alerts)
 
+                machno_string_status = ", ".join(machno_status)
+                print(f"==>> machno_string_status: {machno_string_status}")
+                print(f"==>> machno_string: {machno_string}")
+                if self.machno_result == False or self.machno_result is None and self.machno_result_status == False or self.machno_result_status is None :
+                    self.machno_result = 'N/A'
+                    self.machno_result_status = 'N/A'
+                else:
+                    self.machno_result = machno_string
+                    print(f"==>> machno_result: {machno_result}")
+                    self.machno_result_status = machno_string_status
+                    print(f"==>> machno_result_status: {machno_result_status}")
+                
         self.root.after(15000, self.checking)
 
     def GButton_19_command(self):
         print("command")
-
+    
     def logout(self):
-        response = messagebox.askyesno(
-            "Logout", "Are you sure you want to logout?")
+        response = messagebox.askyesno("Logout", "Are you sure you want to logout?")
         if response:
             self.root.destroy()  # Close the current root window
             os.system("python main.py")  # Start the login.py file

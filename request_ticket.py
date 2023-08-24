@@ -1,13 +1,18 @@
-import json
-import os
+import tkinter as tk
+from tkinter import ttk
+from PIL import Image, ImageTk
+import requests
+from io import BytesIO
 import tkinter as tk
 import tkinter.font as tkFont
-from datetime import date
+import os
+import csv
+import json
+from tkinter import Toplevel
 from datetime import datetime
-from tkinter import ttk
-from tkinter.messagebox import showinfo, showerror
-
-import requests
+from datetime import date
+from tkinter import BooleanVar
+from tkinter.messagebox import showinfo, showwarning, showerror
 
 
 class RequestTicket:
@@ -325,6 +330,7 @@ class RequestTicket:
             print(value_url['dtno'])
         else:
             showerror("Error", "Error in creating job order.")
+
 
     def submit(self):
         print("Submit")
