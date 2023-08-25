@@ -45,7 +45,7 @@ class MO_Details:
         self.extracted_employee_no = extracted_employee_no
         self.extracted_photo_url = extracted_photo_url
         self.extracted_username = extracted_username
-        self.root.title("MO DETAILS")
+        self.root.title ("MO DETAILS")
         self.test_data = data
 
         self.customer = data[1]
@@ -80,12 +80,21 @@ class MO_Details:
 
         self.image = ImageTk.PhotoImage(pil_image)
 
+
+        GLabel_841=tk.Label(root)
+        ft = tkFont.Font(family='Times',size=18)
+        GLabel_841["font"] = ft
+        GLabel_841["fg"] = "#333333"
+        GLabel_841["justify"] = "center"
+        GLabel_841["text"] = self.main_opt
+        GLabel_841.place(x=20,y=110,width=526,height=63)
+
         GLabel_932 = tk.Label(root)
         GLabel_932["bg"] = "#ffffff"
         ft = tkFont.Font(family="Times", size=18)
         GLabel_932["font"] = ft
         GLabel_932["fg"] = "#333333"
-        GLabel_932["justify"] = "center"
+        GLabel_932["justify"] = "left"
         GLabel_932["text"] = f"Device : {data[2]}"
         GLabel_932.place(x=20, y=180, width=526, height=97)
 
@@ -94,7 +103,7 @@ class MO_Details:
         ft = tkFont.Font(family="Times", size=18)
         GLabel_771["font"] = ft
         GLabel_771["fg"] = "#333333"
-        GLabel_771["justify"] = "center"
+        GLabel_771["justify"] = "left"
         GLabel_771["text"] = f"Package : {data[4]}"
         GLabel_771.place(x=20, y=300, width=526, height=97)
 
@@ -103,16 +112,16 @@ class MO_Details:
         ft = tkFont.Font(family="Times", size=18)
         GLabel_146["font"] = ft
         GLabel_146["fg"] = "#333333"
-        GLabel_146["justify"] = "center"
+        GLabel_146["justify"] = "left"
         GLabel_146["text"] = f"Customer : {data[1]}"
         GLabel_146.place(x=20, y=420, width=526, height=97)
 
         GLabel_915 = tk.Label(root)
-        GLabel_915["bg"] = "#ffffff"
+        # GLabel_915["bg"] = "#89d35f"
+        GLabel_915["fg"] = "#333333"
         ft = tkFont.Font(family="Times", size=18)
         GLabel_915["font"] = ft
-        GLabel_915["fg"] = "#333333"
-        GLabel_915["justify"] = "center"
+        GLabel_915["justify"] = "left"
         GLabel_915["text"] = f"MO Quantity : {data[5]}"
         GLabel_915.place(x=20, y=540, width=526, height=97)
 
@@ -121,7 +130,7 @@ class MO_Details:
         # ft = tkFont.Font(family='Times',size=18)
         # lbl_remaining_qty["font"] = ft
         # lbl_remaining_qty["fg"] = "#333333"
-        # lbl_remaining_qty["justify"] = "center"
+        # lbl_remaining_qty["justify"] = "left"
         # lbl_remaining_qty["text"] = f"Remaining MO Quantity : {data[5]}"
         # lbl_remaining_qty.place(x=450,y=540,width=526,height=97)
 
@@ -129,7 +138,7 @@ class MO_Details:
         ft = tkFont.Font(family="Times", size=24)
         GLabel_514["font"] = ft
         GLabel_514["fg"] = "#333333"
-        GLabel_514["justify"] = "center"
+        GLabel_514["justify"] = "left"
         GLabel_514["text"] = extracted_fullname
         GLabel_514.place(x=820, y=20, width=424, height=87)
 
@@ -137,7 +146,7 @@ class MO_Details:
         ft = tkFont.Font(family="Times", size=10)
         GLabel_978["font"] = ft
         GLabel_978["fg"] = "#333333"
-        GLabel_978["justify"] = "center"
+        GLabel_978["justify"] = "left"
         GLabel_978["text"] = "img"
         GLabel_978.place(x=680, y=20, width=120, height=87)
 
@@ -192,7 +201,7 @@ class MO_Details:
         self.check_total_finished()
         self.get_remaining_qty_from_logs()
 
-        # root.protocol("WM_DELETE_WINDOW", self.on_close)
+        root.protocol("WM_DELETE_WINDOW", self.on_close)
 
     def get_remaining_qty_from_logs(self):
         self.lbl_remaining_qty["text"] = f"Remaining MO Quantity: "
@@ -246,35 +255,35 @@ class MO_Details:
 
     def stop_command(self):
         print("STOP button clicked")
-        self.start_btn["state"] = "normal"  # Enable the START button
-        self.stop_btn["state"] = "disabled"  # Disable the STOP button
-        # hris_password = simpledialog.askstring(
-        #     "Password",
-        #     "Enter Password", show='*'
-        # )
-        self.show_input_dialog()
+        # self.start_btn["state"] = "normal"  # Enable the START button
+        # self.stop_btn["state"] = "disabled"  # Disable the STOP button
+        hris_password = simpledialog.askstring(
+            "Password",
+            "Enter Password", show='*'
+        )
+        # self.show_input_dialog()
 
-        # if hris_password is not None and hris_password.strip() != "":
-        #     input_password = str(hris_password)
+        if hris_password is not None and hris_password.strip() != "":
+            input_password = str(hris_password)
 
-        #     url = f"http://hris.teamglac.com/api/users/login?u={self.extracted_username}&p={input_password}"
-        #     response = requests.get(url).json()
-        #     if response['result'] == False or response['result'] == None:
-        #         print("FAILED")
-        #         self.start_btn["state"] = "disabled"
-        #         self.stop_btn["state"] = "normal"
-        #         showerror(
-        #         title="Login Failed",
-        #         message=f"Password is incorrect. Please try again.",
-        #     )
+            url = f"http://hris.teamglac.com/api/users/login?u={self.extracted_username}&p={input_password}"
+            response = requests.get(url).json()
+            if response['result'] == False or response['result'] == None:
+                print("FAILED")
+                self.start_btn["state"] = "disabled"
+                self.stop_btn["state"] = "normal"
+                showerror(
+                title="Login Failed",
+                message=f"Password is incorrect. Please try again.",
+            )
 
-        #     else:
-        #         # self.start_btn["state"] = "normal"    # Enable the START button
-        #         print("Success")
-        #         self.stop_btn["state"] = "disabled"
-        #         self.show_input_dialog()
-        # else:
-        #     pass
+            else:
+                # self.start_btn["state"] = "normal"    # Enable the START button
+                print("Success")
+                # self.stop_btn["state"] = "disabled"
+                self.show_input_dialog()
+        else:
+            pass
         #     self.start_btn["state"] = "normal"
 
     def read_machno(self):
@@ -357,6 +366,7 @@ class MO_Details:
                             json_output_file,
                             indent=4,
                         )
+                        self.log_event("STOP")
                 
                 else:
                     messagebox.showinfo(
@@ -412,6 +422,8 @@ class MO_Details:
                             self.stop_btn["state"] = "disabled"
                         current_entry["total_finished"] += total_finished
                         current_entry["remaining_qty"] -= total_finished
+                        self.log_event("STOP")
+                        
                     else:
                         messagebox.showinfo(
                             title="Warning",
@@ -442,7 +454,7 @@ class MO_Details:
                             "total_finished": total_finished,
                             "remaining_qty": extracted_running_qty - total_finished,
                         }
-                        # self.get_remaining_qty_from_logs()
+
 
                 with open("data/mo_logs.json", "w") as json_output_file:
                     json.dump(
@@ -456,10 +468,10 @@ class MO_Details:
 
             # self.root.destroy()
 
-    # def on_close(self):
-    #     if messagebox.askokcancel("Quit", "Do you want to quit?"):
-    #         self.root.destroy()
-    #         os.system("python main.py")
+    def on_close(self):
+        if messagebox.askokcancel("Quit", "Do you want to quit?"):
+            self.root.destroy()
+            os.system("python main.py")
 
 
 if __name__ == "__main__":
