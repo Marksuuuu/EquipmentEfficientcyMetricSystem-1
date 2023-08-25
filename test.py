@@ -1,49 +1,178 @@
-def show_input_dialog(self):
-        total_finished = simpledialog.askstring(
-            "Enter Total Number of finished",
-            "Please enter the total number of finish items",
-        )
+import tkinter as tk
+import matplotlib.pyplot as plt
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from PIL import Image, ImageTk
 
-        if total_finished is not None and total_finished.strip() != "":
-            total_finished = int(total_finished)
+def create_donut_chart():
+    total = 100 - 17
+    data = [17, total]  # Example data
+    labels = ['Blue', 'Red']  # Example labels
+    colors = ['#3498db', '#e74c3c']  # Example colors
+    explode = (0.05, 0)  # "explode" the first slice for emphasis
 
-            with open("data/mo_logs.json", "r") as logs_file:
-                logs_data = json.load(logs_file)
+    figure = Figure(figsize=(5, 4), dpi=100)
+    plot = figure.add_subplot(1, 1, 1)
+    plot.pie(data, labels=labels, colors=colors, autopct='%1.1f%%', startangle=90, pctdistance=0.85, explode=explode)
 
-            wip_entity_name = self.extracted_wip_entity_name  # Assuming you have this value available
+    centre_circle = plt.Circle((0,0),0.70,fc='white')
+    plot.add_artist(centre_circle)
+    
+    plot.axis('equal')
 
-            found_entry = None
-            for entry in logs_data:
-                if entry["wip_entity_name"] == wip_entity_name:
-                    found_entry = entry
-                    break
+    canvas = FigureCanvasTkAgg(figure, master=root)
+    canvas_widget = canvas.get_tk_widget()
+    
+    # Convert FigureCanvasTkAgg to a PIL Image
+    canvas.draw()  # Render the canvas
+    pil_image = Image.frombytes('RGB', canvas.get_width_height(), canvas.tostring_rgb())
+    
+    # Convert PIL Image to PhotoImage
+    img = ImageTk.PhotoImage(image=pil_image)
+    
+    # Clear the previous contents of the Label (if any) and add the new chart
+    chart_label.config(image=img)
+    chart_label.image = img  # Keep a reference to prevent it from being garbage collected
 
-            if found_entry:
-                found_entry["total_finished"] += total_finished
-            else:
-                new_entry = {
-                    "wip_entity_name": wip_entity_name,
-                    "running_qty": extracted_running_qty,
-                    "total_finished": total_finished
-                }
-                logs_data.append(new_entry)
+root = tk.Tk()
+root.title("Donut Chart in Tkinter")
 
-            with open("data/mo_logs.json", "w") as logs_file:
-                json.dump(logs_data, logs_file, indent=4)
+chart_label = tk.Label(root)
+chart_label.pack()
 
-            self.start_btn["state"] = "normal"
-            self.log_event('START')
-            
-    # Other methods and code for your class
+create_donut_chart_button = tk.Button(root, text="Create Donut Chart", command=create_donut_chart)
+create_donut_chart_button.pack()
 
-
-
-
-
-
-
+root.mainloop()
 
 
+
+
+
+
+
+
+
+
+
+
+# def show_input_dialog(self):
+#     total_finished = simpledialog.askstring(
+#         "Enter Total Number of finished",
+#         "Please enter the total number of finish items",
+#     )
+
+#     if total_finished is not None and total_finished.strip() != "":
+#         total_finished = int(total_finished)
+
+#         with open("data/mo_logs.json", "r") as logs_file:
+#             logs_data = json.load(logs_file)
+
+#         wip_entity_name = self.extracted_wip_entity_name  # Assuming you have this value available
+
+#         found_entry = None
+#         for entry in logs_data:
+#             if entry["wip_entity_name"] == wip_entity_name:
+#                 found_entry = entry
+#                 break
+
+#         if found_entry:
+#             found_entry["total_finished"] += total_finished
+#         else:
+#             new_entry = {
+#                 "wip_entity_name": wip_entity_name,
+#                 "running_qty": extracted_running_qty,
+#                 "total_finished": total_finished
+#             }
+#             logs_data.append(new_entry)
+
+#         with open("data/mo_logs.json", "w") as logs_file:
+#             json.dump(logs_data, logs_file, indent=4)
+
+#         self.start_btn["state"] = "normal"
+#         self.log_event('START')
+
+# from datetime import datetime
+
+# data = [
+#     "ONLINE,2023-08-23,17:14:43",
+#     "OFFLINE,2023-08-25,20:19:14"
+# ]
+
+# total_available_hours = 0
+
+# for i in range(0, len(data), 2):
+#     online_data = data[i].split(",")
+#     offline_data = data[i+1].split(",")
+
+#     online_datetime = datetime.strptime(online_data[1] + " " + online_data[2], "%Y-%m-%d %H:%M:%S")
+#     offline_datetime = datetime.strptime(offline_data[1] + " " + offline_data[2], "%Y-%m-%d %H:%M:%S")
+
+#     time_difference = offline_datetime - online_datetime
+#     total_available_hours += time_difference.total_seconds() / 3600
+
+# print("Total available hours:", total_available_hours)
+
+# import csv
+# from datetime import datetime
+
+# def format_time(seconds):
+#     hours = int(seconds // 3600)
+#     minutes = int((seconds % 3600) // 60)
+#     seconds = int(seconds % 60)
+#     return f"{hours:02d}:{minutes:02d}:{seconds:02d}"
+
+# def getAvailableHours():
+#     data = []
+#     with open('logs/logs.csv', 'r') as csvfile:
+#         csvreader = csv.reader(csvfile)
+#         for row in csvreader:
+#             data.append(row)
+
+#     total_available_seconds = 0
+#     previous_event_time = None
+
+#     for event in data:
+#         event_type = event[0]
+#         event_date = event[1]
+#         event_time = event[2]
+        
+#         event_datetime = datetime.strptime(event_date + " " + event_time, "%Y-%m-%d %H:%M:%S")
+        
+#         if previous_event_time and event_type == "OFFLINE":
+#             time_difference = event_datetime - previous_event_time
+#             total_available_seconds += time_difference.total_seconds()
+        
+#         previous_event_time = event_datetime
+
+#     if not any(event[0].startswith("OFFLINE") for event in data):
+#         current_datetime = datetime.now()
+#         if previous_event_time:
+#             time_difference = current_datetime - previous_event_time
+#         else:
+#             time_difference = current_datetime - datetime.strptime("2000-01-01 00:00:00", "%Y-%m-%d %H:%M:%S")
+#         total_available_seconds += time_difference.total_seconds()
+
+#     formatted_time = format_time(total_available_seconds)
+#     return formatted_time
+
+# total_available_time = getAvailableHours()
+# print("Total available time:", total_available_time)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Other methods and code for your class
 
 
 # import json
@@ -52,7 +181,7 @@ def show_input_dialog(self):
 # def checking():
 #     hris_url = 'http://lams.teamglac.com/lams/api/job_order/active_jo.php'
 #     response = requests.get(hris_url)
-    
+
 #     if response.status_code == 200:
 #         data = response.json()  # Parse JSON response
 #         result = data['result']  # Access the 'result' key
@@ -62,8 +191,8 @@ def show_input_dialog(self):
 #                 res = x['MACH201_MACHNO']
 #                 break
 #         print(res)
-        
-        
+
+
 #         # if result:
 #         #     print('result: ', result)
 #         #     target_value = "DAD 3350-01"
@@ -94,7 +223,7 @@ def show_input_dialog(self):
 
 # for action, date_str, time_str in data:
 #     dt = datetime.strptime(date_str + " " + time_str, "%Y-%m-%d %H:%M:%S")
-    
+
 #     if action == "START":
 #         start_time = dt
 #     elif action == "STOP" and start_time is not None:
@@ -114,9 +243,6 @@ def show_input_dialog(self):
 # print("Total productive time:", total_productive_time)
 
 
-
-
-
 # import tkinter as tk
 # from PIL import Image, ImageTk
 # import requests
@@ -129,11 +255,11 @@ def show_input_dialog(self):
 #         # Fetch the image from a URL
 #         image_url = "http://hris.teamglac.com/employeeInformation/photos/EMP2932/JOHN_RAYMARK_M._LLAVANES.JPG"  # Replace with your image URL
 #         response = requests.get(image_url)
-        
+
 #         if response.status_code == 200:
 #             pil_image = Image.open(BytesIO(response.content))
 #             self.image = ImageTk.PhotoImage(pil_image)
-            
+
 #             # Create a label to display the image
 #             self.image_label = tk.Label(root, image=self.image)
 #             self.image_label.pack()
@@ -164,16 +290,16 @@ def show_input_dialog(self):
 #         alignstr = '%dx%d+%d+%d' % (width, height, (screenwidth - width) / 2, (screenheight - height) / 2)
 #         root.geometry(alignstr)
 #         root.resizable(width=False, height=False)
-        
+
 #         image_url = "http://hris.teamglac.com/employeeInformation/photos/EMP2932/JOHN_RAYMARK_M._LLAVANES.JPG"  # Replace with your image URL
 #         response = requests.get(image_url)
 #         pil_image = Image.open(BytesIO(response.content))
 #         desired_width = 83
 #         desired_height = 60
 #         pil_image = pil_image.resize((desired_width, desired_height), Image.ANTIALIAS)
-        
+
 #         self.image = ImageTk.PhotoImage(pil_image)
-        
+
 #         GLabel_937=tk.Label(root)
 #         GLabel_937["bg"] = "#ffffff"
 #         ft = tkFont.Font(family='Times',size=10)
@@ -191,22 +317,12 @@ def show_input_dialog(self):
 #         GLabel_831["justify"] = "center"
 #         GLabel_831["text"] = "label"
 #         GLabel_831.place(x=1100,y=0,width=83,height=60)
-        
-        
+
+
 # if __name__ == "__main__":
 #     root = tk.Tk()
 #     app = App(root)
 #     root.mainloop()
-
-
-
-
-
-
-
-
-
-
 
 
 # import os
@@ -290,7 +406,7 @@ def show_input_dialog(self):
 #     if matching_employee:
 #         user_department = matching_employee.get('employee_department')
 #         user_position = matching_employee.get('employee_position')
-        
+
 #         if user_department and user_position:
 #             if permissions.is_department_allowed(user_department) and permissions.is_position_allowed(user_position):
 #                 return "User's department and position are allowed."
@@ -305,4 +421,301 @@ def show_input_dialog(self):
 # employee_id = "003091"
 # result = check_employee_permissions(employee_id)
 # print(result)
+<<<<<<< Updated upstream
+=======
 
+import tkinter as tk
+from tkinter import ttk
+from PIL import Image, ImageTk
+import requests
+from io import BytesIO
+import tkinter.font as tkFont
+import os
+import csv
+import json
+from tkinter import Toplevel
+from tkinter import messagebox
+from tkinter import simpledialog
+from tkinter.messagebox import showinfo, showwarning, showerror
+import logging
+import datetime
+
+
+
+class MO_Details:
+    def __init__(self,root,extracted_fullname,extracted_employee_no,extracted_photo_url,extracted_username,data):
+        #setting title
+        root.title("MO")
+        #setting window size
+        width=1264
+        height=675
+        screenwidth = root.winfo_screenwidth()
+        screenheight = root.winfo_screenheight()
+        alignstr = '%dx%d+%d+%d' % (width, height, (screenwidth - width) / 2, (screenheight - height) / 2)
+        root.geometry(alignstr)
+        root.resizable(width=False, height=False)
+        
+        self.root = root
+        self.extracted_employee_no = extracted_employee_no
+        self.extracted_photo_url = extracted_photo_url
+        self.extracted_username = extracted_username
+        self.root.title("MO DETAILS")
+        self.test_data = data
+
+        # self.remaining_qty = None
+        self.data_dict = {}
+        
+        self.root.geometry(alignstr)
+        self.root.resizable(width=False, height=False)
+
+        if self.extracted_photo_url == False or self.extracted_photo_url is None:
+            image_url = "https://www.freeiconspng.com/uploads/no-image-icon-15.png"
+        else:
+            image_url = f"http://hris.teamglac.com/{self.extracted_photo_url}"  # Replace with your image URL
+
+        response = requests.get(image_url)
+        pil_image = Image.open(BytesIO(response.content))
+        desired_width = 83
+        desired_height = 60
+        pil_image = pil_image.resize((desired_width, desired_height), Image.ANTIALIAS)
+        
+        
+        script_directory = os.path.dirname(os.path.abspath(__file__))
+        self.log_folder = os.path.join(script_directory, "data")
+        if not os.path.exists(self.log_folder):
+            os.makedirs(self.log_folder)
+        self.csv_file_path = os.path.join(self.log_folder, 'time.csv')
+
+
+        self.image = ImageTk.PhotoImage(pil_image)
+
+        GLabel_932=tk.Label(root)
+        GLabel_932["bg"] = "#ffffff"
+        ft = tkFont.Font(family='Times',size=18)
+        GLabel_932["font"] = ft
+        GLabel_932["fg"] = "#333333"
+        GLabel_932["justify"] = "center"
+        GLabel_932["text"] = f"Device : {data[2]}"
+        GLabel_932.place(x=20,y=180,width=526,height=97)
+
+        GLabel_771=tk.Label(root)
+        GLabel_771["bg"] = "#ffffff"
+        ft = tkFont.Font(family='Times',size=18)
+        GLabel_771["font"] = ft
+        GLabel_771["fg"] = "#333333"
+        GLabel_771["justify"] = "center"
+        GLabel_771["text"] = f"Package : {data[4]}"
+        GLabel_771.place(x=20,y=300,width=526,height=97)
+
+        GLabel_146=tk.Label(root)
+        GLabel_146["bg"] = "#ffffff"
+        ft = tkFont.Font(family='Times',size=18)
+        GLabel_146["font"] = ft
+        GLabel_146["fg"] = "#333333"
+        GLabel_146["justify"] = "center"
+        GLabel_146["text"] = f"Customer : {data[1]}"
+        GLabel_146.place(x=20,y=420,width=526,height=97)
+
+        GLabel_915=tk.Label(root)
+        GLabel_915["bg"] = "#ffffff"
+        ft = tkFont.Font(family='Times',size=18)
+        GLabel_915["font"] = ft
+        GLabel_915["fg"] = "#333333"
+        GLabel_915["justify"] = "center"
+        GLabel_915["text"] = f"MO Quantity : {data[5]}"
+        GLabel_915.place(x=20,y=540,width=526,height=97)
+
+        GLabel_514=tk.Label(root)
+        ft = tkFont.Font(family='Times',size=24)
+        GLabel_514["font"] = ft
+        GLabel_514["fg"] = "#333333"
+        GLabel_514["justify"] = "center"
+        GLabel_514["text"] = extracted_fullname
+        GLabel_514.place(x=820,y=20,width=424,height=87)
+
+        GLabel_978=tk.Label(root, image=self.image)
+        ft = tkFont.Font(family='Times',size=10)
+        GLabel_978["font"] = ft
+        GLabel_978["fg"] = "#333333"
+        GLabel_978["justify"] = "center"
+        GLabel_978["text"] = "img"
+        GLabel_978.place(x=680,y=20,width=120,height=87)
+
+        self.start_btn=tk.Button(root)
+        self.start_btn["bg"] = "#5fb878"
+        ft = tkFont.Font(family='Times',size=23)
+        self.start_btn["font"] = ft
+        self.start_btn["fg"] = "#ffffff"
+        self.start_btn["justify"] = "center"
+        self.start_btn["text"] = "START"
+        self.start_btn.place(x=1000,y=540,width=245,height=97)
+        self.start_btn["command"] = self.start_command
+
+        self.stop_btn=tk.Button(root)
+        self.stop_btn["bg"] = "#cc0000"
+        ft = tkFont.Font(family='Times',size=23)
+        self.stop_btn["font"] = ft
+        self.stop_btn["fg"] = "#f9f9f9"
+        self.stop_btn["justify"] = "center"
+        self.stop_btn["text"] = "STOP"
+        self.stop_btn.place(x=1000,y=430,width=245,height=97)
+        self.stop_btn["state"] = "disabled"  
+        self.stop_btn["command"] = self.stop_command
+
+        GLabel_65=tk.Label(root)
+        GLabel_65["bg"] = "#ffffff"
+        GLabel_65["borderwidth"] = "2px"
+        ft = tkFont.Font(family='Times',size=58)
+        GLabel_65["font"] = ft
+        GLabel_65["fg"] = "#333333"
+        GLabel_65["justify"] = "center"
+        GLabel_65["text"] =  data[6]
+        GLabel_65.place(x=20,y=20,width=526,height=87)
+
+        GLabel_566=tk.Label(root)
+        ft = tkFont.Font(family='Times',size=11)
+        GLabel_566["font"] = ft
+        GLabel_566["fg"] = "#333333"
+        GLabel_566["justify"] = "center"
+        GLabel_566["text"] = "PERSON ASSIGNED"
+        GLabel_566.place(x=820,y=80,width=424,height=30)
+
+
+        lbl_remaining_qty=tk.Label(root)
+        lbl_remaining_qty["bg"] = "#ffffff"
+        ft = tkFont.Font(family='Times',size=18)
+        lbl_remaining_qty["font"] = ft
+        lbl_remaining_qty["fg"] = "#333333"
+        lbl_remaining_qty["justify"] = "center"
+        # lbl_remaining_qty["text"] = f"Remaining MO Quantity : "
+        # lbl_remaining_qty["text"] = f"Remaining MO Quantity : ", lbl_remaining_qty
+        self.lbl_remaining_qty = lbl_remaining_qty
+        lbl_remaining_qty.place(x=450,y=540,width=526,height=97)
+
+        self.get_remaining_qty_from_logs()
+
+    def get_remaining_qty_from_logs(self):
+        try:
+            with open("data/mo_logs.json", "r") as json_file:
+                data = json.load(json_file)
+                if "data" in data and isinstance(data["data"], list):
+                    remaining_qty = 0
+                    for entry in data["data"]:
+                        if "remaining_qty" in entry:
+                            remaining_qty += entry["remaining_qty"]
+                    
+                    self.lbl_remaining_qty["text"] = f"Remaining MO Quantity: {remaining_qty}"
+                else:
+                    self.lbl_remaining_qty["text"] = "Remaining MO Quantity: N/A"
+        except FileNotFoundError:
+            self.lbl_remaining_qty["text"] = "Remaining MO Quantity: N/A"
+
+
+    def log_event(self, msg):
+        current_time = datetime.datetime.now()
+        date = current_time.strftime('%Y-%m-%d')
+        time = current_time.strftime('%H:%M:%S')
+
+        with open(self.csv_file_path, mode='a', newline='') as csv_file:
+            csv_writer = csv.writer(csv_file)
+            csv_writer.writerow([msg, date, time ])
+
+    def start_command(self):
+        # self.checking()
+        print("START button clicked")
+        self.log_event('START')
+        self.start_btn["state"] = "disabled"  # Disable the START button
+        self.stop_btn["state"] = "normal"  # Enable the STOP button
+
+    def stop_command(self):
+        print("STOP button clicked")
+        self.show_input_dialog()
+
+
+
+    def read_machno(self):
+        with open("data\main.json", "r") as json_file:
+            data = json.load(json_file)
+            extracted_data = []
+            extracted_machno = data["machno"]
+        return extracted_machno
+    
+    def checking(self):
+        hris_url = "http://lams.teamglac.com/lams/api/job_order/active_jo.php"
+        response = requests.get(hris_url)
+
+        if response.status_code == 200:
+            data = response.json()  # Parse JSON response
+            result = data["result"]  # Access the 'result' key
+            res = ""
+            for x in result:
+                if x["MACH201_MACHNO"] == self.read_machno():
+                    res = 1
+                    break
+            if res == 1:
+                showwarning("TICKET ALERT!", "Attention! The machine is temporarily unavailable.")
+                self.stop_btn["state"] = "disabled"
+            else:
+                self.start_btn["state"] = "normal"
+
+    def show_input_dialog(self):
+        total_finished = simpledialog.askstring(
+            "Enter Total Number of finished",
+            "Please enter the total number of finish items",
+        )
+
+        if total_finished is not None and total_finished.strip() != "":
+            total_finished = int(total_finished)
+
+            with open("data/main.json", "r") as json_file:
+                data = json.load(json_file)
+
+                for item in data["data"]:
+                    customer = item["customer"]
+                    device = item["device"]
+                    main_opt = item["main_opt"]
+                    package = item["package"]
+                    running_qty = item["running_qty"]
+                    wip_entity_name = item["wip_entity_name"]
+
+                    extracted_running_qty = int(running_qty)
+
+                if wip_entity_name in self.data_dict:
+                    current_total_finished = self.data_dict[wip_entity_name]["total_finished"]
+                    
+                    if current_total_finished + total_finished <= extracted_running_qty:
+                        if current_total_finished + total_finished == extracted_running_qty:
+                            print("DONE")
+                            self.start_btn["state"] = "disabled"
+                            self.stop_btn["state"] = "disabled"
+                        else:
+                            self.start_btn["state"] = "normal"
+                            self.stop_btn["state"] = "disabled"
+                        self.data_dict[wip_entity_name]["total_finished"] += total_finished
+                        self.data_dict[wip_entity_name]["remaining_qty"] -= total_finished
+                    else:
+                        messagebox.showinfo(title="Warning", message="Input exceeded the set running Quantity: " + str(extracted_running_qty))
+                        print("Total finished is not less than or equal to extracted running qty.")
+                else:
+                    if total_finished <= extracted_running_qty:
+                        if total_finished == extracted_running_qty:
+                            print("DONE")
+                            self.start_btn["state"] = "disabled"
+                            self.stop_btn["state"] = "disabled"
+                        else:
+                            self.start_btn["state"] = "normal"
+                            self.stop_btn["state"] = "disabled"
+                        self.data_dict[wip_entity_name] = {
+                            "wip_entity_name": wip_entity_name,
+                            "running_qty": running_qty,
+                            "total_finished": total_finished,
+                            "remaining_qty": extracted_running_qty - total_finished
+                        }
+
+                    else:
+                        messagebox.showinfo(title="Warning", message="Input exceeded the set running Quantity: " + str(extracted_running_qty))
+                        print("Total finished is not less than or equal to extracted running qty.")
+
+        with open("data/mo_logs.json", "w") as json_output_file:
+            json.dump({"data": list(self.data_dict.values())}, json_output_file, indent=4)
+>>>>>>> Stashed changes

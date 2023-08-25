@@ -1,18 +1,13 @@
-import tkinter as tk
-from tkinter import ttk
-from PIL import Image, ImageTk
-import requests
-from io import BytesIO
+import json
+import os
 import tkinter as tk
 import tkinter.font as tkFont
-import os
-import csv
-import json
-from tkinter import Toplevel
-from datetime import datetime
 from datetime import date
-from tkinter import BooleanVar
-from tkinter.messagebox import showinfo, showwarning, showerror
+from datetime import datetime
+from tkinter import ttk
+from tkinter.messagebox import showinfo, showerror
+
+import requests
 
 
 class RequestTicket:
@@ -324,13 +319,16 @@ class RequestTicket:
 
         if r.status_code == 200:
             value_url = (r.json())
-
-            dtno_value = value_url['dtno']
-            showinfo("Success", f"Job order created successfully. \nDTNO {dtno_value}")
+            print(f"==>> value_url: {value_url}")
+            if value_url['status'] == 'meron':
+                dtno_value = value_url['dtno']
+                showinfo("warning", f"Already have ticket . \nDTNO {dtno_value}")
+            else:
+                dtno_value = value_url['dtno']
+                showinfo("Success", f"Job order created successfully. \nDTNO {dtno_value}")
             print(value_url['dtno'])
         else:
             showerror("Error", "Error in creating job order.")
-
 
     def submit(self):
         print("Submit")
