@@ -22,6 +22,8 @@ from ttkbootstrap.constants import *
 
 from operator_dashboard import OperatorDashboard
 from technician_dashboard import TechnicianDashboard
+from logs_data import LogsData
+
 
 sio = socketio.Client(reconnection=True, reconnection_attempts=5,
                       reconnection_delay=1, reconnection_delay_max=5)
@@ -570,6 +572,12 @@ class App:
         # Change extension to .csv
         log_file_path = os.path.join(log_folder, 'logs.csv')
 
+
+        logs_data_instance = LogsData()
+        total_running_qty = logs_data_instance.total_running_qty
+        total_remaining_qty = logs_data_instance.total_remaining_qty
+        print(f"==>> total_remaining_qty: {total_remaining_qty}")
+        
         try:
             with open(log_file_path, 'r') as file:
                 csv_reader = csv.reader(file)
@@ -582,8 +590,8 @@ class App:
                     label = f"""
                     1. PRODUCTIVE HOURS: {self.calculate_total_productive_time()} HOURS
                     2. AVAILABLE HOURS: {self.getAvailableHours()} HOURS
-                    3. QUANTITY TO PROCESS: ' ' PCS
-                    4. TOTAL PROCESS: ' ' PCS
+                    3. QUANTITY TO PROCESS: {total_running_qty()} PCS
+                    4. TOTAL PROCESS: {total_remaining_qty()} PCS
                     5. TARGET TOTAL ' ' PCS
                     """
                     self.GMessage_465 = tk.Message(root)
@@ -606,7 +614,6 @@ sio.connect('http://10.0.2.150:9090')
 
 if __name__ == "__main__":
     signal.signal(signal.SIGINT, signal.SIG_DFL)
-
     root = tk.Tk()
     app = App(root)
     root.mainloop()
