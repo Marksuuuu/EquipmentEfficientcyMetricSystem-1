@@ -85,6 +85,9 @@ class App:
     def __init__(self, root):
         root.title("LOG IN DASHBOARD")
         # setting window size
+        self.logs_data_instance = LogsData()
+        self.total_running_qty = self.logs_data_instance.total_running_qty
+        self.total_remaining_qty = self.logs_data_instance.total_remaining_qty
         self.width = 1361
         self.height = 894
         self.screenwidth = root.winfo_screenwidth()
@@ -104,6 +107,7 @@ class App:
         self.init_logging()
 
         self.chart_image = None
+        self.total_img = None
         self.GLabel_544 = None
         self.create_ui()
         self.update_chart()
@@ -132,14 +136,6 @@ class App:
         self.GMessage_33["text"] = "LOGS"
         self.GMessage_33.place(x=680, y=160, width=666, height=717)
 
-        self.GLabel_111 = tk.Label(root)
-        self.GLabel_111["bg"] = "#ffffff"
-        self.ft = tkFont.Font(family='Times', size=10)
-        self.GLabel_111["font"] = self.ft
-        self.GLabel_111["fg"] = "#333333"
-        self.GLabel_111["justify"] = "center"
-        self.GLabel_111["text"] = "label"
-        self.GLabel_111.place(x=360, y=160, width=301, height=338)
 
         self.init_logging()
         self.passLogDatatoServer()
@@ -431,7 +427,7 @@ class App:
     def create_donut_chart(self):
         total = 100 - self.calculateOee()
         data = [self.calculateOee(), total]
-        labels = ['Effectiveness', '']
+        labels = ['Effectiveness', 'Not Effective']
         colors = ['#3498db', '#e74c3c']
         explode = (0.05, 0)
 
@@ -445,6 +441,8 @@ class App:
         
         center_text = 'OEE'
         plot.text(0, 0, center_text, va='center', ha='center', fontsize=12)
+        plot.legend(loc='upper center', labels=labels, fontsize='small')
+        
 
         plot.axis('equal')
 
@@ -458,13 +456,62 @@ class App:
         root.after(50000, self.create_donut_chart)
         return img
     
+    def create_total_qty_graph(self):
+        total_running_qty_var = self.total_running_qty()
+        total_remaining_qty_var = self.total_remaining_qty()
+        
+        result_qty = total_remaining_qty_var - total_running_qty_var
+        data = [total_remaining_qty_var , total_running_qty_var]
+        labels = ['REMAINING', 'TOTAL RUNNING QTY']
+        colors = ['#3498db', '#e74c3c']
+        explode = (0.05, 0)
+
+        figure = Figure(figsize=(5, 4), dpi=100)
+        plot = figure.add_subplot(1, 1, 1)
+        plot.pie(data, labels=labels, colors=colors, autopct='%1.1f%%',
+                 startangle=90, pctdistance=0.85, explode=explode)
+
+        centre_circle = plt.Circle((0, 0), 0.70, fc='white')
+        plot.add_artist(centre_circle)
+        
+        center_text = 'QUANTITY'
+        plot.text(0, 0, center_text, va='center', ha='center', fontsize=12)
+
+        plot.axis('equal')
+        plot.legend(loc='upper center', labels=labels, fontsize='small')
+
+        canvas = FigureCanvasTkAgg(figure, master=root)
+        canvas_widget = canvas.get_tk_widget()
+
+        canvas.draw()
+        pil_image = Image.frombytes(
+            'RGB', canvas.get_width_height(), canvas.tostring_rgb())
+        img = ImageTk.PhotoImage(image=pil_image)
+        root.after(50000, self.create_total_qty_graph)
+        return img
+    
     def update_chart(self):
         self.chart_image = self.create_donut_chart()
+        self.total_img = self.create_total_qty_graph()
         if self.GLabel_544 is not None:
             self.GLabel_544.configure(image=self.chart_image)
+            
+        if self.GLabel_111 is not None:
+            self.GLabel_111.configure(image=self.total_img)
+        
+        
         root.after(50000, self.update_chart)
 
     def create_ui(self):
+        self.GLabel_111 = tk.Label(root)
+        self.GLabel_111["bg"] = "#ffffff"
+        self.ft = tkFont.Font(family='Times', size=10)
+        self.GLabel_111["font"] = self.ft
+        self.GLabel_111["fg"] = "#333333"
+        self.GLabel_111["justify"] = "center"
+        self.GLabel_111["text"] = "test"
+        self.GLabel_111.place(x=360, y=160, width=301, height=338)
+        
         self.GLabel_544 = tk.Label(root, bg="#FFFFFF")
         self.GLabel_544["bg"] = "#FFFFFF"
         self.ft = tk.font.Font(family='Times', size=10)
@@ -571,12 +618,6 @@ class App:
         log_folder = os.path.join(script_directory, "logs")
         # Change extension to .csv
         log_file_path = os.path.join(log_folder, 'logs.csv')
-
-
-        logs_data_instance = LogsData()
-        total_running_qty = logs_data_instance.total_running_qty
-        total_remaining_qty = logs_data_instance.total_remaining_qty
-        print(f"==>> total_remaining_qty: {total_remaining_qty}")
         
         try:
             with open(log_file_path, 'r') as file:
@@ -590,8 +631,8 @@ class App:
                     label = f"""
                     1. PRODUCTIVE HOURS: {self.calculate_total_productive_time()} HOURS
                     2. AVAILABLE HOURS: {self.getAvailableHours()} HOURS
-                    3. QUANTITY TO PROCESS: {total_running_qty()} PCS
-                    4. TOTAL PROCESS: {total_remaining_qty()} PCS
+                    3. QUANTITY TO PROCESS: {self.total_running_qty()} PCS
+                    4. TOTAL PROCESS: {self.total_remaining_qty()} PCS
                     5. TARGET TOTAL ' ' PCS
                     """
                     self.GMessage_465 = tk.Message(root)
