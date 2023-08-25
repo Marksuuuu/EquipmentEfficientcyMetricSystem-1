@@ -1,26 +1,27 @@
-import requests
-import json
-import os
 import csv
-import socketio
-import uuid
-import re
+import json
 import logging
+import os
+import re
 import signal
 import tkinter as tk
 import tkinter.font as tkFont
-from tkinter import messagebox
-from tkinter import ttk
-from tkinter.messagebox import showinfo, showwarning, showerror
-from tkinter import simpledialog
-from ttkbootstrap.constants import *
-import ttkbootstrap as tb
+import uuid
 from datetime import datetime, timedelta
-
 from tkinter import Toplevel
+from tkinter import messagebox
+from tkinter.messagebox import showerror
+import matplotlib.pyplot as plt
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from PIL import Image, ImageTk
+
+import requests
+import socketio
+from ttkbootstrap.constants import *
+
 from operator_dashboard import OperatorDashboard
 from technician_dashboard import TechnicianDashboard
-
 
 sio = socketio.Client(reconnection=True, reconnection_attempts=5,
                       reconnection_delay=1, reconnection_delay_max=5)
@@ -77,6 +78,7 @@ class UserPermissions:
     def is_operator(self, position):
         return position in self.operator
 
+
 class App:
     def __init__(self, root):
         root.title("LOG IN DASHBOARD")
@@ -86,19 +88,23 @@ class App:
         self.screenwidth = root.winfo_screenwidth()
         self.screenheight = root.winfo_screenheight()
         self.alignstr = '%dx%d+%d+%d' % (self.width, self.height, (self.screenwidth -
-                                         self.width) / 2, (self.screenheight - self.height) / 2)
+                                                                   self.width) / 2,
+                                         (self.screenheight - self.height) / 2)
         root.geometry(self.alignstr)
         root.resizable(width=False, height=False)
 
         root.protocol("WM_DELETE_WINDOW", self.handle_exit_signal)
 
+        # Functions
 
-        ## FUNCTIONS##
+        self.update_status()
+        self.oee()
+        self.init_logging()
+        self.chart_image = self.create_donut_chart()
+        # End
 
         ## END##
         dateNow = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        # signal.signal(signal.SIGTERM, self.handle_exit_signal)
-        # signal.signal(signal.SIGINT, self.handle_exit_signal)
 
         self.entry_employee_number = tk.Entry(root)
         self.entry_employee_number["bg"] = "#ffffff"
@@ -120,9 +126,9 @@ class App:
         self.GMessage_33["text"] = "LOGS"
         self.GMessage_33.place(x=680, y=160, width=666, height=717)
 
-        self.GLabel_544 = tk.Label(root)
+        self.GLabel_544 = tk.Label(root, image=self.chart_image)
         self.GLabel_544["bg"] = "#ffffff"
-        self.ft = tkFont.Font(family='Times', size=10)
+        self.ft = tk.font.Font(family='Times', size=10)
         self.GLabel_544["font"] = self.ft
         self.GLabel_544["fg"] = "#333333"
         self.GLabel_544["justify"] = "center"
@@ -144,20 +150,11 @@ class App:
 
         self.log_activity(logging.INFO, f'Open Program')
 
-        # Functions
-
-        self.update_status()
-        self.oee()
-        self.init_logging()
-
-        # End
-    
     def handle_exit_signal(self):
         self.log_activity(logging.INFO, f'Terminated the program')
         root.destroy()
         # self.quit()
 
-    
     def passLogDatatoServer(self):
         log_file = 'logs/activity_log.txt'
         try:
@@ -171,7 +168,7 @@ class App:
         except Exception as e:
             raise
         root.after(5000, self.update_logs)
-    
+
     def update_logs(self):
         log_file = 'logs/activity_log.txt'
         try:
@@ -179,7 +176,6 @@ class App:
                 log_content = file.read()
             lines = log_content.split('\n')
             last_5_logs = '\n'.join(lines[-6:])
- 
 
             self.logs = tk.Message(root)
             self.logs["bg"] = "#ffffff"
@@ -191,11 +187,9 @@ class App:
             self.logs['width'] = 700
             self.logs.place(x=680, y=160, width=666, height=717)
 
-
         except FileNotFoundError:
             self.logs["text"] = "Log file not found."
         root.after(5000, self.update_logs)
-
 
     def init_logging(self):
         log_file = 'logs/activity_log.txt'
@@ -352,16 +346,19 @@ class App:
                 print(f"{user_position} is an operator.")
                 self.show_operator_dashboard(
                     user_department, user_position, dataJson)
-                self.log_activity(logging.INFO, f'User login successful. ID NUM: {employee_number}')
-                
+                self.log_activity(
+                    logging.INFO, f'User login successful. ID NUM: {employee_number}')
+
             else:
-                self.log_activity(logging.INFO, f'User login unsuccessful. ID NUM: {employee_number}')
+                self.log_activity(
+                    logging.INFO, f'User login unsuccessful. ID NUM: {employee_number}')
 
                 showerror(title='Login Failed',
                           message=f"User's department or position is not allowed. Please check, Current Department / Possition  {user_department + ' ' + user_position}")
 
         else:
-            self.log_activity(logging.INFO, f'User login unsuccessful. ID NUM: {employee_number}')
+            self.log_activity(
+                logging.INFO, f'User login unsuccessful. ID NUM: {employee_number}')
             showerror(title='Login Failed',
                       message=f"User's department or position is not allowed. Please check, Current Department / Possition  {user_department + ' ' + user_position}")
 
@@ -397,12 +394,12 @@ class App:
                 result = log_content['allowed_users']
         except FileNotFoundError as e:
             print(e)
-            
+
     def calculate_total_productive_time(self):
         script_directory = os.path.dirname(os.path.abspath(__file__))
         log_folder = os.path.join(script_directory, "data")
         log_file_path = os.path.join(log_folder, 'time.csv')
-        
+
         data = []
         # Read data from CSV file
         with open(log_file_path, 'r') as csvfile:
@@ -414,8 +411,9 @@ class App:
         start_time = None
 
         for action, date_str, time_str in data:
-            dt = datetime.strptime(date_str + " " + time_str, "%Y-%m-%d %H:%M:%S")
-            
+            dt = datetime.strptime(
+                date_str + " " + time_str, "%Y-%m-%d %H:%M:%S")
+
             if action == "START":
                 start_time = dt
             elif action == "STOP" and start_time is not None:
@@ -433,7 +431,101 @@ class App:
             total_productive_time += productive_time
 
         return total_productive_time
-    
+
+    def create_donut_chart(self):
+        total = 100 - self.calculateOee()
+        print(self.calculateOee())
+        data = [self.calculateOee(), total]
+        labels = ['Effectiveness', '']
+        colors = ['#3498db', '#e74c3c']
+        explode = (0.05, 0)
+
+        figure = Figure(figsize=(5, 4), dpi=100)
+        plot = figure.add_subplot(1, 1, 1)
+        plot.pie(data, labels=labels, colors=colors, autopct='%1.1f%%',
+                 startangle=90, pctdistance=0.85, explode=explode)
+
+        centre_circle = plt.Circle((0, 0), 0.70, fc='white')
+        plot.add_artist(centre_circle)
+        
+        center_text = 'OEE'
+        plot.text(0, 0, center_text, va='center', ha='center', fontsize=12)
+
+        plot.axis('equal')
+
+        canvas = FigureCanvasTkAgg(figure, master=root)
+        canvas_widget = canvas.get_tk_widget()
+
+        canvas.draw()
+        pil_image = Image.frombytes(
+            'RGB', canvas.get_width_height(), canvas.tostring_rgb())
+        img = ImageTk.PhotoImage(image=pil_image)
+        return img
+
+    def calculateOee(self):
+        availableHrs_str = self.getAvailableHours()
+        availableHrs_parts = availableHrs_str.split(':')
+        available_hours = int(availableHrs_parts[0])
+        available_minutes = int(availableHrs_parts[1])
+        available_seconds = int(availableHrs_parts[2])
+
+        availableHrs = available_hours + \
+            (available_minutes / 60) + (available_seconds / 3600)
+        print(f"==>> availableHrs: {availableHrs}")
+
+        productiveHrs = self.calculate_total_productive_time().total_seconds() / \
+            3600  # Convert timedelta to hours
+        print(f"==>> productiveHrs: {productiveHrs}")
+
+        if availableHrs > 0:  # Make sure availableHrs is greater than 0 to avoid division by zero
+            oee_percentage = (productiveHrs / availableHrs) * 100
+            print(round(oee_percentage, 5))
+            return round(oee_percentage, 5)
+        else:
+            return 0
+
+    def format_time(self, seconds):
+        hours = int(seconds // 3600)
+        minutes = int((seconds % 3600) // 60)
+        seconds = int(seconds % 60)
+        return f"{hours:02d}:{minutes:02d}:{seconds:02d}"
+
+    def getAvailableHours(self):
+        data = []
+        with open('logs/logs.csv', 'r') as csvfile:
+            csvreader = csv.reader(csvfile)
+            for row in csvreader:
+                data.append(row)
+
+        total_available_seconds = 0
+        previous_event_time = None
+
+        for event in data:
+            event_type = event[0]
+            event_date = event[1]
+            event_time = event[2]
+
+            event_datetime = datetime.strptime(
+                event_date + " " + event_time, "%Y-%m-%d %H:%M:%S")
+
+            if previous_event_time and event_type == "OFFLINE":
+                time_difference = event_datetime - previous_event_time
+                total_available_seconds += time_difference.total_seconds()
+
+            previous_event_time = event_datetime
+
+        if not any(event[0].startswith("OFFLINE") for event in data):
+            current_datetime = datetime.now()
+            if previous_event_time:
+                time_difference = current_datetime - previous_event_time
+            else:
+                time_difference = current_datetime - \
+                    datetime.strptime("2000-01-01 00:00:00",
+                                      "%Y-%m-%d %H:%M:%S")
+            total_available_seconds += time_difference.total_seconds()
+
+        formatted_time = self.format_time(total_available_seconds)
+        return formatted_time
 
     def update_status(self):
         script_directory = os.path.dirname(os.path.abspath(__file__))
@@ -479,11 +571,10 @@ class App:
                     last_row = row
                 if last_row:
                     # Get the first value from the last row
-                    last_value = last_row[2]
 
                     label = f"""
                     1. PRODUCTIVE HOURS: {self.calculate_total_productive_time()} HOURS
-                    2. AVAILABLE HOURS: {last_value} HOURS
+                    2. AVAILABLE HOURS: {self.getAvailableHours()} HOURS
                     3. QUANTITY TO PROCESS: ' ' PCS
                     4. TOTAL PROCESS: ' ' PCS
                     5. TARGET TOTAL ' ' PCS
@@ -506,7 +597,6 @@ class App:
 
 
 sio.connect('http://10.0.2.150:9090')
-
 
 if __name__ == "__main__":
     signal.signal(signal.SIGINT, signal.SIG_DFL)
