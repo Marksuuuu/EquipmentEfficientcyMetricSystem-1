@@ -471,7 +471,6 @@ class MO_Details:
     def on_close(self):
         if messagebox.askokcancel("Quit", "Do you want to quit?"):
             self.root.destroy()
-            os.system("python main.py")
 
 
 if __name__ == "__main__":

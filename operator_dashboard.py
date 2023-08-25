@@ -2,12 +2,14 @@ import json
 import os
 import tkinter as tk
 import tkinter.font as tkFont
+import csv
+from datetime import datetime
 from io import BytesIO
 from tkinter import Toplevel
 from tkinter import messagebox
 from tkinter import simpledialog
 from tkinter import ttk
-from tkinter.messagebox import showinfo, showerror
+from tkinter.messagebox import showinfo, showwarning, showerror
 
 import requests
 from PIL import Image, ImageTk
@@ -135,6 +137,15 @@ class OperatorDashboard:
         request_ticket_btn.place(x=10, y=0, width=172, height=44)
         request_ticket_btn["command"] = self.tickets_command
 
+        # lbl_machine_status = tk.Button(root)
+        # lbl_machine_status["bg"] = "#cc0000"
+        # lbl_machine_status["font"] = ft
+        # lbl_machine_status["fg"] = "#ffffff"
+        # lbl_machine_status["justify"] = "center"
+        # lbl_machine_status["text"] = "OFFLINE"
+        # lbl_machine_status.place(x=756, y=0, width=172, height=44)
+        # lbl_machine_status["command"] = self.tickets_command
+
         employee_name = tk.Label(root)
         employee_name["bg"] = "#ffffff"
         employee_name["font"] = ft
@@ -186,7 +197,39 @@ class OperatorDashboard:
 
         self.populate_table()
 
-        self.tree.bind("<Double-1>", self.show_popup_view)
+
+        self.tree.bind("<Double-1>", self.double_click_handler)
+
+
+    def double_click_handler(self, event):
+        if not self.getLastOfflineEntry():
+            self.show_popup_view(event)
+        # else:
+        #     showinfo("Offline Alert", "Cannot perform action while offline.")
+
+    def getLastOfflineEntry(self):
+        last_offline_entry = None
+        with open('logs/logs.csv', 'r') as csvfile:
+            csvreader = csv.reader(csvfile)
+            for row in csvreader:
+                if row[0] == "OFFLINE":
+                    last_offline_entry = row
+
+        if last_offline_entry:
+            event_type, event_date, event_time = last_offline_entry[:3]
+            event_datetime = datetime.strptime(
+                f"{event_date} {event_time}", "%Y-%m-%d %H:%M:%S")
+            print('last_offline_entry: ', last_offline_entry)
+            showwarning(
+                    "STATUS ALERT!",
+                    "Attention! The machine is temporarily unavailable.",
+                )
+            return {
+                "event_type": event_type,
+                "event_datetime": event_datetime
+            }
+        else:
+            return None
 
     def populate_table(self):
         data = self.read_json_file()

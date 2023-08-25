@@ -533,6 +533,8 @@ class App:
 
         formatted_time = self.format_time(total_available_seconds)
         return formatted_time
+    
+
 
     def update_status(self):
         script_directory = os.path.dirname(os.path.abspath(__file__))
