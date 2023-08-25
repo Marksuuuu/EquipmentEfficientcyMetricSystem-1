@@ -100,7 +100,11 @@ class App:
         self.update_status()
         self.oee()
         self.init_logging()
-        self.chart_image = self.create_donut_chart()
+
+        self.chart_image = None
+        self.GLabel_544 = None
+        self.create_ui()
+        self.update_chart()
         # End
 
         ## END##
@@ -125,15 +129,6 @@ class App:
         self.GMessage_33["justify"] = "center"
         self.GMessage_33["text"] = "LOGS"
         self.GMessage_33.place(x=680, y=160, width=666, height=717)
-
-        self.GLabel_544 = tk.Label(root, image=self.chart_image)
-        self.GLabel_544["bg"] = "#ffffff"
-        self.ft = tk.font.Font(family='Times', size=10)
-        self.GLabel_544["font"] = self.ft
-        self.GLabel_544["fg"] = "#333333"
-        self.GLabel_544["justify"] = "center"
-        self.GLabel_544["text"] = "label"
-        self.GLabel_544.place(x=20, y=160, width=298, height=339)
 
         self.GLabel_111 = tk.Label(root)
         self.GLabel_111["bg"] = "#ffffff"
@@ -162,12 +157,12 @@ class App:
                 logs_data = file.read()
             lines = logs_data.split('\n')
             last_5_logs = '\n'.join(lines[-6:])
-            # data = (last_5_logs, client, removeExtension)
-            # encoded_data = json.dumps({'data': data})
-            # sio.emit('passActivityData', encoded_data)
+            data = (last_5_logs, client, removeExtension)
+            encoded_data = json.dumps({'data': data})
+            sio.emit('passActivityData', encoded_data)
         except Exception as e:
             raise
-        root.after(5000, self.update_logs)
+        root.after(50000, self.update_logs)
 
     def update_logs(self):
         log_file = 'logs/activity_log.txt'
@@ -189,7 +184,7 @@ class App:
 
         except FileNotFoundError:
             self.logs["text"] = "Log file not found."
-        root.after(5000, self.update_logs)
+        root.after(50000, self.update_logs)
 
     def init_logging(self):
         log_file = 'logs/activity_log.txt'
@@ -197,7 +192,6 @@ class App:
                             format='[%(asctime)s] %(levelname)s: %(message)s',
                             datefmt='%Y-%m-%d %H:%M:%S', filemode='a')
         # print(f'Logging to {log_file}')-
-
     def log_activity(self, level, message):
         logging.log(level, message)
 
@@ -434,7 +428,6 @@ class App:
 
     def create_donut_chart(self):
         total = 100 - self.calculateOee()
-        print(self.calculateOee())
         data = [self.calculateOee(), total]
         labels = ['Effectiveness', '']
         colors = ['#3498db', '#e74c3c']
@@ -460,7 +453,24 @@ class App:
         pil_image = Image.frombytes(
             'RGB', canvas.get_width_height(), canvas.tostring_rgb())
         img = ImageTk.PhotoImage(image=pil_image)
+        root.after(50000, self.create_donut_chart)
         return img
+    
+    def update_chart(self):
+        self.chart_image = self.create_donut_chart()
+        if self.GLabel_544 is not None:
+            self.GLabel_544.configure(image=self.chart_image)
+        root.after(50000, self.update_chart)
+
+    def create_ui(self):
+        self.GLabel_544 = tk.Label(root, bg="#FFFFFF")
+        self.GLabel_544["bg"] = "#FFFFFF"
+        self.ft = tk.font.Font(family='Times', size=10)
+        self.GLabel_544["font"] = self.ft
+        self.GLabel_544["fg"] = "#333333"
+        self.GLabel_544["justify"] = "center"
+        self.GLabel_544["text"] = "label"
+        self.GLabel_544.place(x=20, y=160, width=298, height=339)
 
     def calculateOee(self):
         availableHrs_str = self.getAvailableHours()
@@ -471,15 +481,12 @@ class App:
 
         availableHrs = available_hours + \
             (available_minutes / 60) + (available_seconds / 3600)
-        print(f"==>> availableHrs: {availableHrs}")
 
         productiveHrs = self.calculate_total_productive_time().total_seconds() / \
             3600  # Convert timedelta to hours
-        print(f"==>> productiveHrs: {productiveHrs}")
 
         if availableHrs > 0:  # Make sure availableHrs is greater than 0 to avoid division by zero
             oee_percentage = (productiveHrs / availableHrs) * 100
-            print(round(oee_percentage, 5))
             return round(oee_percentage, 5)
         else:
             return 0
@@ -555,7 +562,7 @@ class App:
                     pass
         except FileNotFoundError as e:
             print(e)
-        root.after(5000, self.update_status)
+        root.after(50000, self.update_status)
 
     def oee(self):
         script_directory = os.path.dirname(os.path.abspath(__file__))
@@ -593,8 +600,7 @@ class App:
                     pass
         except FileNotFoundError as e:
             print(e)
-        root.after(5000, self.oee)
-
+        root.after(50000, self.oee)
 
 sio.connect('http://10.0.2.150:9090')
 
