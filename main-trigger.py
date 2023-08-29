@@ -38,14 +38,16 @@ class App:
         date = current_time.strftime('%Y-%m-%d')
         time = current_time.strftime('%H:%M:%S')
 
-        with open(self.csv_file_path, mode='a', newline='') as csv_file:
-            csv_writer = csv.writer(csv_file)
-            if self.is_online:
-                # Online event, clear message field
-                csv_writer.writerow(['', date, time])
-            else:
-                # Offline event, include message
+        if self.is_online:
+            with open(self.csv_file_path, mode='w', newline='') as csv_file:
+                csv_writer = csv.writer(csv_file)
                 csv_writer.writerow([message, date, time])
+        else:
+            with open(self.csv_file_path, mode='a', newline='') as csv_file:
+                csv_writer = csv.writer(csv_file)
+                csv_writer.writerow([message, date, time])
+        
+           
 
 
 if __name__ == "__main__":
