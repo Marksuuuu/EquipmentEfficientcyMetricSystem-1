@@ -425,8 +425,12 @@ class App:
         return total_productive_time
 
     def create_donut_chart(self):
-        total = 100 - self.calculateOee()
-        data = [self.calculateOee(), total]
+        calculated_oee = self.calculateOee()
+        # Ensure that calculated_oee is within the valid percentage range (0-100)
+        calculated_oee = max(0, min(calculated_oee, 100))
+        
+        total = 100 - calculated_oee
+        data = [calculated_oee, total]
         labels = ['Effectiveness', 'Not Effective']
         colors = ['#3498db', '#e74c3c']
         explode = (0.05, 0)
@@ -434,7 +438,7 @@ class App:
         figure = Figure(figsize=(5, 4), dpi=100)
         plot = figure.add_subplot(1, 1, 1)
         plot.pie(data, labels=labels, colors=colors, autopct='%1.1f%%',
-                 startangle=90, pctdistance=0.85, explode=explode)
+                startangle=90, pctdistance=0.85, explode=explode)
 
         centre_circle = plt.Circle((0, 0), 0.70, fc='white')
         plot.add_artist(centre_circle)
@@ -443,7 +447,6 @@ class App:
         plot.text(0, 0, center_text, va='center', ha='center', fontsize=12)
         plot.legend(loc='upper center', labels=labels, fontsize='small')
         
-
         plot.axis('equal')
 
         canvas = FigureCanvasTkAgg(figure, master=root)
@@ -455,6 +458,7 @@ class App:
         img = ImageTk.PhotoImage(image=pil_image)
         root.after(50000, self.create_donut_chart)
         return img
+
     
     def create_total_qty_graph(self):
         total_running_qty_var = self.total_running_qty()
