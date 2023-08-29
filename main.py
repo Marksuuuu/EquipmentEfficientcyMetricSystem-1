@@ -111,7 +111,7 @@ class App:
         self.GLabel_544 = None
         self.create_ui()
         self.update_chart()
-        # End
+
 
         ## END##
         dateNow = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -617,7 +617,7 @@ class App:
                     pass
         except FileNotFoundError as e:
             print(e)
-        root.after(50000, self.update_status)
+        root.after(5000, self.update_status)
 
     def oee(self):
         script_directory = os.path.dirname(os.path.abspath(__file__))
