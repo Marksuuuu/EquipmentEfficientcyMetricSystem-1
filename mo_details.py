@@ -467,6 +467,7 @@ class MO_Details:
                             message="Input exceeded the set running Quantity: "
                             + str(extracted_running_qty),
                         )
+                        print("")
                     else:
                         self.start_btn["state"] = "normal"
                         self.stop_btn["state"] = "disabled"
