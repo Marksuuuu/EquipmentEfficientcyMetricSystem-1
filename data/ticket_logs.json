@@ -33,5 +33,12 @@
         "downtime_type_value": "SETUP",
         "checkbox_value": 1,
         "remarks_value": "TEST TICKET, PLEASE DELETE IF YOU WANT"
+    },
+    {
+        "employee_no": "010450",
+        "machine_no_value": "1470-004",
+        "downtime_type_id": "1",
+        "checkbox_value": 1,
+        "remarks_value": "TEST TICKET PLEASE DELETE"
     }
 ]
