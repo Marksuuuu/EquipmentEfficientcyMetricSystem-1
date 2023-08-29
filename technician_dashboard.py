@@ -49,6 +49,8 @@ class TechnicianDashboard:
         extracted_employee_department = data[3]
         extracted_photo_url = data[4]
         extracted_possition = data[5]
+        self.downtime_type = ''
+
         self.root = root
         self.checking()
         root.title(
@@ -118,13 +120,32 @@ class TechnicianDashboard:
         GButton_19.place(x=1530, y=140, width=115, height=56)
         GButton_19["command"] = self.logout
 
+        self.notes = ''
+        self.poppedData = self.downtime_type.pop()
+        print(f"==>> poppedData: {self.poppedData}")
+        if self.poppedData.title() == 'Setup':
+            self.notes = """ PLEASE GO AND MAKE A SETUP!"""
+            print(f"==>> notes: {self.notes}")
+        elif self.poppedData.title() == 'Conversion':
+            self.notes = """ PLEASE GO AND MAKE A CONVERTION!"""
+            print(f"==>> notes: {self.notes}")
+        elif self.poppedData.title() == 'Repair':
+            self.notes = """ PLEASE GO AND MAKE A REPAIR!"""
+            print(f"==>> notes: {self.notes}")
+        elif self.poppedData.title() == 'Others':
+            self.notes = """ PLEASE CHECK!"""
+            print(f"==>> notes: {self.notes}")
+        else:
+            self.notes = ""
+            print(f"==>> notes: {self.notes}")
+
         GMessage_474 = tk.Message(root)
         GMessage_474["bg"] = "#ffffff"
         ft = tkFont.Font(family='Times', size=23)
         GMessage_474["font"] = ft
         GMessage_474["fg"] = "#333333"
         GMessage_474["justify"] = "center"
-        GMessage_474["text"] = "TICKET"
+        GMessage_474["text"] = self.notes
         GMessage_474.place(x=840, y=320, width=800, height=547)
 
     def read_machno(self):
@@ -135,24 +156,24 @@ class TechnicianDashboard:
         return extracted_machno
 
     def checking(self):
-        hris_url = "http://lams.teamglac.com/lams/api/job_order/active_jo.php"
-        response = requests.get(hris_url)
+        lams_url = "http://lams.teamglac.com/lams/api/job_order/active_jo.php"
+        response = requests.get(lams_url)
         if response.status_code == 200:
             data = response.json()
             result = data["result"]
             res = 0
             machno_alerts = []
             machno_status = []
+            self.downtime_type = []
             for x in result:
                 if x.get("MACH201_MACHNO") == self.read_machno():
                     res = 1
-
                     machno_alerts.append(x["DTNO"])
-
                     machno_status.append(x["STATUS"])
+                    self.downtime_type.append(x["DOWNTIME_TYPE"])
                     break
             if res == 1:
-
+                self.getDownTimeType('1')
                 self.machno_string = ", ".join(machno_alerts)
                 self.machno_string_status = ", ".join(machno_status)
                 print(
@@ -168,6 +189,22 @@ class TechnicianDashboard:
                 #     self.ticket_status = self.machno_string_status
 
         self.root.after(15000, self.checking)
+
+    def getDownTimeType(self, downtimeType):
+        print(f"==>> downtimeType: {downtimeType}")
+        cmms_url = 'http://cmms.teamglac.com/main_downtime_type.php'
+        response = requests.get(cmms_url)
+        data = response.json()
+        result = data["result"]
+        print(f"==>> result: {result}")
+        if response.status_code == 200:
+            for item in result:
+                if downtimeType in item['ID']:
+                    downtime_type = item["DOWNTIME_TYPE"]
+                    break
+                else:
+                    print('else')
+        print(f"==>> downtime_type: {downtime_type}")
 
     def GButton_19_command(self):
         print("command")
