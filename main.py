@@ -111,7 +111,7 @@ class App:
         self.GLabel_544 = None
         self.create_ui()
         self.update_chart()
-
+        # End
 
         ## END##
         dateNow = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -464,12 +464,15 @@ class App:
         total_running_qty_var = self.total_running_qty()
         total_remaining_qty_var = self.total_remaining_qty()
         
+        if total_running_qty_var == 0 and total_remaining_qty_var == 0:
+            return None
+        
         result_qty = total_remaining_qty_var - total_running_qty_var
-        data = [total_remaining_qty_var , total_running_qty_var]
+        data = [total_remaining_qty_var, total_running_qty_var]
         labels = ['REMAINING', 'TOTAL RUNNING QTY']
         colors = ['#3498db', '#e74c3c']
         explode = (0.05, 0)
-
+        
         figure = Figure(figsize=(5, 4), dpi=100)
         plot = figure.add_subplot(1, 1, 1)
         plot.pie(data, labels=labels, colors=colors, autopct='%1.1f%%',
@@ -513,7 +516,7 @@ class App:
         self.GLabel_111["font"] = self.ft
         self.GLabel_111["fg"] = "#333333"
         self.GLabel_111["justify"] = "center"
-        self.GLabel_111["text"] = "test"
+        self.GLabel_111["text"] = "NO DATA"
         self.GLabel_111.place(x=360, y=160, width=301, height=338)
         
         self.GLabel_544 = tk.Label(root, bg="#FFFFFF")

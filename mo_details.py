@@ -223,9 +223,7 @@ class MO_Details:
                     ):
                         remaining_qty = entry["remaining_qty"]
                         break
-                self.lbl_remaining_qty[
-                    "text"
-                ] = f"Remaining MO Quantity: {remaining_qty}"
+                self.lbl_remaining_qty["text"] = f"Remaining MO Quantity: {remaining_qty}"
                 # if "data" in data and isinstance(data["data"], list):
                 #     remaining_qty = 0
                 #     for entry in data["data"]:
@@ -255,7 +253,7 @@ class MO_Details:
 
     def start_command(self):
 
-        # self.checking()
+        self.checking()
 
         print(self.currentDateTime)
         print("START button clicked")
@@ -286,7 +284,7 @@ class MO_Details:
                 title="Login Failed",
                 message=f"Password is incorrect. Please try again.",
             )
-                self.show_input_dialog()
+                # self.show_input_dialog()
 
             else:
                 # self.start_btn["state"] = "normal"    # Enable the START button
@@ -364,16 +362,14 @@ class MO_Details:
                 extracted_running_qty = int(self.running_qty)
 
                 if total_finished <= extracted_running_qty:
+
                     self.data_dict[self.wip_entity_name] = {
                         "wip_entity_name": self.wip_entity_name,
                         "running_qty": self.running_qty,
                         "total_finished": total_finished,
                         "remaining_qty": extracted_running_qty - total_finished,
-                        "last_transaction": self.currentDateTime,
-                        "person_assigned": self.extracted_fullname,
-
                     }
-                    self.get_remaining_qty_from_logs()
+
 
                     with open("data/mo_logs.json", "w") as json_output_file:
                         json.dump(
@@ -381,6 +377,9 @@ class MO_Details:
                             json_output_file,
                             indent=4,
                         )
+                        self.start_btn["state"] = "normal"
+                        self.stop_btn["state"] = "disabled"
+                        self.get_remaining_qty_from_logs()
                         self.log_event("STOP")
                 
                 else:
@@ -393,20 +392,16 @@ class MO_Details:
                         "Total finished is not less than or equal to extracted running qty."
                     )
 
-        else: 
-            # json is not empty
-            print('initial self.extracted_fullname: ', self.extracted_fullname)
+        else:
             if total_finished is not None and total_finished.strip() != "":
                 total_finished = int(total_finished)
                 extracted_running_qty = int(self.running_qty)
-
                 if self.wip_entity_name not in self.data_dict:
                     self.data_dict[self.wip_entity_name] = {
                         "wip_entity_name": self.wip_entity_name,
                         "running_qty": self.running_qty,
                         "total_finished": 0,
                         "remaining_qty": extracted_running_qty,
-                        "last_transaction": self.currentDateTime,
                     }
 
                 try:
@@ -415,6 +410,7 @@ class MO_Details:
                         self.data_dict = {
                             item["wip_entity_name"]: item for item in data["data"]
                         }
+                        print("data_dict: ", self.data_dict)
 
                 except FileNotFoundError:
                     self.data_dict = {}
@@ -440,8 +436,6 @@ class MO_Details:
                             self.stop_btn["state"] = "disabled"
                         current_entry["total_finished"] += total_finished
                         current_entry["remaining_qty"] -= total_finished
-                        self.extracted_fullname = self.extracted_fullname
-                        print(' ELSE self.extracted_fullname: ', self.extracted_fullname)
                         self.log_event("STOP")
                         
                     else:
@@ -467,7 +461,6 @@ class MO_Details:
                             message="Input exceeded the set running Quantity: "
                             + str(extracted_running_qty),
                         )
-                        print("")
                     else:
                         self.start_btn["state"] = "normal"
                         self.stop_btn["state"] = "disabled"
@@ -476,8 +469,6 @@ class MO_Details:
                             "running_qty": self.running_qty,
                             "total_finished": total_finished,
                             "remaining_qty": extracted_running_qty - total_finished,
-                            "last_transaction": self.currentDateTime,
-                            "person_assigned": self.extracted_fullname,
                         }
 
 
