@@ -34,6 +34,10 @@ class RequestTicket:
         now = datetime.now()
         today = date.today()
         self.current_date_time = now.strftime("%Y-%m-%d %H:%M:%S")
+        
+        self.dropdown_var = tk.StringVar()
+
+        self.fetch_downtime_types()
 
         # ////////////////////////////////////////
         # REQUESTOR
@@ -133,13 +137,9 @@ class RequestTicket:
         lbl_DowntimeType["text"] = "DOWNTIME TYPE"
         lbl_DowntimeType.place(x=540, y=200, width=250, height=50)
 
-        self.dropdown_var = tk.StringVar()
-        # Create a dropdown widget
         dropdown = ttk.Combobox(root, textvariable=self.dropdown_var, state="readonly")
-        dropdown["values"] = ("SETUP", "RECTIFICATION", "CONVERSION")
-        dropdown.bind(
-            "<<ComboboxSelected>>", self.on_select
-        )  # Bind a function to the selection event
+        dropdown["values"] = [item["DOWNTIME_TYPE"] for item in self.downtime_data]
+        dropdown.bind("<<ComboboxSelected>>", self.on_select)
         dropdown.place(x=540, y=240, width=250, height=30)
 
         # dropdown.pack(padx=20, pady=20)
@@ -203,6 +203,8 @@ class RequestTicket:
 
         # ////////////////////////////////////////
         # FUNCTIONS
+    
+    
 
     def load_machno(self):
         log_file_path = os.path.join(self.get_script_directory(), "data", "main.json")
@@ -238,8 +240,23 @@ class RequestTicket:
     def get_script_directory(self):
         return os.path.dirname(os.path.abspath(__file__))
 
+    def fetch_downtime_types(self):
+        cmms_url = 'http://cmms.teamglac.com/main_downtime_type.php'
+        response = requests.get(cmms_url)
+        data = response.json()
+        self.downtime_data = data["result"]
+
     def on_select(self, event):
-        selected_downtime_type = self.dropdown_var.get()
+        selected_text = self.dropdown_var.get()
+        selected_id = None
+        for item in self.downtime_data:
+            if item['DOWNTIME_TYPE'] == selected_text:
+                selected_id = item['ID']
+                break
+
+        if selected_id is not None:
+            print("Selected ID:", selected_id)
+            print("Selected Text:", selected_text)
 
     # def collect_and_print_values(self):
     #     employee_no = self.employee_no
@@ -286,10 +303,11 @@ class RequestTicket:
     def collect_and_print_values(self):
         employee_no = self.employee_no
         machine_no_value = self.load_machno()
-        downtime_type_value = self.dropdown_var.get()
+        downtime_type_id = self.get_selected_downtime_type_id()
+        print(f"==>> downtime_type_id: {downtime_type_id}")
         checkbox_value = self.set_checkbox_value
         remarks_value = self.le_Remarks.get()
-
+    
         # Load existing JSON data if the file exists, or create an empty list
         file_path = "data/ticket_logs.json"
         if os.path.exists(file_path):
@@ -301,7 +319,7 @@ class RequestTicket:
         new_entry = {
             "employee_no": employee_no,
             "machine_no_value": machine_no_value,
-            "downtime_type_value": downtime_type_value,
+            "downtime_type_id": downtime_type_id,
             "checkbox_value": checkbox_value,
             "remarks_value": remarks_value
         }
@@ -314,7 +332,7 @@ class RequestTicket:
             json.dump(existing_data, json_file, indent=4)
 
         # Your existing code for sending the HTTP request and displaying messages
-        url = f'http://lams.teamglac.com/lams/api/job_order/create_jo.php?params=["{machine_no_value}","{downtime_type_value}","{remarks_value}","{employee_no}","{checkbox_value}"]'
+        url = f'http://lams.teamglac.com/lams/api/job_order/create_jo.php?params=["{machine_no_value}","{downtime_type_id}","{remarks_value}","{employee_no}","{checkbox_value}"]'
         r = requests.post(url)
 
         if r.status_code == 200:
@@ -329,6 +347,15 @@ class RequestTicket:
             print(value_url['dtno'])
         else:
             showerror("Error", "Error in creating job order.")
+            
+    def get_selected_downtime_type_id(self):
+        selected_text = self.dropdown_var.get()
+        selected_id = None
+        for item in self.downtime_data:
+            if item['DOWNTIME_TYPE'] == selected_text:
+                selected_id = item['ID']
+                break
+        return selected_id
 
     def submit(self):
         print("Submit")
