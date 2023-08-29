@@ -1,16 +1,16 @@
 {
     "data": [
         {
-            "wip_entity_name": "MO838597",
-            "running_qty": 100,
-            "total_finished": 26,
-            "remaining_qty": 74
-        },
-        {
             "wip_entity_name": "MO839288",
             "running_qty": 100,
-            "total_finished": 100,
-            "remaining_qty": 0
+            "total_finished": 11,
+            "remaining_qty": 89
+        },
+        {
+            "wip_entity_name": "MO838597",
+            "running_qty": 100,
+            "total_finished": 12,
+            "remaining_qty": 88
         }
     ]
 }

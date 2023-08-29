@@ -137,12 +137,13 @@ class OperatorDashboard:
         request_ticket_btn.place(x=10, y=0, width=172, height=44)
         request_ticket_btn["command"] = self.tickets_command
 
-        # lbl_machine_status = tk.Button(root)
-        # lbl_machine_status["bg"] = "#cc0000"
+        # lbl_machine_status = tk.Label(root)
+        # lbl_machine_status["bg"] = "#7E8081"
         # lbl_machine_status["font"] = ft
         # lbl_machine_status["fg"] = "#ffffff"
         # lbl_machine_status["justify"] = "center"
-        # lbl_machine_status["text"] = "OFFLINE"
+        # # lbl_machine_status["text"] = "OFFLINE"
+        # self.lbl_machine_status = lbl_machine_status
         # lbl_machine_status.place(x=756, y=0, width=172, height=44)
         # lbl_machine_status["command"] = self.tickets_command
 
@@ -196,7 +197,8 @@ class OperatorDashboard:
         self.tree.pack(pady=120)
 
         self.populate_table()
-
+        # self.display_machine_status()
+        self.update_status()
 
         self.tree.bind("<Double-1>", self.double_click_handler)
 
@@ -221,8 +223,8 @@ class OperatorDashboard:
                 f"{event_date} {event_time}", "%Y-%m-%d %H:%M:%S")
             print('last_offline_entry: ', last_offline_entry)
             showwarning(
-                    "STATUS ALERT!",
-                    "Attention! The machine is temporarily unavailable.",
+                    "MACHINE OFFLINE!",
+                    "Attention! The machine is currently OFFLINE",
                 )
             return {
                 "event_type": event_type,
@@ -230,6 +232,39 @@ class OperatorDashboard:
             }
         else:
             return None
+
+
+    def update_status(self):
+        script_directory = os.path.dirname(os.path.abspath(__file__))
+        log_folder = os.path.join(script_directory, "logs")
+        # Change extension to .csv
+        log_file_path = os.path.join(log_folder, 'logs.csv')
+
+        try:
+            with open(log_file_path, 'r') as file:
+                csv_reader = csv.reader(file)
+                last_row = None
+                for row in csv_reader:
+                    last_row = row
+                if last_row:
+                    # Get the first value from the last row
+                    last_value = last_row[0]
+                    self.logs_message = tk.Message(self.root)
+                    self.logs_message["bg"] = "#e0bdbd"
+                    self.ft = tkFont.Font(family='Times', size=10)
+                    self.logs_message["font"] = self.ft
+                    self.logs_message["fg"] = "#333333"
+                    self.logs_message["justify"] = "center"
+                    self.logs_message['width'] = 200
+                    self.logs_message["text"] = last_value
+                    # self.logs_message.place(x=20, y=20, width=284, height=51)
+                    self.logs_message.place(x=756, y=0, width=172, height=44)
+
+                else:
+                    pass
+        except FileNotFoundError as e:
+            print(e)
+        self.root.after(5000, self.update_status)
 
     def populate_table(self):
         data = self.read_json_file()
@@ -239,6 +274,7 @@ class OperatorDashboard:
                 "", "end", iid=i, text=str(i),
                 values=(i, customer, device, main_opt, package, running_qty, wip_entity_name)
             )
+
 
     def read_json_file(self):
         with open("data\main.json", "r") as json_file:

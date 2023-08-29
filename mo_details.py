@@ -11,8 +11,8 @@ from tkinter import Toplevel
 from tkinter import messagebox
 from tkinter import simpledialog
 from tkinter.messagebox import showinfo, showwarning, showerror
-import logging
 import datetime
+
 
 
 class MO_Details:
@@ -45,6 +45,7 @@ class MO_Details:
         self.extracted_employee_no = extracted_employee_no
         self.extracted_photo_url = extracted_photo_url
         self.extracted_username = extracted_username
+        self.extracted_fullname = extracted_fullname
         self.root.title ("MO DETAILS")
         self.test_data = data
 
@@ -55,8 +56,14 @@ class MO_Details:
         self.running_qty = data[5]
         self.wip_entity_name = data[6]
 
-        # self.remaining_qty = None
         self.data_dict = {}
+
+
+        current_time = datetime.datetime.now()
+        date = current_time.strftime("%Y-%m-%d")
+        time = current_time.strftime("%H:%M:%S")
+        self.currentDateTime = f"{date} {time}"
+
 
         self.root.geometry(alignstr)
         self.root.resizable(width=False, height=False)
@@ -216,9 +223,7 @@ class MO_Details:
                     ):
                         remaining_qty = entry["remaining_qty"]
                         break
-                self.lbl_remaining_qty[
-                    "text"
-                ] = f"Remaining MO Quantity: {remaining_qty}"
+                self.lbl_remaining_qty["text"] = f"Remaining MO Quantity: {remaining_qty}"
                 # if "data" in data and isinstance(data["data"], list):
                 #     remaining_qty = 0
                 #     for entry in data["data"]:
@@ -247,7 +252,10 @@ class MO_Details:
             csv_writer.writerow([msg, date, time])
 
     def start_command(self):
-        # self.checking()
+
+        self.checking()
+
+        print(self.currentDateTime)
         print("START button clicked")
         self.log_event("START")
         self.start_btn["state"] = "disabled"  # Disable the START button
@@ -276,6 +284,7 @@ class MO_Details:
                 title="Login Failed",
                 message=f"Password is incorrect. Please try again.",
             )
+                # self.show_input_dialog()
 
             else:
                 # self.start_btn["state"] = "normal"    # Enable the START button
@@ -353,6 +362,7 @@ class MO_Details:
                 extracted_running_qty = int(self.running_qty)
 
                 if total_finished <= extracted_running_qty:
+
                     self.data_dict[self.wip_entity_name] = {
                         "wip_entity_name": self.wip_entity_name,
                         "running_qty": self.running_qty,
@@ -360,12 +370,16 @@ class MO_Details:
                         "remaining_qty": extracted_running_qty - total_finished,
                     }
 
+
                     with open("data/mo_logs.json", "w") as json_output_file:
                         json.dump(
                             {"data": list(self.data_dict.values())},
                             json_output_file,
                             indent=4,
                         )
+                        self.start_btn["state"] = "normal"
+                        self.stop_btn["state"] = "disabled"
+                        self.get_remaining_qty_from_logs()
                         self.log_event("STOP")
                 
                 else:
@@ -440,14 +454,16 @@ class MO_Details:
                         self.stop_btn["state"] = "disabled"
 
                     elif extracted_running_qty < total_finished:
-                        self.start_btn["state"] = "normal"
-                        self.stop_btn["state"] = "disabled"
+                        self.start_btn["state"] = "disabled"
+                        self.stop_btn["state"] = "normal"
                         messagebox.showinfo(
                             title="Warning",
                             message="Input exceeded the set running Quantity: "
                             + str(extracted_running_qty),
                         )
                     else:
+                        self.start_btn["state"] = "normal"
+                        self.stop_btn["state"] = "disabled"
                         self.data_dict[self.wip_entity_name] = {
                             "wip_entity_name": self.wip_entity_name,
                             "running_qty": self.running_qty,
