@@ -97,6 +97,7 @@ class OperatorDashboard:
         # setting title
 
 
+
         root.title(
             f"OPERATOR DASHBOARD - {self.extracted_employee_no} -- POSSITION - {self.extracted_possition}"
         )
@@ -187,7 +188,8 @@ class OperatorDashboard:
                 "MAIN OPERATION",
                 "PACKAGE",
                 "MO QUANTITY",
-                "MO"
+                "MO",
+                "STATUS"
             ),
         )
         self.tree.heading("ROW NUMBER", text="ROW NUMBER")
@@ -197,6 +199,7 @@ class OperatorDashboard:
         self.tree.heading("PACKAGE", text="PACKAGE")
         self.tree.heading("MO QUANTITY", text="MO QUANTITY")
         self.tree.heading("MO", text="MO")
+        self.tree.heading("STATUS", text="STATUS")
         self.tree.pack(pady=120)
 
         self.populate_table()
@@ -282,13 +285,15 @@ class OperatorDashboard:
             extracted_data = []
 
             for item in data["data"]:
+                item["status"] = ""
                 customer = item["customer"]
                 device = item["device"]
                 main_opt = item["main_opt"]
                 package = item["package"]
                 running_qty = item["running_qty"]
                 wip_entity_name = item["wip_entity_name"]
-                extracted_data.append((customer, device, main_opt, package, running_qty, wip_entity_name))
+                status = item.get("status", "")
+                extracted_data.append((customer, device, main_opt, package, running_qty, wip_entity_name, status))
 
         return extracted_data
 
@@ -297,10 +302,10 @@ class OperatorDashboard:
         
         data = self.read_json_file()
 
-        for i, (customer, device, main_opt, package, running_qty, wip_entity_name) in enumerate(data, start=1):
+        for i, (customer, device, main_opt, package, running_qty, wip_entity_name, status) in enumerate(data, start=1):
             self.tree.insert(
                 "", "end", iid=i, text=str(i),
-                values=(i, customer, device, main_opt, package, running_qty, wip_entity_name)
+                values=(i, customer, device, main_opt, package, running_qty, wip_entity_name, status)
             )
 
     def update_table(self):

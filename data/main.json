@@ -8,7 +8,7 @@
             "main_opt": "Wirebond/3RD Opt.Insp.",
             "package": "SP3F",
             "running_qty": "100",
-            "uph": "20",
+            "uph": "30",
             "wip_entity_name": "MO838597"
         },
         {
@@ -26,7 +26,7 @@
             "main_opt": "Wirebond/3RD Opt.Insp.",
             "package": "SOT",
             "running_qty": "100",
-            "uph": "30",
+            "uph": "20",
             "wip_entity_name": "MO839211"
         }
     ]

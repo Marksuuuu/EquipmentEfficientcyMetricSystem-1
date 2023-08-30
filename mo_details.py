@@ -271,36 +271,36 @@ class MO_Details:
         print("STOP button clicked")
         # self.start_btn["state"] = "normal"  # Enable the START button
         # self.stop_btn["state"] = "disabled"  # Disable the STOP button
-        hris_password = simpledialog.askstring(
-            "Password",
-            "Enter Password", show='*'
-        )
-        # self.show_input_dialog()
+        # hris_password = simpledialog.askstring(
+        #     "Password",
+        #     "Enter Password", show='*'
+        # )
+        self.show_input_dialog()
 
-        if hris_password is not None and hris_password.strip() != "":
-            input_password = str(hris_password)
+        # if hris_password is not None and hris_password.strip() != "":
+        #     input_password = str(hris_password)
 
-            url = f"http://hris.teamglac.com/api/users/login?u={self.extracted_username}&p={input_password}"
-            response = requests.get(url).json()
-            if response['result'] == False or response['result'] == None:
-                print("FAILED")
-                self.start_btn["state"] = "disabled"
-                self.stop_btn["state"] = "normal"
-                showerror(
-                title="Login Failed",
-                message=f"Password is incorrect. Please try again.",
-            )
-                # self.show_input_dialog()
+        #     url = f"http://hris.teamglac.com/api/users/login?u={self.extracted_username}&p={input_password}"
+        #     response = requests.get(url).json()
+        #     if response['result'] == False or response['result'] == None:
+        #         print("FAILED")
+        #         self.start_btn["state"] = "disabled"
+        #         self.stop_btn["state"] = "normal"
+        #         showerror(
+        #         title="Login Failed",
+        #         message=f"Password is incorrect. Please try again.",
+        #     )
+        #         # self.show_input_dialog()
 
-            else:
-                # self.start_btn["state"] = "normal"    # Enable the START button
-                print("Success")
-                # self.stop_btn["state"] = "disabled"
-                self.show_input_dialog()
-                self.mo_data = MOData()
-                self.mo_data.perform_check_and_swap()
-        else:
-            pass
+        #     else:
+        #         # self.start_btn["state"] = "normal"    # Enable the START button
+        #         print("Success")
+        #         # self.stop_btn["state"] = "disabled"
+        #         self.show_input_dialog()
+        #         self.mo_data = MOData()
+        #         self.mo_data.perform_check_and_swap()
+        # else:
+        #     pass
         #     self.start_btn["state"] = "normal"
 
 
@@ -355,12 +355,17 @@ class MO_Details:
                     self.stop_btn.place_forget()
 
                     showinfo("MO COMPLETED!", "MO Alredy Completed!")
-                    # self.mo_data = MOData()
-                    # self.mo_data.perform_check_and_swap()
+                    self.mo_data = MOData()
+                    self.mo_data.perform_check_and_swap()
                     self.root.destroy()
 
 
     def show_input_dialog(self):
+        dateTimeNow = self.currentDateTime
+        person_assigned = self.extracted_fullname
+        print('dateTimeNow: ', dateTimeNow)
+        print('person_assigned: ', person_assigned)
+
         total_finished = simpledialog.askstring(
             "Enter Total Number of Completed",
             "Please enter the total number of Completed MO",
@@ -372,12 +377,13 @@ class MO_Details:
                 extracted_running_qty = int(self.running_qty)
 
                 if total_finished <= extracted_running_qty:
-                    if total_finished== extracted_running_qty:
-                        print("DONE")
+                    if total_finished == extracted_running_qty:
+                        status = "COMPLETED"
                         self.start_btn["state"] = "disabled"
                         self.stop_btn["state"] = "disabled"
                         self.root.destroy()
                     else:
+                        status = "NOT COMPLETED"
                         self.start_btn["state"] = "normal"
                         self.stop_btn["state"] = "disabled"
                     self.data_dict[self.wip_entity_name] = {
@@ -385,6 +391,10 @@ class MO_Details:
                         "running_qty": self.running_qty,
                         "total_finished": total_finished,
                         "remaining_qty": extracted_running_qty - total_finished,
+                        "transaction_date": dateTimeNow,
+                        "last_person_assigned": person_assigned,
+                        "status": status
+                        
                     }
 
                     with open("data/mo_logs.json", "w") as json_output_file:
@@ -409,7 +419,6 @@ class MO_Details:
                     )
 
         else:
-            print('self.currentDateTime: ', self.currentDateTime)
             if total_finished is not None and total_finished.strip() != "":
                 total_finished = int(total_finished)
                 extracted_running_qty = int(self.running_qty)
@@ -444,7 +453,7 @@ class MO_Details:
                             self.current_total_finished + total_finished
                             == extracted_running_qty
                         ):
-                            print("DONE")
+                            status = "COMPLETED"
                             # self.start_btn["state"] = "disabled"
                             # self.stop_btn["state"] = "disabled"
                             self.start_btn.place_forget()
@@ -453,10 +462,14 @@ class MO_Details:
                             self.show_label_completed()
 
                         else:
+                            status = "NOT COMPLETED"
                             self.start_btn["state"] = "normal"
                             self.stop_btn["state"] = "disabled"
                         current_entry["total_finished"] += total_finished
                         current_entry["remaining_qty"] -= total_finished
+                        current_entry["transaction_date"] = dateTimeNow
+                        current_entry["last_person_assigned"] = person_assigned
+                        current_entry["status"] = status
                         self.log_event("STOP")
                         
                     else:
@@ -471,8 +484,12 @@ class MO_Details:
 
                 else:
                     if extracted_running_qty == total_finished:
-                        self.start_btn["state"] = "disabled"
-                        self.stop_btn["state"] = "disabled"
+                        # self.start_btn["state"] = "disabled"
+                        # self.stop_btn["state"] = "disabled"
+                        self.start_btn.place_forget()
+                        self.stop_btn.place_forget()
+
+                        self.show_label_completed()
 
                     elif extracted_running_qty < total_finished:
                         self.start_btn["state"] = "disabled"
@@ -485,11 +502,15 @@ class MO_Details:
                     else:
                         self.start_btn["state"] = "normal"
                         self.stop_btn["state"] = "disabled"
+                        status = "COMPLETED" if extracted_running_qty - total_finished == 0 else "NOT COMPLETED"
                         self.data_dict[self.wip_entity_name] = {
                             "wip_entity_name": self.wip_entity_name,
                             "running_qty": self.running_qty,
                             "total_finished": total_finished,
                             "remaining_qty": extracted_running_qty - total_finished,
+                            "transaction_date": dateTimeNow,
+                            "last_person_assigned": person_assigned,
+                            "status": status
                         }
 
 
@@ -499,7 +520,7 @@ class MO_Details:
                         json_output_file,
                         indent=4,
                     )
-
+            
             self.get_remaining_qty_from_logs()
             # self.root.destroy()
 
