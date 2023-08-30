@@ -16,7 +16,7 @@ from PIL import Image, ImageTk
 
 from mo_details import MO_Details
 from request_ticket import RequestTicket
-
+from move_mo import MOData
 
 class UserPermissions:
     def __init__(self, config_path):
@@ -96,6 +96,8 @@ class OperatorDashboard:
         self.extracted_username = data[6]
         self.root = root
         # setting title
+
+
         root.title(
             f"OPERATOR DASHBOARD - {self.extracted_employee_no} -- POSSITION - {self.extracted_possition}"
         )
@@ -136,16 +138,6 @@ class OperatorDashboard:
         request_ticket_btn["text"] = "REQUEST TICKET"
         request_ticket_btn.place(x=10, y=0, width=172, height=44)
         request_ticket_btn["command"] = self.tickets_command
-
-        # lbl_machine_status = tk.Label(root)
-        # lbl_machine_status["bg"] = "#7E8081"
-        # lbl_machine_status["font"] = ft
-        # lbl_machine_status["fg"] = "#ffffff"
-        # lbl_machine_status["justify"] = "center"
-        # # lbl_machine_status["text"] = "OFFLINE"
-        # self.lbl_machine_status = lbl_machine_status
-        # lbl_machine_status.place(x=756, y=0, width=172, height=44)
-        # lbl_machine_status["command"] = self.tickets_command
 
         employee_name = tk.Label(root)
         employee_name["bg"] = "#ffffff"
@@ -197,10 +189,13 @@ class OperatorDashboard:
         self.tree.pack(pady=120)
 
         self.populate_table()
-        # self.display_machine_status()
+        self.root.after(5000, self.update_table)
+
         self.update_status()
 
         self.tree.bind("<Double-1>", self.double_click_handler)
+
+
 
 
     def double_click_handler(self, event):
@@ -267,6 +262,7 @@ class OperatorDashboard:
         self.root.after(5000, self.update_status)
 
     def populate_table(self):
+        
         data = self.read_json_file()
 
         for i, (customer, device, main_opt, package, running_qty, wip_entity_name) in enumerate(data, start=1):
@@ -275,6 +271,15 @@ class OperatorDashboard:
                 values=(i, customer, device, main_opt, package, running_qty, wip_entity_name)
             )
 
+    def update_table(self):
+        # Clear existing data from the treeview
+        self.tree.delete(*self.tree.get_children())
+        
+        # Call the populate_table function to fill the treeview with updated data
+        self.populate_table()
+        
+        # Schedule the next update
+        self.root.after(5000, self.update_table)
 
     def read_json_file(self):
         with open("data\main.json", "r") as json_file:
@@ -344,6 +349,8 @@ class OperatorDashboard:
             )
 
     def swap_position(self, selected_item):
+        print('selected_item: ', selected_item)
+
         selected_id = self.tree.item(selected_item, "text")
         first_id = "1"
 

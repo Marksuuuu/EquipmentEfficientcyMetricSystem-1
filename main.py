@@ -63,6 +63,7 @@ class UserPermissions:
                 self.technician = data["allowed_users"]["technician"]
         except FileNotFoundError as e:
             print(e)
+            
             self.employee_departments = []
             self.employee_positions = []
             self.technician = []
@@ -79,7 +80,6 @@ class UserPermissions:
 
     def is_operator(self, position):
         return position in self.operator
-
 
 class App:
     def __init__(self, root):
@@ -599,7 +599,7 @@ class App:
         log_file_path = os.path.join(log_folder, 'logs.csv')
 
         try:
-            with open(log_file_path, 'r') as file:
+            with open(log_file_path, 'r') as file: 
                 csv_reader = csv.reader(file)
                 last_row = None
                 for row in csv_reader:
