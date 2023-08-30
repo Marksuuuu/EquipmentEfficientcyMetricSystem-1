@@ -599,7 +599,7 @@ class App:
         log_file_path = os.path.join(log_folder, 'logs.csv')
 
         try:
-            with open(log_file_path, 'r') as file: 
+            with open(log_file_path, 'r') as file:
                 csv_reader = csv.reader(file)
                 last_row = None
                 for row in csv_reader:

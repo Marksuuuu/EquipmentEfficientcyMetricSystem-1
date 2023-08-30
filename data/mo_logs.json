@@ -3,14 +3,20 @@
         {
             "wip_entity_name": "MO838597",
             "running_qty": 100,
-            "total_finished": 100,
-            "remaining_qty": 0
+            "total_finished": 90,
+            "remaining_qty": 10
         },
         {
             "wip_entity_name": "MO839288",
             "running_qty": 100,
-            "total_finished": 100,
-            "remaining_qty": 0
+            "total_finished": 90,
+            "remaining_qty": 10
+        },
+        {
+            "wip_entity_name": "MO839211",
+            "running_qty": 100,
+            "total_finished": 90,
+            "remaining_qty": 10
         }
     ]
 }

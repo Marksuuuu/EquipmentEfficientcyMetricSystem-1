@@ -1,43 +1,55 @@
 import tkinter as tk
-from tkinter import ttk
-import requests
 
-class MyApp:
-    def __init__(self, root):
-        self.root = root
-        self.root.geometry("800x600")
+def hide_button():
+    button.pack_forget()
 
-        self.dropdown_var = tk.StringVar()
+root = tk.Tk()
 
-        self.fetch_downtime_types()
+button = tk.Button(root, text="Hide Me", command=hide_button)
+button.pack()
+
+root.mainloop()
+
+# import tkinter as tk
+# from tkinter import ttk
+# import requests
+
+# class MyApp:
+#     def __init__(self, root):
+#         self.root = root
+#         self.root.geometry("800x600")
+
+#         self.dropdown_var = tk.StringVar()
+
+#         self.fetch_downtime_types()
         
-        dropdown = ttk.Combobox(root, textvariable=self.dropdown_var, state="readonly")
-        dropdown["values"] = [item["DOWNTIME_TYPE"] for item in self.downtime_data]
-        dropdown.bind("<<ComboboxSelected>>", self.on_select)
-        dropdown.place(x=540, y=240, width=250, height=30)
+#         dropdown = ttk.Combobox(root, textvariable=self.dropdown_var, state="readonly")
+#         dropdown["values"] = [item["DOWNTIME_TYPE"] for item in self.downtime_data]
+#         dropdown.bind("<<ComboboxSelected>>", self.on_select)
+#         dropdown.place(x=540, y=240, width=250, height=30)
 
-    def fetch_downtime_types(self):
-        cmms_url = 'http://cmms.teamglac.com/main_downtime_type.php'
-        response = requests.get(cmms_url)
-        data = response.json()
-        self.downtime_data = data["result"]
+#     def fetch_downtime_types(self):
+#         cmms_url = 'http://cmms.teamglac.com/main_downtime_type.php'
+#         response = requests.get(cmms_url)
+#         data = response.json()
+#         self.downtime_data = data["result"]
 
-    def on_select(self, event):
-        selected_text = self.dropdown_var.get()
-        selected_id = None
-        for item in self.downtime_data:
-            if item['DOWNTIME_TYPE'] == selected_text:
-                selected_id = item['ID']
-                break
+#     def on_select(self, event):
+#         selected_text = self.dropdown_var.get()
+#         selected_id = None
+#         for item in self.downtime_data:
+#             if item['DOWNTIME_TYPE'] == selected_text:
+#                 selected_id = item['ID']
+#                 break
 
-        if selected_id is not None:
-            print("Selected ID:", selected_id)
-            print("Selected Text:", selected_text)
+#         if selected_id is not None:
+#             print("Selected ID:", selected_id)
+#             print("Selected Text:", selected_text)
 
-if __name__ == "__main__":
-    root = tk.Tk()
-    app = MyApp(root)
-    root.mainloop()
+# if __name__ == "__main__":
+#     root = tk.Tk()
+#     app = MyApp(root)
+#     root.mainloop()
 
 
 

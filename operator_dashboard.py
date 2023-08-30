@@ -10,13 +10,12 @@ from tkinter import messagebox
 from tkinter import simpledialog
 from tkinter import ttk
 from tkinter.messagebox import showinfo, showwarning, showerror
-
+from move_mo import MOData
 import requests
 from PIL import Image, ImageTk
 
 from mo_details import MO_Details
 from request_ticket import RequestTicket
-from move_mo import MOData
 
 class UserPermissions:
     def __init__(self, config_path):
@@ -166,6 +165,18 @@ class OperatorDashboard:
         logout_btn["command"] = self.logout  # Use the logout method directly
         logout_btn.place(x=1620, y=70, width=66, height=37)
 
+
+        refresh_btn = tk.Button(root)
+        refresh_btn["bg"] = "#999999"
+        refresh_btn["cursor"] = "tcross"
+        ft = tkFont.Font(family="Times", size=10)
+        refresh_btn["font"] = ft
+        refresh_btn["fg"] = "#333333"
+        refresh_btn["justify"] = "center"
+        refresh_btn["text"] = "REFRESH"
+        refresh_btn["command"] = self.update_table
+        refresh_btn.place(x=1520, y=70, width=66, height=37)
+
         self.tree = ttk.Treeview(
             root,
             show="headings",
@@ -176,7 +187,7 @@ class OperatorDashboard:
                 "MAIN OPERATION",
                 "PACKAGE",
                 "MO QUANTITY",
-                "MO",
+                "MO"
             ),
         )
         self.tree.heading("ROW NUMBER", text="ROW NUMBER")
@@ -189,13 +200,15 @@ class OperatorDashboard:
         self.tree.pack(pady=120)
 
         self.populate_table()
-        self.root.after(5000, self.update_table)
+        # self.root.after(5000, self.update_table)
 
         self.update_status()
 
         self.tree.bind("<Double-1>", self.double_click_handler)
 
-
+    def test(self):
+        self.mo_data = MOData()
+        self.mo_data.perform_check_and_swap()
 
 
     def double_click_handler(self, event):
@@ -203,6 +216,7 @@ class OperatorDashboard:
             self.show_popup_view(event)
         # else:
         #     showinfo("Offline Alert", "Cannot perform action while offline.")
+
 
     def getLastOfflineEntry(self):
         last_offline_entry = None
@@ -261,6 +275,24 @@ class OperatorDashboard:
             print(e)
         self.root.after(5000, self.update_status)
 
+
+    def read_json_file(self):
+        with open("data\main.json", "r") as json_file:
+            data = json.load(json_file)
+            extracted_data = []
+
+            for item in data["data"]:
+                customer = item["customer"]
+                device = item["device"]
+                main_opt = item["main_opt"]
+                package = item["package"]
+                running_qty = item["running_qty"]
+                wip_entity_name = item["wip_entity_name"]
+                extracted_data.append((customer, device, main_opt, package, running_qty, wip_entity_name))
+
+        return extracted_data
+
+
     def populate_table(self):
         
         data = self.read_json_file()
@@ -279,23 +311,8 @@ class OperatorDashboard:
         self.populate_table()
         
         # Schedule the next update
-        self.root.after(5000, self.update_table)
+        # self.root.after(5000, self.update_table)
 
-    def read_json_file(self):
-        with open("data\main.json", "r") as json_file:
-            data = json.load(json_file)
-            extracted_data = []
-
-            for item in data["data"]:
-                customer = item["customer"]
-                device = item["device"]
-                main_opt = item["main_opt"]
-                package = item["package"]
-                running_qty = item["running_qty"]
-                wip_entity_name = item["wip_entity_name"]
-                extracted_data.append((customer, device, main_opt, package, running_qty, wip_entity_name))
-
-        return extracted_data
 
     def show_popup_view(self, event):
         selected_item = self.tree.selection()
@@ -313,6 +330,7 @@ class OperatorDashboard:
 
         else:
             self.validate_offline_employee()
+
 
     def validate_offline_employee(self):
         log_file_path = os.path.join(self.get_script_directory(), "config", "hris.json")

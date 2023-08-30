@@ -14,7 +14,6 @@ from tkinter.messagebox import showinfo, showwarning, showerror
 from move_mo import MOData
 import datetime
 
-
 class MO_Details:
     def __init__(
         self,
@@ -25,9 +24,8 @@ class MO_Details:
         extracted_username,
         data,
     ):
-        # setting title
+
         root.title("MO")
-        # setting window size
         width = 1264
         height = 675
         screenwidth = root.winfo_screenwidth()
@@ -58,12 +56,10 @@ class MO_Details:
 
         self.data_dict = {}
 
-
         current_time = datetime.datetime.now()
         date = current_time.strftime("%Y-%m-%d")
         time = current_time.strftime("%H:%M:%S")
         self.currentDateTime = f"{date} {time}"
-
 
         self.root.geometry(alignstr)
         self.root.resizable(width=False, height=False)
@@ -249,37 +245,6 @@ class MO_Details:
         self.lbl_remaining_qty["text"] = f"Remaining MO Quantity: {remaining_qty}"
         return remaining_qty
 
-    # def get_remaining_qty_from_logs(self):
-    #     self.lbl_remaining_qty["text"] = f"Remaining MO Quantity: "
-    #     try:
-    #         with open("data/mo_logs.json", "r") as json_file:
-    #             data = json.load(json_file)
-    #             remaining_qty = 0
-    #             for entry in data["data"]:
-    #                 if (
-    #                     "wip_entity_name" in entry
-    #                     and entry["wip_entity_name"] == self.wip_entity_name
-    #                 ):
-    #                     remaining_qty = entry["remaining_qty"]
-    #                     break
-    #             self.lbl_remaining_qty["text"] = f"Remaining MO Quantity: {remaining_qty}"
-                # if "data" in data and isinstance(data["data"], list):
-                #     remaining_qty = 0
-                #     for entry in data["data"]:
-                #         if "wip_entity_name" in entry and entry["wip_entity_name"] == self.wip_entity_name:
-                #             remaining_qty = entry["remaining_qty"]
-                #             print('remaining_qty: ', remaining_qty)
-                #             break
-                #     self.lbl_remaining_qty["text"] = f"Remaining MO Quantity: {remaining_qty}"
-                #     print('GO HERE TRUE')
-                # else:
-                #     print('GO HERE')
-                #     self.lbl_remaining_qty["text"] = "Remaining MO Quantity: N/A"
-
-        # except FileNotFoundError:
-        #     self.lbl_remaining_qty["text"] = "Remaining MO Quantity: N/A"
-
-        # return remaining_qty
 
     def log_event(self, msg):
         current_time = datetime.datetime.now()
@@ -290,6 +255,7 @@ class MO_Details:
             csv_writer = csv.writer(csv_file)
             csv_writer.writerow([msg, date, time])
 
+
     def start_command(self):
 
         # self.checking()
@@ -299,6 +265,7 @@ class MO_Details:
         self.log_event("START")
         self.start_btn["state"] = "disabled"  # Disable the START button
         self.stop_btn["state"] = "normal"  # Enable the STOP button
+
 
     def stop_command(self):
         print("STOP button clicked")
@@ -332,10 +299,10 @@ class MO_Details:
                 self.show_input_dialog()
                 self.mo_data = MOData()
                 self.mo_data.perform_check_and_swap()
-                
         else:
             pass
         #     self.start_btn["state"] = "normal"
+
 
     def read_machno(self):
         with open("data\main.json", "r") as json_file:
@@ -343,6 +310,7 @@ class MO_Details:
             extracted_data = []
             extracted_machno = data["machno"]
         return extracted_machno
+
 
     def checking(self):
         hris_url = "http://lams.teamglac.com/lams/api/job_order/active_jo.php"
@@ -365,6 +333,7 @@ class MO_Details:
             else:
                 self.start_btn["state"] = "normal"
 
+
     def check_total_finished(self):
         with open("data/mo_logs.json", "r") as json_file:
             json_data = json.load(json_file)
@@ -381,23 +350,20 @@ class MO_Details:
 
             if wip_entity_name == self.wip_entity_name:
                 if self.running_qty == total_finished:
-                    self.start_btn["state"] = "disabled"
-                    self.stop_btn["state"] = "disabled"
-                    showinfo("MO FINISHED!", "MO Alredy Finished!")
-                    self.mo_data = MOData()
-                    self.mo_data.perform_check_and_swap()
+                    self.show_label_completed()
+                    self.start_btn.place_forget()
+                    self.stop_btn.place_forget()
+
+                    showinfo("MO COMPLETED!", "MO Alredy Completed!")
+                    # self.mo_data = MOData()
+                    # self.mo_data.perform_check_and_swap()
                     self.root.destroy()
 
-            # print('wip_entity_name: ', wip_entity_name)
-
-        # if self.wip_entity_name in entry:
-        #     print('self.wip_entity_name: ', self.wip_entity_name)
-        #     print('wip_entity_name: ', wip_entity_name)
 
     def show_input_dialog(self):
         total_finished = simpledialog.askstring(
-            "Enter Total Number of finished",
-            "Please enter the total number of finished items",
+            "Enter Total Number of Completed",
+            "Please enter the total number of Completed MO",
         )
 
         if os.stat("data/mo_logs.json").st_size == 0:
@@ -461,7 +427,6 @@ class MO_Details:
                         self.data_dict = {
                             item["wip_entity_name"]: item for item in data["data"]
                         }
-                        print("data_dict: ", self.data_dict)
 
                 except FileNotFoundError:
                     self.data_dict = {}
@@ -480,8 +445,13 @@ class MO_Details:
                             == extracted_running_qty
                         ):
                             print("DONE")
-                            self.start_btn["state"] = "disabled"
-                            self.stop_btn["state"] = "disabled"
+                            # self.start_btn["state"] = "disabled"
+                            # self.stop_btn["state"] = "disabled"
+                            self.start_btn.place_forget()
+                            self.stop_btn.place_forget()
+
+                            self.show_label_completed()
+
                         else:
                             self.start_btn["state"] = "normal"
                             self.stop_btn["state"] = "disabled"
@@ -531,9 +501,17 @@ class MO_Details:
                     )
 
             self.get_remaining_qty_from_logs()
-
-
             # self.root.destroy()
+
+    def show_label_completed(self):
+        self.lbl_mo_status = tk.Label(self.root)
+        self.lbl_mo_status["bg"] = "#5fb878"
+        ft = tkFont.Font(family="Times", size=23)
+        self.lbl_mo_status["font"] = ft
+        self.lbl_mo_status["fg"] = "#ffffff"
+        self.lbl_mo_status["justify"] = "center"
+        self.lbl_mo_status["text"] = "COMPLETED"
+        self.lbl_mo_status.place(x=960, y=520, width=245, height=95)
 
     def on_close(self):
         if messagebox.askokcancel("Quit", "Do you want to quit?"):
