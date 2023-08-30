@@ -32,7 +32,7 @@ class LogsData:
                 running_qty = int(item['running_qty'])
                 total_running_qty += running_qty
 
-        print("Total Running Quantity:", total_running_qty)
+        # print("Total Running Quantity:", total_running_qty)
         return total_running_qty
         
     def total_remaining_qty(self):
@@ -58,7 +58,7 @@ class LogsData:
                 total_finished = int(item['total_finished'])
                 total_remaining_qty += total_finished
 
-        print("Total Remaining Quantity:", total_remaining_qty)
+        # print("Total Remaining Quantity:", total_remaining_qty)
         return total_remaining_qty
 
 if __name__ == "__main__":

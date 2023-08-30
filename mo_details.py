@@ -11,8 +11,8 @@ from tkinter import Toplevel
 from tkinter import messagebox
 from tkinter import simpledialog
 from tkinter.messagebox import showinfo, showwarning, showerror
+from move_mo import MOData
 import datetime
-
 
 
 class MO_Details:
@@ -212,10 +212,12 @@ class MO_Details:
 
     def get_remaining_qty_from_logs(self):
         self.lbl_remaining_qty["text"] = f"Remaining MO Quantity: "
+        
+        remaining_qty = None
+        
         try:
             with open("data/mo_logs.json", "r") as json_file:
                 data = json.load(json_file)
-                remaining_qty = 0
                 for entry in data["data"]:
                     if (
                         "wip_entity_name" in entry
@@ -223,7 +225,44 @@ class MO_Details:
                     ):
                         remaining_qty = entry["remaining_qty"]
                         break
-                self.lbl_remaining_qty["text"] = f"Remaining MO Quantity: {remaining_qty}"
+        except FileNotFoundError:
+            pass
+
+        if remaining_qty is None:
+            try:
+                with open("data/main.json", "r") as json_file:
+                    main_data = json.load(json_file)
+                    wip_entities = main_data.get("data", [])
+                    for entry in wip_entities:
+                        if (
+                            "wip_entity_name" in entry
+                            and entry["wip_entity_name"] == self.wip_entity_name
+                        ):
+                            self.lbl_remaining_qty["text"] = f"Remaining MO Quantity: {entry['running_qty']}"
+                            return entry["running_qty"]
+            except FileNotFoundError:
+                pass
+
+            self.lbl_remaining_qty["text"] = "Remaining MO Quantity: N/A"
+            return None
+
+        self.lbl_remaining_qty["text"] = f"Remaining MO Quantity: {remaining_qty}"
+        return remaining_qty
+
+    # def get_remaining_qty_from_logs(self):
+    #     self.lbl_remaining_qty["text"] = f"Remaining MO Quantity: "
+    #     try:
+    #         with open("data/mo_logs.json", "r") as json_file:
+    #             data = json.load(json_file)
+    #             remaining_qty = 0
+    #             for entry in data["data"]:
+    #                 if (
+    #                     "wip_entity_name" in entry
+    #                     and entry["wip_entity_name"] == self.wip_entity_name
+    #                 ):
+    #                     remaining_qty = entry["remaining_qty"]
+    #                     break
+    #             self.lbl_remaining_qty["text"] = f"Remaining MO Quantity: {remaining_qty}"
                 # if "data" in data and isinstance(data["data"], list):
                 #     remaining_qty = 0
                 #     for entry in data["data"]:
@@ -237,10 +276,10 @@ class MO_Details:
                 #     print('GO HERE')
                 #     self.lbl_remaining_qty["text"] = "Remaining MO Quantity: N/A"
 
-        except FileNotFoundError:
-            self.lbl_remaining_qty["text"] = "Remaining MO Quantity: N/A"
+        # except FileNotFoundError:
+        #     self.lbl_remaining_qty["text"] = "Remaining MO Quantity: N/A"
 
-        return remaining_qty
+        # return remaining_qty
 
     def log_event(self, msg):
         current_time = datetime.datetime.now()
@@ -253,7 +292,7 @@ class MO_Details:
 
     def start_command(self):
 
-        self.checking()
+        # self.checking()
 
         print(self.currentDateTime)
         print("START button clicked")
@@ -291,6 +330,9 @@ class MO_Details:
                 print("Success")
                 # self.stop_btn["state"] = "disabled"
                 self.show_input_dialog()
+                self.mo_data = MOData()
+                self.mo_data.perform_check_and_swap()
+                
         else:
             pass
         #     self.start_btn["state"] = "normal"
@@ -342,6 +384,8 @@ class MO_Details:
                     self.start_btn["state"] = "disabled"
                     self.stop_btn["state"] = "disabled"
                     showinfo("MO FINISHED!", "MO Alredy Finished!")
+                    self.mo_data = MOData()
+                    self.mo_data.perform_check_and_swap()
                     self.root.destroy()
 
             # print('wip_entity_name: ', wip_entity_name)
@@ -362,14 +406,20 @@ class MO_Details:
                 extracted_running_qty = int(self.running_qty)
 
                 if total_finished <= extracted_running_qty:
-
+                    if total_finished== extracted_running_qty:
+                        print("DONE")
+                        self.start_btn["state"] = "disabled"
+                        self.stop_btn["state"] = "disabled"
+                        self.root.destroy()
+                    else:
+                        self.start_btn["state"] = "normal"
+                        self.stop_btn["state"] = "disabled"
                     self.data_dict[self.wip_entity_name] = {
                         "wip_entity_name": self.wip_entity_name,
                         "running_qty": self.running_qty,
                         "total_finished": total_finished,
                         "remaining_qty": extracted_running_qty - total_finished,
                     }
-
 
                     with open("data/mo_logs.json", "w") as json_output_file:
                         json.dump(
@@ -393,6 +443,7 @@ class MO_Details:
                     )
 
         else:
+            print('self.currentDateTime: ', self.currentDateTime)
             if total_finished is not None and total_finished.strip() != "":
                 total_finished = int(total_finished)
                 extracted_running_qty = int(self.running_qty)

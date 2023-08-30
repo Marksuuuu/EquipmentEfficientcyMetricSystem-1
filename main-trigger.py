@@ -48,8 +48,6 @@ class App:
                 csv_writer.writerow([message, date, time])
         
            
-
-
 if __name__ == "__main__":
     root = tk.Tk()
     app = App(root)
