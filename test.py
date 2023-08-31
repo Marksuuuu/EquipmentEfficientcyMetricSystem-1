@@ -791,4 +791,23 @@ if __name__ == "__main__":
 #                         print("Total finished is not less than or equal to extracted running qty.")
 
 #         with open("data/mo_logs.json", "w") as json_output_file:
-#             json.dump({"data": list(self.data_dict.values())}, json_output_file, indent=4)
+    #             json.dump({"data": list(self.data_dict.values())}, json_output_file, indent=4)
+    remaining_qty = None
+
+        if remaining_qty is None:
+            try:
+                with open("data/main.json", "r") as json_file:
+                    main_data = json.load(json_file)
+                    wip_entities = main_data.get("data", [])
+                    for entry in wip_entities:
+                        if (
+                            "wip_entity_name" in entry
+                            and entry["wip_entity_name"] == self.wip_entity_name
+                        ):
+                            self.lbl_remaining_qty["text"] = f"Remaining MO Quantity: {entry['running_qty']}"
+                            return entry["running_qty"]
+            except FileNotFoundError:
+                pass
+
+            self.lbl_remaining_qty["text"] = "Remaining MO Quantity: N/A"
+        return None

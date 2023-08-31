@@ -44,5 +44,6 @@ class MOData:
                 else:
                     print('NOT COMPLETED')
 
+    
 if __name__ == '__main__':
     MOData()

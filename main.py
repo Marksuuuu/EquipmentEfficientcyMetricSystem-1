@@ -497,6 +497,7 @@ class App:
         root.after(50000, self.create_total_qty_graph)
         return img
     
+    
     def update_chart(self):
         self.chart_image = self.create_donut_chart()
         self.total_img = self.create_total_qty_graph()
@@ -508,6 +509,7 @@ class App:
         
         
         root.after(50000, self.update_chart)
+
 
     def create_ui(self):
         self.GLabel_111 = tk.Label(root)
@@ -590,7 +592,6 @@ class App:
         formatted_time = self.format_time(total_available_seconds)
         return formatted_time
     
-
 
     def update_status(self):
         script_directory = os.path.dirname(os.path.abspath(__file__))

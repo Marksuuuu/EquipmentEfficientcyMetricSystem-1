@@ -175,7 +175,8 @@ class MO_Details:
         self.stop_btn["justify"] = "center"
         self.stop_btn["text"] = "STOP"
         self.stop_btn.place(x=1000, y=430, width=245, height=97)
-        self.stop_btn["state"] = "disabled"
+        # self.stop_btn["state"] = "disabled"
+        self.stop_btn.place_forget()
         self.stop_btn["command"] = self.stop_command
 
         GLabel_65 = tk.Label(root)
@@ -290,18 +291,41 @@ class MO_Details:
             csv_writer = csv.writer(csv_file)
             csv_writer.writerow([msg, date, time])
 
+<<<<<<< Updated upstream
+=======
+
+    def show_start_btn(self):
+
+        self.start_btn.place(x=1000, y=540, width=245, height=97)
+        self.stop_btn.place_forget()
+    
+    def show_stop_btn(self):
+        self.stop_btn.place(x=1000, y=540, width=245, height=97)
+        self.start_btn.place_forget()
+
+    def hide_start_and_stop_btn(self):
+        self.start_btn.place_forget()
+        self.stop_btn.place_forget()
+
+    # def hide_start_btn(self):
+    #     self.start_btn.place_forget()
+    
+    # def hide_stop_btn(self):
+    #     self.stop_btn.place_forget()
+
+
+>>>>>>> Stashed changes
     def start_command(self):
+        
+        # self.checking() #comment this if there is a ticket for testing
 
-        # self.checking()
-
-        print(self.currentDateTime)
-        print("START button clicked")
+        self.show_stop_btn() #uncomment this to show the start button
         self.log_event("START")
-        self.start_btn["state"] = "disabled"  # Disable the START button
-        self.stop_btn["state"] = "normal"  # Enable the STOP button
+
 
     def stop_command(self):
         print("STOP button clicked")
+<<<<<<< Updated upstream
         # self.start_btn["state"] = "normal"  # Enable the START button
         # self.stop_btn["state"] = "disabled"  # Disable the STOP button
         hris_password = simpledialog.askstring(
@@ -309,10 +333,20 @@ class MO_Details:
             "Enter Password", show='*'
         )
         # self.show_input_dialog()
+=======
+        self.show_input_dialog()
+
+
+        # hris_password = simpledialog.askstring(
+        #     "Password",
+        #     "Enter Password", show='*'
+        # )
+>>>>>>> Stashed changes
 
         if hris_password is not None and hris_password.strip() != "":
             input_password = str(hris_password)
 
+<<<<<<< Updated upstream
             url = f"http://hris.teamglac.com/api/users/login?u={self.extracted_username}&p={input_password}"
             response = requests.get(url).json()
             if response['result'] == False or response['result'] == None:
@@ -336,6 +370,33 @@ class MO_Details:
         else:
             pass
         #     self.start_btn["state"] = "normal"
+=======
+        #     url = f"http://hris.teamglac.com/api/users/login?u={self.extracted_username}&p={input_password}"
+        #     response = requests.get(url).json()
+        #     if response['result'] == False or response['result'] == None:
+        #         print("FAILED")
+        #         # self.start_btn["state"] = "disabled"
+        #         # self.stop_btn["state"] = "normal"
+
+        #         self.show_stop_btn()
+        #         showerror(
+        #         title="Login Failed",
+        #         message=f"Password is incorrect. Please try again.",
+        #     )
+        #         # self.show_input_dialog()
+
+        #     else:
+        #         # self.start_btn["state"] = "normal"    # Enable the START button
+        #         print("Success")
+        #         # self.stop_btn["state"] = "disabled"
+
+        #         self.show_input_dialog()
+        #         self.mo_data = MOData()
+        #         self.mo_data.perform_check_and_swap()
+        # else:
+        #     pass
+
+>>>>>>> Stashed changes
 
     def read_machno(self):
         with open("data\main.json", "r") as json_file:
@@ -361,10 +422,18 @@ class MO_Details:
                     "TICKET ALERT!",
                     "Attention! The machine is temporarily unavailable.",
                 )
-                self.stop_btn["state"] = "disabled"
-            else:
-                self.start_btn["state"] = "normal"
+                # self.stop_btn["state"] = "disabled"
+                self.hide_start_and_stop_btn()
 
+<<<<<<< Updated upstream
+=======
+            else:
+                self.log_event("START")
+
+                # self.start_btn["state"] = "normal"
+                self.show_start_btn()
+
+>>>>>>> Stashed changes
     def check_total_finished(self):
         with open("data/mo_logs.json", "r") as json_file:
             json_data = json.load(json_file)
@@ -381,9 +450,16 @@ class MO_Details:
 
             if wip_entity_name == self.wip_entity_name:
                 if self.running_qty == total_finished:
+<<<<<<< Updated upstream
                     self.start_btn["state"] = "disabled"
                     self.stop_btn["state"] = "disabled"
                     showinfo("MO FINISHED!", "MO Alredy Finished!")
+=======
+                    self.show_label_completed()
+                    self.hide_start_and_stop_btn()
+
+                    showinfo("MO COMPLETED!", "MO Alredy Completed!")
+>>>>>>> Stashed changes
                     self.mo_data = MOData()
                     self.mo_data.perform_check_and_swap()
                     self.root.destroy()
@@ -395,6 +471,12 @@ class MO_Details:
         #     print('wip_entity_name: ', wip_entity_name)
 
     def show_input_dialog(self):
+<<<<<<< Updated upstream
+=======
+        dateTimeNow = self.currentDateTime
+        person_assigned = self.extracted_fullname
+
+>>>>>>> Stashed changes
         total_finished = simpledialog.askstring(
             "Enter Total Number of finished",
             "Please enter the total number of finished items",
@@ -406,6 +488,7 @@ class MO_Details:
                 extracted_running_qty = int(self.running_qty)
 
                 if total_finished <= extracted_running_qty:
+<<<<<<< Updated upstream
                     if total_finished== extracted_running_qty:
                         print("DONE")
                         self.start_btn["state"] = "disabled"
@@ -414,11 +497,27 @@ class MO_Details:
                     else:
                         self.start_btn["state"] = "normal"
                         self.stop_btn["state"] = "disabled"
+=======
+                    if total_finished == extracted_running_qty:
+                        status = "COMPLETED"
+                        self.hide_start_and_stop_btn()
+                        # self.show_label_completed()
+                    else:
+                        status = "NOT COMPLETED"
+                        self.show_start_btn()
+
+>>>>>>> Stashed changes
                     self.data_dict[self.wip_entity_name] = {
                         "wip_entity_name": self.wip_entity_name,
                         "running_qty": self.running_qty,
                         "total_finished": total_finished,
                         "remaining_qty": extracted_running_qty - total_finished,
+<<<<<<< Updated upstream
+=======
+                        "transaction_date": dateTimeNow,
+                        "last_person_assigned": person_assigned,
+                        "status": status,  # Set the status here
+>>>>>>> Stashed changes
                     }
 
                     with open("data/mo_logs.json", "w") as json_output_file:
@@ -427,19 +526,15 @@ class MO_Details:
                             json_output_file,
                             indent=4,
                         )
-                        self.start_btn["state"] = "normal"
-                        self.stop_btn["state"] = "disabled"
-                        self.get_remaining_qty_from_logs()
-                        self.log_event("STOP")
-                
+                    
+                    # self.show_start_btn()
+                    self.get_remaining_qty_from_logs()
+                    self.log_event("STOP")
                 else:
                     messagebox.showinfo(
                         title="Warning",
                         message="Input exceeded the set running Quantity: "
                         + str(extracted_running_qty),
-                    )
-                    print(
-                        "Total finished is not less than or equal to extracted running qty."
                     )
 
         else:
@@ -468,7 +563,6 @@ class MO_Details:
 
                 if self.wip_entity_name in self.data_dict:
                     current_entry = self.data_dict[self.wip_entity_name]
-                    print("current_entry: ", current_entry)
                     self.current_total_finished = current_entry["total_finished"]
 
                     if (
@@ -479,12 +573,23 @@ class MO_Details:
                             self.current_total_finished + total_finished
                             == extracted_running_qty
                         ):
+<<<<<<< Updated upstream
                             print("DONE")
                             self.start_btn["state"] = "disabled"
                             self.stop_btn["state"] = "disabled"
                         else:
                             self.start_btn["state"] = "normal"
                             self.stop_btn["state"] = "disabled"
+=======
+                            status = "COMPLETED"
+                            self.hide_start_and_stop_btn()
+                            self.show_label_completed()
+
+                        else:
+                            status = "NOT COMPLETED"
+                            self.show_start_btn()
+
+>>>>>>> Stashed changes
                         current_entry["total_finished"] += total_finished
                         current_entry["remaining_qty"] -= total_finished
                         self.log_event("STOP")
@@ -501,27 +606,40 @@ class MO_Details:
 
                 else:
                     if extracted_running_qty == total_finished:
+<<<<<<< Updated upstream
                         self.start_btn["state"] = "disabled"
                         self.stop_btn["state"] = "disabled"
+=======
+                        self.hide_start_and_stop_btn()
+                        self.show_label_completed()
+                        self.mo_data = MOData()
+                        self.mo_data.perform_check_and_swap()
+                        print("MO COMPLETED")
+>>>>>>> Stashed changes
 
                     elif extracted_running_qty < total_finished:
-                        self.start_btn["state"] = "disabled"
-                        self.stop_btn["state"] = "normal"
+                        self.show_stop_btn()
+
                         messagebox.showinfo(
                             title="Warning",
                             message="Input exceeded the set running Quantity: "
                             + str(extracted_running_qty),
                         )
                     else:
+<<<<<<< Updated upstream
                         self.start_btn["state"] = "normal"
                         self.stop_btn["state"] = "disabled"
+=======
+                        self.show_start_btn()
+
+                        status = "COMPLETED" if extracted_running_qty - total_finished == 0 else "NOT COMPLETED"
+>>>>>>> Stashed changes
                         self.data_dict[self.wip_entity_name] = {
                             "wip_entity_name": self.wip_entity_name,
                             "running_qty": self.running_qty,
                             "total_finished": total_finished,
                             "remaining_qty": extracted_running_qty - total_finished,
                         }
-
 
                 with open("data/mo_logs.json", "w") as json_output_file:
                     json.dump(

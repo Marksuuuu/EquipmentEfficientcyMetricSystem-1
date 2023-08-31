@@ -95,8 +95,11 @@ class OperatorDashboard:
         self.extracted_possition = data[5]
         self.extracted_username = data[6]
         self.root = root
+<<<<<<< Updated upstream
         # setting title
 
+=======
+>>>>>>> Stashed changes
 
         root.title(
             f"OPERATOR DASHBOARD - {self.extracted_employee_no} -- POSSITION - {self.extracted_possition}"
@@ -121,7 +124,7 @@ class OperatorDashboard:
             image_url = f"http://hris.teamglac.com/{self.extracted_photo_url}"  # Replace with your image URL
 
         response = requests.get(image_url)
-        pil_image = Image.open(BytesIO(response.content))
+        pil_image = Image.open(BytesIO(initial_bytes=response.content))
         desired_width = 83
         desired_height = 60
         pil_image = pil_image.resize((desired_width, desired_height), Image.ANTIALIAS)
@@ -147,7 +150,7 @@ class OperatorDashboard:
         employee_name["text"] = self.extracted_fullname
         employee_name.place(x=1420, y=0, width=281, height=60)
 
-        employee_photo = tk.Label(root, image=self.image)
+        employee_photo = tk.Label(master=root, image=self.image)
         employee_photo["bg"] = "#999999"
         employee_photo["font"] = ft
         employee_photo["fg"] = "#333333"
@@ -195,8 +198,11 @@ class OperatorDashboard:
 
         self.tree.bind("<Double-1>", self.double_click_handler)
 
+<<<<<<< Updated upstream
 
 
+=======
+>>>>>>> Stashed changes
 
     def double_click_handler(self, event):
         if not self.getLastOfflineEntry():
@@ -216,7 +222,6 @@ class OperatorDashboard:
             event_type, event_date, event_time = last_offline_entry[:3]
             event_datetime = datetime.strptime(
                 f"{event_date} {event_time}", "%Y-%m-%d %H:%M:%S")
-            print('last_offline_entry: ', last_offline_entry)
             showwarning(
                     "MACHINE OFFLINE!",
                     "Attention! The machine is currently OFFLINE",
@@ -261,15 +266,102 @@ class OperatorDashboard:
             print(e)
         self.root.after(5000, self.update_status)
 
+<<<<<<< Updated upstream
+=======
+    def read_mo_logs(self):
+        try:
+
+            with open('data/mo_logs.json', 'r') as json_file:
+                mo_logs = json.load(json_file)
+            return mo_logs
+        
+        except (FileNotFoundError, json.JSONDecodeError, KeyError):
+            print("Error reading mo_logs.json or extracting data.")
+            return []
+
+
+    def read_json_file(self):
+
+        
+        with open("data\main.json", "r") as json_file:
+            data = json.load(json_file)
+            extracted_data = []
+
+            for item in data["data"]:
+                item["status"] = ""
+                customer = item["customer"]
+                device = item["device"]
+                main_opt = item["main_opt"]
+                package = item["package"]
+                running_qty = item["running_qty"]
+                wip_entity_name = item["wip_entity_name"]
+                status = item.get("status", "")
+                extracted_data.append((customer, device, main_opt, package, running_qty, wip_entity_name, status))
+
+        return extracted_data
+    
+    def read_json_file_with_status(self):
+        main_data = None
+        
+        mo_logs = self.read_mo_logs()
+        
+        
+        with open("data/main.json", "r") as json_file:
+            main_data = json.load(json_file)
+
+        extracted_data = []
+
+        for item in main_data["data"]:
+            wip_entity_name = item["wip_entity_name"]
+            status = ""
+            
+            for mo_log_entry in mo_logs["data"]:
+                if mo_log_entry["wip_entity_name"] == wip_entity_name:
+                    status = mo_log_entry["status"]
+                    break
+            
+            extracted_data.append((
+                item["customer"],
+                item["device"],
+                item["main_opt"],
+                item["package"],
+                item["running_qty"],
+                item["wip_entity_name"],
+                status  # Add the status here
+            ))
+
+        return extracted_data
+    
+
+>>>>>>> Stashed changes
     def populate_table(self):
         
-        data = self.read_json_file()
+        if os.stat("data/mo_logs.json").st_size == 0:
+            print("mo_logs.json is empty.")
+            data = self.read_json_file()
 
+<<<<<<< Updated upstream
         for i, (customer, device, main_opt, package, running_qty, wip_entity_name) in enumerate(data, start=1):
             self.tree.insert(
                 "", "end", iid=i, text=str(i),
                 values=(i, customer, device, main_opt, package, running_qty, wip_entity_name)
             )
+=======
+            for i, (customer, device, main_opt, package, running_qty, wip_entity_name, status) in enumerate(data, start=1):
+                self.tree.insert(
+                    "", "end", iid=i, text=str(i),
+                    values=(i, customer, device, main_opt, package, running_qty, wip_entity_name, status)
+                )
+        else:
+            print("mo_logs.json is not empty.")
+            data = self.read_json_file_with_status()
+
+            for i, (customer, device, main_opt, package, running_qty, wip_entity_name, status) in enumerate(data, start=1):
+                self.tree.insert(
+                    "", "end", iid=i, text=str(i),
+                    values=(i, customer, device, main_opt, package, running_qty, wip_entity_name, status)
+                )
+>>>>>>> Stashed changes
 
     def update_table(self):
         # Clear existing data from the treeview
@@ -406,7 +498,6 @@ class OperatorDashboard:
             values=(first_id, selected_data[1], selected_data[2], selected_data[3], selected_data[4], selected_data[5],
                     selected_data[6]),
         )
-
         # Show a success message
         showinfo("Success", "Data swapped successfully!")
 
