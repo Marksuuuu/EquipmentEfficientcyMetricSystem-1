@@ -250,38 +250,6 @@ class MO_Details:
         self.lbl_remaining_qty["text"] = f"Remaining MO Quantity: {remaining_qty}"
         return remaining_qty
 
-    # def get_remaining_qty_from_logs(self):
-    #     self.lbl_remaining_qty["text"] = f"Remaining MO Quantity: "
-    #     try:
-    #         with open("data/mo_logs.json", "r") as json_file:
-    #             data = json.load(json_file)
-    #             remaining_qty = 0
-    #             for entry in data["data"]:
-    #                 if (
-    #                     "wip_entity_name" in entry
-    #                     and entry["wip_entity_name"] == self.wip_entity_name
-    #                 ):
-    #                     remaining_qty = entry["remaining_qty"]
-    #                     break
-    #             self.lbl_remaining_qty["text"] = f"Remaining MO Quantity: {remaining_qty}"
-                # if "data" in data and isinstance(data["data"], list):
-                #     remaining_qty = 0
-                #     for entry in data["data"]:
-                #         if "wip_entity_name" in entry and entry["wip_entity_name"] == self.wip_entity_name:
-                #             remaining_qty = entry["remaining_qty"]
-                #             print('remaining_qty: ', remaining_qty)
-                #             break
-                #     self.lbl_remaining_qty["text"] = f"Remaining MO Quantity: {remaining_qty}"
-                #     print('GO HERE TRUE')
-                # else:
-                #     print('GO HERE')
-                #     self.lbl_remaining_qty["text"] = "Remaining MO Quantity: N/A"
-
-        # except FileNotFoundError:
-        #     self.lbl_remaining_qty["text"] = "Remaining MO Quantity: N/A"
-
-        # return remaining_qty
-
     def log_event(self, msg):
         current_time = datetime.datetime.now()
         date = current_time.strftime("%Y-%m-%d")

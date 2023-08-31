@@ -164,6 +164,17 @@ class OperatorDashboard:
         logout_btn["command"] = self.logout  # Use the logout method directly
         logout_btn.place(x=1620, y=70, width=66, height=37)
 
+        refresh_btn = tk.Button(root)
+        refresh_btn["bg"] = "#999999"
+        refresh_btn["cursor"] = "tcross"
+        ft = tkFont.Font(family="Times", size=10)
+        refresh_btn["font"] = ft
+        refresh_btn["fg"] = "#333333"
+        refresh_btn["justify"] = "center"
+        refresh_btn["text"] = "REFRESH"
+        refresh_btn["command"] = self.update_table
+        refresh_btn.place(x=1520, y=70, width=66, height=37)
+
         self.tree = ttk.Treeview(
             root,
             show="headings",
@@ -175,6 +186,7 @@ class OperatorDashboard:
                 "PACKAGE",
                 "MO QUANTITY",
                 "MO",
+                "STATUS",
             ),
         )
         self.tree.heading("ROW NUMBER", text="ROW NUMBER")
@@ -184,10 +196,11 @@ class OperatorDashboard:
         self.tree.heading("PACKAGE", text="PACKAGE")
         self.tree.heading("MO QUANTITY", text="MO QUANTITY")
         self.tree.heading("MO", text="MO")
+        self.tree.heading("STATUS", text="STATUS")
         self.tree.pack(pady=120)
 
         self.populate_table()
-        self.root.after(5000, self.update_table)
+        # self.root.after(5000, self.update_table)
 
         self.update_status()
 
@@ -276,15 +289,13 @@ class OperatorDashboard:
             extracted_data = []
 
             for item in data["data"]:
-                item["status"] = ""
                 customer = item["customer"]
                 device = item["device"]
                 main_opt = item["main_opt"]
                 package = item["package"]
                 running_qty = item["running_qty"]
                 wip_entity_name = item["wip_entity_name"]
-                status = item.get("status", "")
-                extracted_data.append((customer, device, main_opt, package, running_qty, wip_entity_name, status))
+                extracted_data.append((customer, device, main_opt, package, running_qty, wip_entity_name))
 
         return extracted_data
     
@@ -322,7 +333,6 @@ class OperatorDashboard:
     
 
     def populate_table(self):
-        
         if os.stat("data/mo_logs.json").st_size == 0:
             print("mo_logs.json is empty.")
             data = self.read_json_file()
@@ -350,7 +360,7 @@ class OperatorDashboard:
         self.populate_table()
         
         # Schedule the next update
-        self.root.after(5000, self.update_table)
+        # self.root.after(5000, self.update_table)
 
     def read_json_file(self):
         with open("data\main.json", "r") as json_file:
