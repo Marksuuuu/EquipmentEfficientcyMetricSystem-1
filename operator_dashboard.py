@@ -166,6 +166,17 @@ class OperatorDashboard:
         logout_btn["command"] = self.logout  # Use the logout method directly
         logout_btn.place(x=1620, y=70, width=66, height=37)
 
+        refresh_btn = tk.Button(root)
+        refresh_btn["bg"] = "#999999"
+        refresh_btn["cursor"] = "tcross"
+        ft = tkFont.Font(family="Times", size=10)
+        refresh_btn["font"] = ft
+        refresh_btn["fg"] = "#333333"
+        refresh_btn["justify"] = "center"
+        refresh_btn["text"] = "REFRESH"
+        refresh_btn["command"] = self.update_table
+        refresh_btn.place(x=1520, y=70, width=66, height=37)
+
         self.tree = ttk.Treeview(
             root,
             show="headings",
@@ -177,6 +188,7 @@ class OperatorDashboard:
                 "PACKAGE",
                 "MO QUANTITY",
                 "MO",
+                "STATUS",
             ),
         )
         self.tree.heading("ROW NUMBER", text="ROW NUMBER")
@@ -186,10 +198,11 @@ class OperatorDashboard:
         self.tree.heading("PACKAGE", text="PACKAGE")
         self.tree.heading("MO QUANTITY", text="MO QUANTITY")
         self.tree.heading("MO", text="MO")
+        self.tree.heading("STATUS", text="STATUS")
         self.tree.pack(pady=120)
 
         self.populate_table()
-        self.root.after(5000, self.update_table)
+        # self.root.after(5000, self.update_table)
 
         self.update_status()
 
@@ -271,6 +284,30 @@ class OperatorDashboard:
                 values=(i, customer, device, main_opt, package, running_qty, wip_entity_name)
             )
 
+
+
+    def populate_table(self):
+        
+        if os.stat("data/mo_logs.json").st_size == 0:
+            print("mo_logs.json is empty.")
+            data = self.read_json_file()
+
+            for i, (customer, device, main_opt, package, running_qty, wip_entity_name, status) in enumerate(data, start=1):
+                self.tree.insert(
+                    "", "end", iid=i, text=str(i),
+                    values=(i, customer, device, main_opt, package, running_qty, wip_entity_name, status)
+                )
+
+        else:
+            print("mo_logs.json is not empty.")
+            data = self.read_json_file_with_status()
+
+            for i, (customer, device, main_opt, package, running_qty, wip_entity_name, status) in enumerate(data, start=1):
+                self.tree.insert(
+                    "", "end", iid=i, text=str(i),
+                    values=(i, customer, device, main_opt, package, running_qty, wip_entity_name, status)
+                )
+
     def update_table(self):
         # Clear existing data from the treeview
         self.tree.delete(*self.tree.get_children())
@@ -279,23 +316,70 @@ class OperatorDashboard:
         self.populate_table()
         
         # Schedule the next update
-        self.root.after(5000, self.update_table)
+        # self.root.after(5000, self.update_table)
 
     def read_json_file(self):
-        with open("data\main.json", "r") as json_file:
-            data = json.load(json_file)
-            extracted_data = []
+        try:
+            with open("data\main.json", "r") as json_file:
+                data = json.load(json_file)
+                extracted_data = []
 
-            for item in data["data"]:
-                customer = item["customer"]
-                device = item["device"]
-                main_opt = item["main_opt"]
-                package = item["package"]
-                running_qty = item["running_qty"]
-                wip_entity_name = item["wip_entity_name"]
-                extracted_data.append((customer, device, main_opt, package, running_qty, wip_entity_name))
+                for item in data["data"]:
+                    customer = item["customer"]
+                    device = item["device"]
+                    main_opt = item["main_opt"]
+                    package = item["package"]
+                    running_qty = item["running_qty"]
+                    wip_entity_name = item["wip_entity_name"]
+                    status = item.get("status", "")
+                    extracted_data.append((customer, device, main_opt, package, running_qty, wip_entity_name, status))
+            return extracted_data
+        except (FileNotFoundError, json.JSONDecodeError, KeyError):
+                print("Error reading mo_logs.json or extracting data.")
+                return []
+
+    def read_mo_logs(self):
+        try:
+            with open('data/mo_logs.json', 'r') as json_file:
+                mo_logs = json.load(json_file)
+            return mo_logs
+        
+        except (FileNotFoundError, json.JSONDecodeError, KeyError):
+            print("Error reading mo_logs.json or extracting data.")
+            return []
+        
+    def read_json_file_with_status(self):
+        main_data = None
+        
+        mo_logs = self.read_mo_logs()
+        
+        
+        with open("data/main.json", "r") as json_file:
+            main_data = json.load(json_file)
+
+        extracted_data = []
+
+        for item in main_data["data"]:
+            wip_entity_name = item["wip_entity_name"]
+            status = ""
+            
+            for mo_log_entry in mo_logs["data"]:
+                if mo_log_entry["wip_entity_name"] == wip_entity_name:
+                    status = mo_log_entry["status"]
+                    break
+            
+            extracted_data.append((
+                item["customer"],
+                item["device"],
+                item["main_opt"],
+                item["package"],
+                item["running_qty"],
+                item["wip_entity_name"],
+                status  # Add the status here
+            ))
 
         return extracted_data
+
 
     def show_popup_view(self, event):
         selected_item = self.tree.selection()

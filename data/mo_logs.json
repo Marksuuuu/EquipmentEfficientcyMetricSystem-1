@@ -1,16 +1,22 @@
 {
     "data": [
         {
-            "wip_entity_name": "MO838597",
-            "running_qty": 100,
-            "total_finished": 100,
-            "remaining_qty": 0
-        },
-        {
             "wip_entity_name": "MO839288",
             "running_qty": 100,
             "total_finished": 100,
-            "remaining_qty": 0
+            "remaining_qty": 0,
+            "transaction_date": "2023-08-31 13:56:41",
+            "last_person_assigned": "Mercado, Alex Fernan F.",
+            "status": "COMPLETED"
+        },
+        {
+            "wip_entity_name": "MO839211",
+            "running_qty": 100,
+            "total_finished": 100,
+            "remaining_qty": 0,
+            "transaction_date": "2023-08-31 13:59:01",
+            "last_person_assigned": "Mercado, Alex Fernan F.",
+            "status": "COMPLETED"
         }
     ]
 }
