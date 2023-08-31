@@ -13,9 +13,7 @@ import requests
 class RequestTicket:
     def __init__(self, root, extracted_fullname, extracted_employee_no):
         self.root = root
-        # setting title
         root.title("TICKET")
-        # setting window size
         width = 998
         height = 531
         screenwidth = root.winfo_screenwidth()

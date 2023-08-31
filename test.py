@@ -1,43 +1,43 @@
-import tkinter as tk
-from tkinter import ttk
-import requests
+# import tkinter as tk
+# from tkinter import ttk
+# import requests
 
-class MyApp:
-    def __init__(self, root):
-        self.root = root
-        self.root.geometry("800x600")
+# class MyApp:
+#     def __init__(self, root):
+#         self.root = root
+#         self.root.geometry("800x600")
 
-        self.dropdown_var = tk.StringVar()
+#         self.dropdown_var = tk.StringVar()
 
-        self.fetch_downtime_types()
+#         self.fetch_downtime_types()
         
-        dropdown = ttk.Combobox(root, textvariable=self.dropdown_var, state="readonly")
-        dropdown["values"] = [item["DOWNTIME_TYPE"] for item in self.downtime_data]
-        dropdown.bind("<<ComboboxSelected>>", self.on_select)
-        dropdown.place(x=540, y=240, width=250, height=30)
+#         dropdown = ttk.Combobox(root, textvariable=self.dropdown_var, state="readonly")
+#         dropdown["values"] = [item["DOWNTIME_TYPE"] for item in self.downtime_data]
+#         dropdown.bind("<<ComboboxSelected>>", self.on_select)
+#         dropdown.place(x=540, y=240, width=250, height=30)
 
-    def fetch_downtime_types(self):
-        cmms_url = 'http://cmms.teamglac.com/main_downtime_type.php'
-        response = requests.get(cmms_url)
-        data = response.json()
-        self.downtime_data = data["result"]
+#     def fetch_downtime_types(self):
+#         cmms_url = 'http://cmms.teamglac.com/main_downtime_type.php'
+#         response = requests.get(cmms_url)
+#         data = response.json()
+#         self.downtime_data = data["result"]
 
-    def on_select(self, event):
-        selected_text = self.dropdown_var.get()
-        selected_id = None
-        for item in self.downtime_data:
-            if item['DOWNTIME_TYPE'] == selected_text:
-                selected_id = item['ID']
-                break
+#     def on_select(self, event):
+#         selected_text = self.dropdown_var.get()
+#         selected_id = None
+#         for item in self.downtime_data:
+#             if item['DOWNTIME_TYPE'] == selected_text:
+#                 selected_id = item['ID']
+#                 break
 
-        if selected_id is not None:
-            print("Selected ID:", selected_id)
-            print("Selected Text:", selected_text)
+#         if selected_id is not None:
+#             print("Selected ID:", selected_id)
+#             print("Selected Text:", selected_text)
 
-if __name__ == "__main__":
-    root = tk.Tk()
-    app = MyApp(root)
-    root.mainloop()
+# if __name__ == "__main__":
+#     root = tk.Tk()
+#     app = MyApp(root)
+#     root.mainloop()
 
 
 
@@ -792,22 +792,3 @@ if __name__ == "__main__":
 
 #         with open("data/mo_logs.json", "w") as json_output_file:
     #             json.dump({"data": list(self.data_dict.values())}, json_output_file, indent=4)
-    remaining_qty = None
-
-        if remaining_qty is None:
-            try:
-                with open("data/main.json", "r") as json_file:
-                    main_data = json.load(json_file)
-                    wip_entities = main_data.get("data", [])
-                    for entry in wip_entities:
-                        if (
-                            "wip_entity_name" in entry
-                            and entry["wip_entity_name"] == self.wip_entity_name
-                        ):
-                            self.lbl_remaining_qty["text"] = f"Remaining MO Quantity: {entry['running_qty']}"
-                            return entry["running_qty"]
-            except FileNotFoundError:
-                pass
-
-            self.lbl_remaining_qty["text"] = "Remaining MO Quantity: N/A"
-        return None

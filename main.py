@@ -301,6 +301,7 @@ class App:
             else:
                 print("Error accessing HRIS API:", response.status_code)
         except ValueError:
+            print(employee_number)
             tk.messagebox.showerror(
                 "Invalid Input", "Please enter a valid integer employee number.")
 

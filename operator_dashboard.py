@@ -95,11 +95,6 @@ class OperatorDashboard:
         self.extracted_possition = data[5]
         self.extracted_username = data[6]
         self.root = root
-<<<<<<< Updated upstream
-        # setting title
-
-=======
->>>>>>> Stashed changes
 
         root.title(
             f"OPERATOR DASHBOARD - {self.extracted_employee_no} -- POSSITION - {self.extracted_possition}"
@@ -198,11 +193,6 @@ class OperatorDashboard:
 
         self.tree.bind("<Double-1>", self.double_click_handler)
 
-<<<<<<< Updated upstream
-
-
-=======
->>>>>>> Stashed changes
 
     def double_click_handler(self, event):
         if not self.getLastOfflineEntry():
@@ -266,8 +256,6 @@ class OperatorDashboard:
             print(e)
         self.root.after(5000, self.update_status)
 
-<<<<<<< Updated upstream
-=======
     def read_mo_logs(self):
         try:
 
@@ -333,20 +321,12 @@ class OperatorDashboard:
         return extracted_data
     
 
->>>>>>> Stashed changes
     def populate_table(self):
         
         if os.stat("data/mo_logs.json").st_size == 0:
             print("mo_logs.json is empty.")
             data = self.read_json_file()
 
-<<<<<<< Updated upstream
-        for i, (customer, device, main_opt, package, running_qty, wip_entity_name) in enumerate(data, start=1):
-            self.tree.insert(
-                "", "end", iid=i, text=str(i),
-                values=(i, customer, device, main_opt, package, running_qty, wip_entity_name)
-            )
-=======
             for i, (customer, device, main_opt, package, running_qty, wip_entity_name, status) in enumerate(data, start=1):
                 self.tree.insert(
                     "", "end", iid=i, text=str(i),
@@ -361,7 +341,6 @@ class OperatorDashboard:
                     "", "end", iid=i, text=str(i),
                     values=(i, customer, device, main_opt, package, running_qty, wip_entity_name, status)
                 )
->>>>>>> Stashed changes
 
     def update_table(self):
         # Clear existing data from the treeview
